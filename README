@@ -1,0 +1,276 @@
+
+
+---===================================---
+   cb2util - CodeBreaker PS2 File Utility
+   Copyright (C) 2006-2007 misfire
+---======================================---
+
+
+Welcome to cb2util, the CodeBreaker PS2 File Utility!
+
+
+---============---
+   Version history
+---===============---
+
+v1.0 (Apr 3 2007)
+* Initial public release
+
+
+---==========---
+   About cb2util
+---=============---
+
+cb2util was made to utilize different file formats of CodeBreaker PS2.
+
+It currently supports:
+- Code saves (V7)
+- Code saves (V8+/Day1)
+- PCB files (upgrades/homebrew/etc)
+
+The features are:
+- extract (and optionally decrypt) all cheats from code saves
+- encrypt or decrypt PCB files
+- convert PCB files into ELF files
+- check digital signature on code saves and PCB files
+
+Future versions may include more functionality, of course.
+
+Originally, I was planning to integrate most of this program's features into
+CB2crypt, but for several reasons I decided to develop a new portable console
+application instead; read the chapter "Scripting", and you'll understand my
+decision.
+
+
+---==---
+   Usage
+---=====---
+
+As cb2util is a console application, you have to pass arguments to it.
+
+Using the --help option will display the following text:
+$ ./cb2util --help
+
+Usage: cb2util [options] <input file> [output file]
+ Program to utilize different CodeBreaker PS2 file formats
+ Options are:
+  -t/--type <type>      Define input file type; see below for type values
+
+  Code saves (V7) (type=cbc7)
+   <no option>          Extract cheats
+   -d/--decrypt         Decrypt extracted cheats
+
+  Code saves (V8+/Day1) (type=cbc, default)
+   <no option>          Extract cheats
+   -d/--decrypt         Decrypt extracted cheats
+   -c/--check           Only check RSA signature
+
+  PCB files (type=pcb)
+   <no option>          Encrypt/decrypt to output file
+   -s/--strip           Strip RSA signature
+   -c/--check           Only check RSA signature
+   -e/--elf             Convert into an ELF file
+
+  -h/--help             Display this information
+  -v/--version          Display the version of cb2util
+
+
+As written above, you must specify the file type (-t option), if you want to
+work with something else than code saves (V8+/Day1). For example, -t pcb tells
+cb2util to treat the input file as a PCB file.
+Below are some notes and examples concerning the different file formats.
+
+
+---============---
+   Code saves (V7)
+---===============---
+
+File extension: *.cbc
+
+Description: Code saves (also known as Day1 or CBC files) store cheat codes that
+can be added to your CodeBreaker's code list. In this section I'm talking about
+the older CBC files for CB V7, which are only encrypted and not digitally
+signed.
+
+-t option value: cbc7
+
+Supported features:
+- extract cheats (default)
+- decrypt extracted cheats (-d)
+
+Examples:
+
+Extract cheats from mgs3.cbc and print them to the screen
+$ ./cb2util -t cbc7 mgs3.cbc
+
+Extract and decrypt cheats from mgs3.cbc, print them to the screen
+$ ./cb2util -t cbc7 -d mgs3.cbc
+
+Extract and decrypt cheats from mgs3.cbc, write them to mgs3.txt
+$ ./cb2util -t cbc7 -d mgs3.cbc > mgs3.txt
+
+
+---==================---
+   Code saves (V8+/Day1)
+---=====================---
+
+File extension: *.cbc
+
+Description: Code saves (also known as Day1 or CBC files) store cheat codes that
+can be added to your CodeBreaker's code list. This section deals with the newer
+encrypted and signed CBC files for CB V8+ and CB Day1.
+
+-t option value: cbc (unneeded, as this is the default file type)
+
+Supported features:
+- extract cheats (default)
+- decrypt extracted cheats (-d)
+- check RSA signature (-c)
+
+Examples:
+
+Extract cheats from re4.cbc and print them to the screen
+$ ./cb2util re4.cbc
+
+Extract and decrypt cheats from re4.cbc, print them to the screen
+$ ./cb2util -d re4.cbc
+
+Extract and decrypt cheats from re4.cbc, write them to re4.txt
+$ ./cb2util -d re4.cbc > re4.txt
+
+Check RSA signature of re4.cbc
+$ ./cb2util -c re4.cbc
+
+
+---======---
+   PCB files
+---=========---
+
+File extension: *.bin
+
+Description: PCB files are encrypted and digitally signed binaries that can be
+executed by the CodeBreaker PS2. In theory, this could be any application; we've
+seen upgrades and homebrew so far.
+
+Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
+doesn't care if it's encrypting or decrypting.
+
+-t option value: pcb
+
+Supported features:
+- encrypt/decrypt (default)
+- strip RSA signature when decrypting (-s)
+- check RSA signature (-c)
+- convert into an ELF file (-e)
+
+Examples:
+
+Decrypt pelican.bin to pelican.raw
+$ ./cb2util -t pcb pelican.bin pelican.raw
+
+Decrypt pelican.bin to pelican.raw and strip RSA signature
+$ ./cb2util -t pcb -s pelican.bin pelican.raw
+
+Check RSA signature of pelican.bin
+$ ./cb2util -t pcb -c pelican.bin
+
+Convert pelican.bin into the ELF file pelican.elf
+$ ./cb2util -t pcb -e pelican.bin pelican.elf
+
+
+---=====================---
+   Game saves (unsupported)
+---========================---
+
+File extension: *.cbs
+
+Game saves (or CBS files) are not supported by cb2util, mainly because there is
+already an excellent tool called PS2 Save Builder for this purpose. It offers
+everything one could wish for, and I really don't want to reinvent the wheel.
+However, if somebody knows anything about the used compression algorithm, etc.,
+don't hesitate to contact me.
+
+
+---======---
+   Scripting
+---=========---
+
+And now to the funny part. With cb2util, it is possible to obtain the main part
+of CMGSCCC's PS2 cheat code database.
+
+For this, you'll need three things:
+- cb2util executable
+- extract-cheats shell script (and an environment to execute it, of course)
+- all (or at least many) Day1 code saves from the CMGSCCC website (*)
+
+The extract-cheats script extracts and decrypts the cheats from all code saves
+in a specific directory to text files. It can be used very easily; simply pass
+the arguments that fit your needs.
+
+Usage: extract-cheats [-d directory] [-7]
+    -d Specify directory with code saves
+    -7 Use V7 code save format
+
+No options means to process all V8+ code saves in the current working directory.
+
+Examples:
+
+Extract cheats from all code saves in current working directory
+$ ./extract-cheats
+
+Extract cheats from all code saves in directory foo
+$ ./extract-cheats -d foo
+
+Extract cheats from all V7 code saves in directory bar
+$ ./extract-cheats -d bar -7
+
+And there you have it: oodles of cheat codes for about 1000 PS2 games. :)
+
+
+(*) I've written another script called cb2get to automatically download all code
+saves for you. The site's administrator didn't like it, and after lots of
+ridiculous countermeasures he finally made a good design decision by introducing
+verification images and a download limit. (I bet their website is more secure
+now, although they've sacrificed the CodeBreaker's built-in Day1 download
+feature.) Unfortunately, cb2get doesn't work anymore, and you have to get the
+code saves from somewhere else...
+
+
+---=======---
+   Disclaimer
+---==========---
+
+THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
+ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
+ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
+
+cb2util comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
+Public License. Please see file COPYING for further information.
+
+
+---===========---
+   Special thanks
+---==============---
+
+Thanks to the Free Software Foundation -- Open Source is a blessing!
+Alexander Valyalkin for his great BIG_INT library.
+Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
+Vector for making PS2 Save Builder and saving me some time. ;)
+
+Greets to all the people that contribute to our code hacking community!
+
+
+---====---
+   Contact
+---=======---
+
+misfire [AT] xploderfreax [DOT] de
+
+If you enjoy cb2util, please consider a PayPal donation to my e-mail address
+above. Thank you.
+
+
+---======================---
+   HACKING NEEDS TO BE FREE!
+---=========================---
+

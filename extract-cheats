@@ -1,0 +1,77 @@
+#!/bin/sh
+# extract-cheats
+#
+# Extract cheats from all CB code saves in a directory to text files
+#
+# Copyright (C) 2007 misfire
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
+dir="."
+v7=0
+
+# Check if cb2util can be found
+if [ ! -x "cb2util" ]
+then
+	echo "$0: Can't find cb2util executable"
+	exit 1
+fi
+
+# Process command options
+while getopts d:7 opt
+do
+	case "$opt"
+	in
+		d)	dir=$OPTARG
+			if [ ! -d "$dir" ]
+			then
+				echo "$0: $dir is not a directory"
+				exit 1
+			fi;;
+
+		7)	v7=1;;
+
+		\?)	echo "Usage: $0 [-d directory] [-7]"
+			echo "    -d Specify directory with code saves"
+			echo "    -7 Use V7 code save format"
+			exit 1;;
+	esac
+done
+
+# Build cb2util options
+opt="-d"
+[ "$v7" -eq 1 ] && opt="-t cbc7 $opt"
+
+# Get all code saves in directory
+dir=${dir%/}
+files=$(ls $dir/*.cbc)
+if [ $? -ne 0 ]
+then
+	echo "$0: No code saves in directory"
+	exit 1
+fi
+
+# Extract cheats
+echo "Extracting cheats from..."
+for if in $files
+do
+	echo "$if"
+	of="${if%.*}.txt"
+	cb2util $opt $if > $of
+done
+
+echo "Done!"
