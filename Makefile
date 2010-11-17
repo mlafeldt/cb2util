@@ -1,46 +1,39 @@
-##
-# Makefile for cb2util (Linux)
-##
+BIGINT = libbig_int
 
-CC	= gcc $(CINCS)
-CINCS	= -I$(BIG_INT_DIR)/include
-COPTS	= -O2 -Wall -s
-CLIBS	=
-BIN	= cb2util
+CC = gcc
+CFLAGS = -Wall -Werror -O2 -s
+CFLAGS += -I$(BIGINT)/include
+LIBS =
+PROG = cb2util
 
-# BIG_INT library
-BIG_INT_DIR = libbig_int
-BIG_INT_OBJS = \
-	$(BIG_INT_DIR)/src/basic_funcs.o \
-	$(BIG_INT_DIR)/src/bitset_funcs.o \
-	$(BIG_INT_DIR)/src/memory_manager.o \
-	$(BIG_INT_DIR)/src/modular_arithmetic.o \
-	$(BIG_INT_DIR)/src/number_theory.o \
-	$(BIG_INT_DIR)/src/service_funcs.o \
-	$(BIG_INT_DIR)/src/str_funcs.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/add.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/and.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/andnot.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/cmp.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/div.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/mul.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/or.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/sqr.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/sub.o \
-	$(BIG_INT_DIR)/src/low_level_funcs/xor.o
+OBJS += $(BIGINT)/src/basic_funcs.o
+OBJS += $(BIGINT)/src/bitset_funcs.o
+OBJS += $(BIGINT)/src/low_level_funcs/add.o
+OBJS += $(BIGINT)/src/low_level_funcs/and.o
+OBJS += $(BIGINT)/src/low_level_funcs/andnot.o
+OBJS += $(BIGINT)/src/low_level_funcs/cmp.o
+OBJS += $(BIGINT)/src/low_level_funcs/div.o
+OBJS += $(BIGINT)/src/low_level_funcs/mul.o
+OBJS += $(BIGINT)/src/low_level_funcs/or.o
+OBJS += $(BIGINT)/src/low_level_funcs/sqr.o
+OBJS += $(BIGINT)/src/low_level_funcs/sub.o
+OBJS += $(BIGINT)/src/low_level_funcs/xor.o
+OBJS += $(BIGINT)/src/memory_manager.o
+OBJS += $(BIGINT)/src/modular_arithmetic.o
+OBJS += $(BIGINT)/src/number_theory.o
+OBJS += $(BIGINT)/src/service_funcs.o
+OBJS += $(BIGINT)/src/str_funcs.o
+OBJS += arcfour.o
+OBJS += cb2_crypto.o
+OBJS += cb2util.o
+OBJS += cbc.o
+OBJS += pcb.o
+OBJS += shs.o
 
-OBJS = \
-	$(BIG_INT_OBJS) \
-	arcfour.o \
-	shs.o \
-	cb2_crypto.o \
-	cbc.o \
-	pcb.o \
-	cb2util.o
+all: $(PROG)
 
-all:		$(OBJS)
-		$(CC) $(COPTS) -o $(BIN) $(OBJS) $(CLIBS)
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $? $(LIBS)
+
 clean:
-		rm -f $(BIN) $(OBJS)
-
-rebuild:	clean all
+	$(RM) $(PROG) $(OBJS)
