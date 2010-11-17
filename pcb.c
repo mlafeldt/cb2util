@@ -77,7 +77,7 @@ int PcbWriteElf(FILE *fp, const u8 *data, int datasize)
 	phdr->p_align = sizeof(buf);
 
 	/* Append note */
-	strcpy(&buf[sizeof(Elf32_Ehdr) + sizeof(Elf32_Phdr)], note);
+	strcpy((char*)&buf[sizeof(Elf32_Ehdr) + sizeof(Elf32_Phdr)], note);
 
 	/* Write to file */
 	fseek(fp, 0, SEEK_SET);

@@ -604,7 +604,7 @@ int big_int_miller_test(const big_int *a, const big_int *base, int *is_prime)
 
     low_level_sub(r->num, r->num + r->len, &one, (&one) + 1, r->num);
     /* check [base] correctness */
-    if (base->sign == MINUS || base->len == 1 && base->num[0] < 2) {
+    if (base->sign == MINUS || (base->len == 1 && base->num[0] < 2)) {
         /* base must be greater than 1 */
         result = 1;
         goto end;

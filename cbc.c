@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "cbc.h"
+#include "cb2_crypto.h"
 
 /* Print CBC file header (V8+) */
 void CbcPrintHeader(const cbc_hdr_t *hdr)
@@ -45,7 +46,7 @@ void CbcPrintHeader(const cbc_hdr_t *hdr)
 int CbcIsV7Header(const u8 *hdr, const u8 *data)
 {
 	/* Compare game title in header with game title in data section */
-	return !strcmp(hdr, data);
+	return !strcmp((char*)hdr, (char*)data);
 }
 
 /* Extract cheats from data section and print them to stdout */

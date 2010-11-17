@@ -27,11 +27,13 @@ typedef unsigned long   LONG;
 
 /* Define the following to use the updated SHS implementation */
 
-#define NEW_SHS         /**/
+#define NEW_SHS
 
 /* Define the following if running on a little-endian CPU */
 
-#define LITTLE_ENDIAN   /**/
+#ifndef LITTLE_ENDIAN
+#define LITTLE_ENDIAN
+#endif
 
 /* The SHS block size and message digest sizes, in bytes */
 

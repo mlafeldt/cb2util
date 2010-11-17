@@ -49,8 +49,8 @@ static int incdec(const big_int *a, bin_op_type op, big_int *answer)
         return 1;
     }
 
-    if (answer->sign == PLUS && op == ADD ||
-        answer->sign == MINUS && op == SUB) {
+    if ((answer->sign == PLUS && op == ADD) ||
+        (answer->sign == MINUS && op == SUB)) {
         /*
             Add 1 to [answer]. For this allocate one digit and
             set it to zero before calling low_level_add() function.

@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <getopt.h>
 #include "mytypes.h"
 #include "cb2util.h"
@@ -254,7 +255,11 @@ int main(int argc, char *argv[])
 
 	/* Read from input file into buffer */
 	fseek(fp, 0, SEEK_SET);
-	fread(buf, filesize, 1, fp);
+	if (fread(buf, filesize, 1, fp) != 1) {
+		fprintf(stderr, APP_NAME": Failed to read %d bytes from file\n", filesize);
+		fclose(fp);
+		return ERR_READ_FILE;
+	}
 	fclose(fp);
 
 	/* Process file types */
