@@ -4,8 +4,9 @@ CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
 CFLAGS += -I$(BIGINT)/include
 LIBS =
-PROG = cb2util
+prefix = $(HOME)
 
+PROG = cb2util
 OBJS += $(BIGINT)/src/basic_funcs.o
 OBJS += $(BIGINT)/src/bitset_funcs.o
 OBJS += $(BIGINT)/src/low_level_funcs/add.o
@@ -31,6 +32,9 @@ OBJS += pcb.o
 OBJS += shs.o
 
 all: $(PROG)
+
+install: $(PROG)
+	install $(PROG) $(prefix)/bin
 
 $(PROG): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $? $(LIBS)
