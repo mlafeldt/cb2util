@@ -33,7 +33,7 @@ OBJS += shs.o
 
 all: $(PROG)
 
-install: $(PROG)
+install: all
 	install $(PROG) $(prefix)/bin
 
 $(PROG): $(OBJS)
@@ -41,3 +41,6 @@ $(PROG): $(OBJS)
 
 clean:
 	$(RM) $(PROG) $(OBJS)
+
+test: all
+	$(MAKE) -C t/ all
