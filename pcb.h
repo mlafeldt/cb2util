@@ -26,8 +26,8 @@
 #ifndef _PCB_H_
 #define _PCB_H_
 
+#include <stdint.h>
 #include <stdio.h>
-#include "mytypes.h"
 
 /* PCB header: 2048-bit RSA signature (256 bytes) */
 #define PCB_HDR_SIZE		256
@@ -42,6 +42,6 @@
 /* Address to which the PS2 first transfers control */
 #define PCB_ENTRY_ADDR		PCB_LOAD_ADDR
 
-int PcbWriteElf(FILE *fp, const u8 *data, int datasize);
+int PcbWriteElf(FILE *fp, const uint8_t *data, int datasize);
 
 #endif /*_PCB_H_*/

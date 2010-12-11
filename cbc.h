@@ -26,16 +26,16 @@
 #ifndef _CBC_H_
 #define _CBC_H_
 
-#include "mytypes.h"
+#include <stdint.h>
 
 /* CBC file header */
 typedef struct {
-	u32	fileid;		/* File ID, must be CBC_FILE_ID */
-	u8	rsasig[256];	/* 2048-bit RSA signature */
-	u32	cbvers;		/* Required CB version */
-	char	gametitle[72];	/* Game title */
-	u32	dataoff;	/* File offset of data section */
-	u32	zero;		/* Always 0 */
+	uint32_t	fileid;		/* File ID, must be CBC_FILE_ID */
+	uint8_t		rsasig[256];	/* 2048-bit RSA signature */
+	uint32_t	cbvers;		/* Required CB version */
+	char		gametitle[72];	/* Game title */
+	uint32_t	dataoff;	/* File offset of data section */
+	uint32_t	zero;		/* Always 0 */
 } cbc_hdr_t; /* 344 bytes total */
 
 #define CBC_FILE_ID		0x01554643 /* "CFU", 1 */
@@ -50,7 +50,7 @@ typedef struct {
 #define CBC_V7_MIN_FILE_SIZE	CBC_V7_HDR_SIZE
 
 void CbcPrintHeader(const cbc_hdr_t *hdr);
-int CbcIsV7Header(const u8 *hdr, const u8 *data);
-int CbcExtractCheats(const u8 *data, int datasize, int dodecrypt);
+int CbcIsV7Header(const uint8_t *hdr, const uint8_t *data);
+int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt);
 
 #endif /*_CBC_H_*/

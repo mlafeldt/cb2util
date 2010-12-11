@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdint.h>
 #include <stdlib.h> /* for rand() */
-#include "mytypes.h"
 #include "arcfour.h"
 #include "sha1.h"
 #include "big_int_full.h"
@@ -36,7 +36,7 @@
  */
 
 // V1 seed tables
-static const u32 seedtable[3][16] = {
+static const uint32_t seedtable[3][16] = {
 	{
 		0x0A0B8D9B, 0x0A0133F8, 0x0AF733EC, 0x0A15C574,
 		0x0A50AC20, 0x0A920FB9, 0x0A599F0B, 0x0A4AA0E3,
@@ -60,10 +60,10 @@ static const u32 seedtable[3][16] = {
 /*
  * Encrypts a V1 code.
  */
-void CB1EncryptCode(u32 *addr, u32 *val)
+void CB1EncryptCode(uint32_t *addr, uint32_t *val)
 {
-	u32 tmp;
-	u8 cmd = *addr >> 28;
+	uint32_t tmp;
+	uint8_t cmd = *addr >> 28;
 
 	tmp = *addr & 0xFF000000;
 	*addr = ((*addr & 0xFF) << 16) | ((*addr >> 8) & 0xFFFF);
@@ -75,10 +75,10 @@ void CB1EncryptCode(u32 *addr, u32 *val)
 /*
  * Decrypts a V1 code.
  */
-void CB1DecryptCode(u32 *addr, u32 *val)
+void CB1DecryptCode(uint32_t *addr, uint32_t *val)
 {
-	u32 tmp;
-	u8 cmd = *addr >> 28;
+	uint32_t tmp;
+	uint8_t cmd = *addr >> 28;
 
 	if (cmd > 2) *val = (*addr ^ *val) - seedtable[2][cmd];
 
@@ -93,7 +93,7 @@ void CB1DecryptCode(u32 *addr, u32 *val)
  */
 
 // Default seed tables (1280 bytes total)
-static const u8 defseeds[5][256] = {
+static const uint8_t defseeds[5][256] = {
 	{
 		0x84, 0x01, 0x21, 0xA4, 0xFA, 0x4D, 0x50, 0x8D, 0x75, 0x33, 0xC5, 0xF7, 0x4A, 0x6D, 0x7C, 0xA6,
 		0x1C, 0xF8, 0x40, 0x18, 0xA1, 0xB3, 0xA2, 0xF9, 0x6A, 0x19, 0x63, 0x66, 0x29, 0xAE, 0x10, 0x75,
@@ -187,13 +187,13 @@ static const u8 defseeds[5][256] = {
 };
 
 // Default ARCFOUR key (20 bytes)
-static const u32 defkey[5] = {
+static const uint32_t defkey[5] = {
 	0xD0DBA9D7, 0x13A0A96C, 0x80410DF0, 0x2CCDBE1F, 0xE570A86B
 };
 
 // RSA parameters
-static const u64 rsa_modulus = 18446744073709551605ULL; // = 0xFFFFFFFFFFFFFFF5
-static const u64 rsa_dec_key = 11;
+static const uint64_t rsa_modulus = 18446744073709551605ULL; // = 0xFFFFFFFFFFFFFFF5
+static const uint64_t rsa_dec_key = 11;
 /*
  * This is how I calculated the encryption key e from d:
  * (some number theory)
@@ -216,27 +216,27 @@ static const u64 rsa_dec_key = 11;
  *	e = 11^(-1) mod 14751610313746554000
  *	e = 2682110966135737091
  */
-static const u64 rsa_enc_key = 2682110966135737091ULL;
+static const uint64_t rsa_enc_key = 2682110966135737091ULL;
 
-static u8 seeds[5][256];	// Current set of seeds
-static u32 key[5];		// Current ARCFOUR key
-static u32 oldkey[5];		// Backup of ARCFOUR key
+static uint8_t seeds[5][256];	// Current set of seeds
+static uint32_t key[5];		// Current ARCFOUR key
+static uint32_t oldkey[5];	// Backup of ARCFOUR key
 static ARC4_CTX ctx;		// ARCFOUR context
 static int v7enc;		// Flag: Use V7 encryption?
 static int v7init;		// Flag: V7 encryption already initialized?
 static int beefcodf;		// Flag: Is it BEEFC0DF?
-//u32 unkwn;
+//uint32_t unkwn;
 
 /*
  * Computes the multiplicative inverse of @word, modulo (2^32).
  * I think this is borrowed from IDEA. ;)
  */
-static u32 MulInverse(u32 word)
+static uint32_t MulInverse(uint32_t word)
 {
 	// Original MIPS R5900 coding converted to C
-	u32 a0, a1, a2, a3;
-	u32 v0, v1;
-	u32 t1;
+	uint32_t a0, a1, a2, a3;
+	uint32_t v0, v1;
+	uint32_t t1;
 
 	if (word == 1) return 1;
 
@@ -265,7 +265,7 @@ static u32 MulInverse(u32 word)
 /*
  * Multiplication, modulo (2^32)
  */
-static u32 MulEncrypt(u32 a, u32 b)
+static uint32_t MulEncrypt(uint32_t a, uint32_t b)
 {
 	return (a * (b | 1));
 }
@@ -273,7 +273,7 @@ static u32 MulEncrypt(u32 a, u32 b)
 /*
  * Multiplication with multiplicative inverse, modulo (2^32)
  */
-static u32 MulDecrypt(u32 a, u32 b)
+static uint32_t MulDecrypt(uint32_t a, uint32_t b)
 {
 	return (a * MulInverse(b | 1));
 }
@@ -284,7 +284,7 @@ static u32 MulDecrypt(u32 a, u32 b)
  * NOTE: Uses the excellent BIG_INT library by
  * Alexander Valyalkin (valyala@gmail.com)
  */
-static void RSACrypt(u32 *addr, u32 *val, u64 rsakey)
+static void RSACrypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
 {
 	big_int *code, *exp, *mod;
 	int cmp_flag;
@@ -298,7 +298,7 @@ static void RSACrypt(u32 *addr, u32 *val, u64 rsakey)
 	// Setup modulus
 	mod = big_int_create(2);
 	mod->len = 2;
-	*(u64*)mod->num = rsa_modulus;
+	*(uint64_t*)mod->num = rsa_modulus;
 
 	// Exponentiation is only invertible if code < modulus
 	big_int_cmp(code, mod, &cmp_flag);
@@ -306,7 +306,7 @@ static void RSACrypt(u32 *addr, u32 *val, u64 rsakey)
 		// Setup exponent
 		exp = big_int_create(2);
 		exp->len = 2;
-		*(u64*)exp->num = rsakey;
+		*(uint64_t*)exp->num = rsakey;
 
 		// Encryption: c = m^e mod n
 		// Decryption: m = c^d mod n
@@ -329,10 +329,10 @@ static void RSACrypt(u32 *addr, u32 *val, u64 rsakey)
  * "Beefcode" is the new V7+ seed code:
  * BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
  */
-void CB7Beefcode(int init, u32 val)
+void CB7Beefcode(int init, uint32_t val)
 {
 	int i;
-	u8 *p = (u8*)&val; // Easy access to all bytes of val
+	uint8_t *p = (uint8_t*)&val; // Easy access to all bytes of val
 
 	// Setup key and seeds
 	if (init) {
@@ -367,11 +367,11 @@ void CB7Beefcode(int init, u32 val)
 	// Use key to encrypt seeds with ARCFOUR algorithm
 	for (i = 0; i < 5; i++) {
 		// Setup ARCFOUR context with key
-		ARC4Init(&ctx, (u8*)key, 20);
+		ARC4Init(&ctx, (uint8_t*)key, 20);
 		// Encrypt seeds
 		ARC4Crypt(&ctx, &seeds[i][0], 256);
 		// Encrypt original key for next round
-		ARC4Crypt(&ctx, (u8*)key, 20);
+		ARC4Crypt(&ctx, (uint8_t*)key, 20);
 	}
 
 	// Backup key
@@ -381,11 +381,11 @@ void CB7Beefcode(int init, u32 val)
 /*
  * Encrypts a V7+ code.
  */
-void CB7EncryptCode(u32 *addr, u32 *val)
+void CB7EncryptCode(uint32_t *addr, uint32_t *val)
 {
 	int i;
-	u32 code[2];
-	u32 oldaddr, oldval;
+	uint32_t code[2];
+	uint32_t oldaddr, oldval;
 
 	oldaddr = *addr;
 	oldval  = *val;
@@ -397,8 +397,8 @@ void CB7EncryptCode(u32 *addr, u32 *val)
 	// Step 2: ARCFOUR
 	code[0] = *addr;
 	code[1] = *val;
-	ARC4Init(&ctx, (u8*)key, 20);
-	ARC4Crypt(&ctx, (u8*)code, 8);
+	ARC4Init(&ctx, (uint8_t*)key, 20);
+	ARC4Crypt(&ctx, (uint8_t*)code, 8);
 	*addr = code[0];
 	*val  = code[1];
 
@@ -407,8 +407,8 @@ void CB7EncryptCode(u32 *addr, u32 *val)
 
 	// Step 4: Encryption loop of 64 cycles, using the generated seeds
 	for (i = 0; i <= 63; i++) {
-		*addr = ((*addr + ((u32*)seeds[2])[i]) ^ ((u32*)seeds[0])[i]) - (*val ^ ((u32*)seeds[4])[i]);
-		*val  = ((*val - ((u32*)seeds[3])[i]) ^ ((u32*)seeds[1])[i]) + (*addr ^ ((u32*)seeds[4])[i]);
+		*addr = ((*addr + ((uint32_t*)seeds[2])[i]) ^ ((uint32_t*)seeds[0])[i]) - (*val ^ ((uint32_t*)seeds[4])[i]);
+		*val  = ((*val - ((uint32_t*)seeds[3])[i]) ^ ((uint32_t*)seeds[1])[i]) + (*addr ^ ((uint32_t*)seeds[4])[i]);
 	}
 
 	// BEEFC0DE
@@ -422,8 +422,8 @@ void CB7EncryptCode(u32 *addr, u32 *val)
 	if (beefcodf) {
 		code[0] = oldaddr;
 		code[1] = oldval;
-		ARC4Init(&ctx, (u8*)code, 8);
-		ARC4Crypt(&ctx, (u8*)seeds, sizeof(seeds));
+		ARC4Init(&ctx, (uint8_t*)code, 8);
+		ARC4Crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
 		//unkwn = 0;
 		return;
@@ -433,15 +433,15 @@ void CB7EncryptCode(u32 *addr, u32 *val)
 /*
  * Decrypts a V7+ code.
  */
-void CB7DecryptCode(u32 *addr, u32 *val)
+void CB7DecryptCode(uint32_t *addr, uint32_t *val)
 {
 	int i;
-	u32 code[2];
+	uint32_t code[2];
 
 	// Step 1: Decryption loop of 64 cycles, using the generated seeds
 	for (i = 63; i >= 0; i--) {
-		*val  = ((*val - (*addr ^ ((u32*)seeds[4])[i])) ^ ((u32*)seeds[1])[i]) + ((u32*)seeds[3])[i];
-		*addr = ((*addr + (*val ^ ((u32*)seeds[4])[i])) ^ ((u32*)seeds[0])[i]) - ((u32*)seeds[2])[i];
+		*val  = ((*val - (*addr ^ ((uint32_t*)seeds[4])[i])) ^ ((uint32_t*)seeds[1])[i]) + ((uint32_t*)seeds[3])[i];
+		*addr = ((*addr + (*val ^ ((uint32_t*)seeds[4])[i])) ^ ((uint32_t*)seeds[0])[i]) - ((uint32_t*)seeds[2])[i];
 	}
 
 	// Step 2: RSA
@@ -450,8 +450,8 @@ void CB7DecryptCode(u32 *addr, u32 *val)
 	// Step 3: ARCFOUR
 	code[0] = *addr;
 	code[1] = *val;
-	ARC4Init(&ctx, (u8*)key, 20);
-	ARC4Crypt(&ctx, (u8*)code, 8);
+	ARC4Init(&ctx, (uint8_t*)key, 20);
+	ARC4Crypt(&ctx, (uint8_t*)code, 8);
 	*addr = code[0];
 	*val  = code[1];
 
@@ -463,8 +463,8 @@ void CB7DecryptCode(u32 *addr, u32 *val)
 	if (beefcodf) {
 		code[0] = *addr;
 		code[1] = *val;
-		ARC4Init(&ctx, (u8*)code, 8);
-		ARC4Crypt(&ctx, (u8*)seeds, sizeof(seeds));
+		ARC4Init(&ctx, (uint8_t*)code, 8);
+		ARC4Crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
 		//unkwn = 0;
 		return;
@@ -494,17 +494,17 @@ void CB7DecryptCode(u32 *addr, u32 *val)
 
 int CB7SelfTest(void)
 {
-	static const u32 testcodes[NUM_TESTCODES*2] = {
+	static const uint32_t testcodes[NUM_TESTCODES*2] = {
 		0x000FFFFE, 0x0000007D,
 		0x90175B28, 0x0C061A24,
 		0x20323260, 0xFFFFFFFF
 	};
-	u32 addr, val;
+	uint32_t addr, val;
 	int i;
 
 	// Generate some random seeds
-	CB7Beefcode(1, (u32)rand());
-	CB7Beefcode(0, (u32)rand());
+	CB7Beefcode(1, (uint32_t)rand());
+	CB7Beefcode(0, (uint32_t)rand());
 
 	// Check if D(E(M)) = M
 	for (i = 0; i < NUM_TESTCODES; i++) {
@@ -552,9 +552,9 @@ void CBSetCommonV7(void)
 /*
  * Used to encrypt a list of CB codes (V1 + V7).
  */
-void CBEncryptCode(u32 *addr, u32 *val)
+void CBEncryptCode(uint32_t *addr, uint32_t *val)
 {
-	u32 oldaddr, oldval;
+	uint32_t oldaddr, oldval;
 
 	oldaddr = *addr;
 	oldval  = *val;
@@ -581,7 +581,7 @@ void CBEncryptCode(u32 *addr, u32 *val)
 /*
  * Used to decrypt a list of CB codes (V1 + V7).
  */
-void CBDecryptCode(u32 *addr, u32 *val)
+void CBDecryptCode(uint32_t *addr, uint32_t *val)
 {
 	if (v7enc)
 		CB7DecryptCode(addr, val);
@@ -608,7 +608,7 @@ void CBDecryptCode(u32 *addr, u32 *val)
  */
 
 /* 1024-byte ARCFOUR key used to encrypt/decrypt CBC and PCB files */
-static const u8 filekey[1024] = {
+static const uint8_t filekey[1024] = {
 	0x2B, 0xF3, 0x2C, 0x6A, 0x73, 0x33, 0xCC, 0xD6, 0x01, 0x8F, 0x28, 0x26, 0xF0, 0xD6, 0xAF, 0xBF,
 	0xEB, 0x7C, 0xCF, 0x96, 0xAD, 0x40, 0x35, 0x16, 0xB1, 0x84, 0x8D, 0x29, 0x08, 0x86, 0x78, 0xE5,
 	0x06, 0x86, 0x7D, 0xCC, 0xA5, 0x45, 0x9D, 0x26, 0xB5, 0x0E, 0x97, 0x87, 0xCB, 0x45, 0xEA, 0x61,
@@ -705,7 +705,7 @@ static const u8 filekey[1024] = {
 static const int rsa_file_exp = 65537;
 
 /* Public modulus (2048 bits) */
-static const u8 rsa_file_mod[256] = {
+static const uint8_t rsa_file_mod[256] = {
 	0x27, 0x54, 0xE0, 0x35, 0x17, 0x15, 0xC3, 0xAB, 0x20, 0x95, 0x2D, 0x6F, 0xBE, 0x52, 0x13, 0x9E,
 	0xFC, 0x8D, 0x04, 0x5A, 0x70, 0x46, 0x70, 0x5C, 0xBB, 0x73, 0xD3, 0x83, 0x08, 0x97, 0x80, 0x68,
 	0xEC, 0x30, 0x12, 0x09, 0xB8, 0x1C, 0x21, 0xE1, 0x76, 0xFE, 0xE5, 0xE3, 0xFB, 0xE2, 0x6C, 0x8A,
@@ -739,15 +739,15 @@ static const u8 rsa_file_mod[256] = {
 #define RSA_SIG_SIZE		256
 
 /* Verify the digital signature on CBC and PCB files */
-int CBVerifyFileSig(const u8 *sig, const u8 *data, int datasize, u32 *sighash, u32 *calchash)
+int CBVerifyFileSig(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash)
 {
 	big_int *bsig, *exp, *mod;
 	SHA_CTX ctx;
 	int ret;
 
 	/* Setup big_int number for signature */
-	bsig = big_int_create(RSA_SIG_SIZE / sizeof(u32));
-	bsig->len = RSA_SIG_SIZE / sizeof(u32);
+	bsig = big_int_create(RSA_SIG_SIZE / sizeof(uint32_t));
+	bsig->len = RSA_SIG_SIZE / sizeof(uint32_t);
 	memcpy(bsig->num, sig, RSA_SIG_SIZE);
 
 	/* Setup exponent */
@@ -756,8 +756,8 @@ int CBVerifyFileSig(const u8 *sig, const u8 *data, int datasize, u32 *sighash, u
 	exp->num[0] = rsa_file_exp;
 
 	/* Setup modulus */
-	mod = big_int_create(sizeof(rsa_file_mod) / sizeof(u32));
-	mod->len = sizeof(rsa_file_mod) / sizeof(u32);
+	mod = big_int_create(sizeof(rsa_file_mod) / sizeof(uint32_t));
+	mod->len = sizeof(rsa_file_mod) / sizeof(uint32_t);
 	memcpy(mod->num, rsa_file_mod, sizeof(rsa_file_mod));
 
 	/* Decrypt signature to get hash (m = c^d mod n) */
@@ -765,7 +765,7 @@ int CBVerifyFileSig(const u8 *sig, const u8 *data, int datasize, u32 *sighash, u
 
 	/* Calculate actual hash of data */
 	sha_init(&ctx);
-	sha_update(&ctx, (u8*)data, datasize);
+	sha_update(&ctx, (uint8_t*)data, datasize);
 	sha_final(&ctx);
 
 	/* Signature is valid if both hashes are equal */
@@ -786,7 +786,7 @@ int CBVerifyFileSig(const u8 *sig, const u8 *data, int datasize, u32 *sighash, u
 }
 
 /* Encrypt/decrypt CBC/PCB file data */
-void CBCryptFileData(u8 *data, int datasize)
+void CBCryptFileData(uint8_t *data, int datasize)
 {
 	ARC4_CTX ctx;
 

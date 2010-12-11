@@ -11,14 +11,15 @@
 #ifndef _SHS_DEFINED
 #define _SHS_DEFINED
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 /* Some useful types */
 
-typedef unsigned char   BYTE;
-typedef unsigned int    WORD;
-typedef unsigned long   LONG;
+typedef uint8_t		BYTE;
+typedef uint16_t	WORD;
+typedef uint32_t	LONG;
 
 /* Exit status of functions. */
 

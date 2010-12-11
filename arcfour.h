@@ -32,16 +32,14 @@
 #ifndef _ARCFOUR_H_
 #define _ARCFOUR_H_
 
-#include "mytypes.h"
-
 typedef struct {
-	u8	perm[256];
-	u8	index1;
-	u8	index2;
+	unsigned char	perm[256];
+	unsigned char	index1;
+	unsigned char	index2;
 } arc4_ctx_t;
 
-void arc4_init(arc4_ctx_t *ctx, const u8 *key, int keylen);
-void arc4_crypt(arc4_ctx_t *ctx, u8 *buf, int bufsize);
+void arc4_init(arc4_ctx_t *ctx, const unsigned char *key, int keylen);
+void arc4_crypt(arc4_ctx_t *ctx, unsigned char *buf, int bufsize);
 
 /* Some aliases */
 #define ARC4_CTX	arc4_ctx_t

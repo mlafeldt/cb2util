@@ -23,17 +23,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "mytypes.h"
 #include "cb2util.h"
 #include "ps2_elf.h"
 #include "pcb.h"
 
 /* Write ELF headers and data to file */
-int PcbWriteElf(FILE *fp, const u8 *data, int datasize)
+int PcbWriteElf(FILE *fp, const uint8_t *data, int datasize)
 {
-	u8 buf[0x80]; /* Buffer for ELF headers */
+	uint8_t buf[0x80]; /* Buffer for ELF headers */
 	Elf32_Ehdr *ehdr;
 	Elf32_Phdr *phdr;
 	static const char *note = "Created with "APP_NAME" "APP_VERSION;

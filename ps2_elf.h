@@ -31,13 +31,15 @@
 #ifndef _PS2_ELF_H_
 #define _PS2_ELF_H_
 
+#include <stdint.h>
+
 /* Data types */
 
-typedef u32	Elf32_Addr;
-typedef u16	Elf32_Half;
-typedef u32	Elf32_Off;
-typedef s32	Elf32_Sword;
-typedef u32	Elf32_Word;
+typedef uint32_t	Elf32_Addr;
+typedef uint16_t	Elf32_Half;
+typedef uint32_t	Elf32_Off;
+typedef int32_t		Elf32_Sword;
+typedef uint32_t	Elf32_Word;
 
 
 /* The ELF file header.  This appears at the start of every ELF file.  */

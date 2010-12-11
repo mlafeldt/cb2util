@@ -23,11 +23,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include "mytypes.h"
 #include "cb2util.h"
 #include "cb2_crypto.h"
 #include "cbc.h"
@@ -138,7 +138,7 @@ static void show_version(void)
 }
 
 /* Print hash value */
-static void print_hash(const u32 *hash)
+static void print_hash(const uint32_t *hash)
 {
 	int i;
 
@@ -148,10 +148,10 @@ static void print_hash(const u32 *hash)
 }
 
 /* Check RSA signature */
-static int check_sig(const u8 *sig, const u8 *data, int datasize)
+static int check_sig(const uint8_t *sig, const uint8_t *data, int datasize)
 {
 	/* 160-bit hash is the concatenation of five 32-bit words */
-	u32 sighash[5], calchash[5];
+	uint32_t sighash[5], calchash[5];
 
 	if (!CBVerifyFileSig(sig, data, datasize, sighash, calchash)) {
 		printf("RSA signature is valid\n");
@@ -172,9 +172,9 @@ int main(int argc, char *argv[])
 {
 	FILE *fp;
 	int filesize, filetype = FILE_TYPE_CBC; /* CBC is default */
-	u8 *buf;	/* Buffer to hold file contents */
+	uint8_t *buf;	/* Buffer to hold file contents */
 	cbc_hdr_t *hdr;
-	u8 *data;	/* Pointer to data section */
+	uint8_t *data;	/* Pointer to data section */
 	int datasize;	/* Size of data section */
 	int optflags = OPT_NO;
 	int option_index = 0; /* getopt_long() stores the option index here */
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Allocate memory for file contents */
-	buf = (u8*)malloc(filesize);
+	buf = (uint8_t*)malloc(filesize);
 	if (buf == NULL) {
 		fprintf(stderr, APP_NAME": Unable to allocate %d bytes\n", filesize);
 		fclose(fp);

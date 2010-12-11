@@ -31,9 +31,9 @@
  */
 #include "arcfour.h"
 
-static inline void swap_bytes(u8 *a, u8 *b)
+static inline void swap_bytes(unsigned char *a, unsigned char *b)
 {
-	u8 tmp;
+	unsigned char tmp;
 
 	tmp = *a;
 	*a = *b;
@@ -44,14 +44,14 @@ static inline void swap_bytes(u8 *a, u8 *b)
  * Initialize an ARCFOUR context buffer using the supplied key,
  * which can have arbitrary length.
  */
-void arc4_init(arc4_ctx_t *ctx, const u8 *key, int keylen)
+void arc4_init(arc4_ctx_t *ctx, const unsigned char *key, int keylen)
 {
-	u8 j;
+	unsigned char j;
 	int i;
 
 	/* Initialize context with identity permutation */
 	for (i = 0; i < 256; i++)
-		ctx->perm[i] = (u8)i;
+		ctx->perm[i] = (unsigned char)i;
 	ctx->index1 = 0;
 	ctx->index2 = 0;
 
@@ -67,10 +67,10 @@ void arc4_init(arc4_ctx_t *ctx, const u8 *key, int keylen)
  * Since ARCFOUR is a stream cypher, this function is used
  * for both encryption and decryption.
  */
-void arc4_crypt(arc4_ctx_t *ctx, u8 *buf, int bufsize)
+void arc4_crypt(arc4_ctx_t *ctx, unsigned char *buf, int bufsize)
 {
 	int i;
-	u8 j;
+	unsigned char j;
 
 	for (i = 0; i < bufsize; i++) {
 		/* Update modification indicies */

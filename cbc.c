@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "cbc.h"
@@ -43,25 +44,25 @@ void CbcPrintHeader(const cbc_hdr_t *hdr)
 }
 
 /* Check whether it's a valid V7 header */
-int CbcIsV7Header(const u8 *hdr, const u8 *data)
+int CbcIsV7Header(const uint8_t *hdr, const uint8_t *data)
 {
 	/* Compare game title in header with game title in data section */
 	return !strcmp((char*)hdr, (char*)data);
 }
 
 /* Extract cheats from data section and print them to stdout */
-int CbcExtractCheats(const u8 *data, int datasize, int dodecrypt)
+int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
 {
 	char *p;
 	int off = 0;
-	u16 numdesc, numlines;
-	u32 code[2];
+	uint16_t numdesc, numlines;
+	uint32_t code[2];
 	int totcodes = 0;
 
 	/* Parse data section, print results to stdout */
 	while (off < datasize) {
 		/* Check for end marker */
-		if (*(u32*)&data[off] == 0xFFFFFFFF)
+		if (*(uint32_t*)&data[off] == 0xFFFFFFFF)
 			break;
 
 		/* Reset CB encryption */
@@ -73,8 +74,8 @@ int CbcExtractCheats(const u8 *data, int datasize, int dodecrypt)
 		printf("\"%s\"\n", p);
 		off += strlen(p) + 1;
 
-		numdesc = *(u16*)&data[off];
-		off += sizeof(u16);
+		numdesc = *(uint16_t*)&data[off];
+		off += sizeof(uint16_t);
 
 		/* Process code description(s)
 		   Example: Infinite Ammo */
@@ -84,8 +85,8 @@ int CbcExtractCheats(const u8 *data, int datasize, int dodecrypt)
 			/* Skip desc type, we won't use it */
 			off++;
 
-			numlines = *(u16*)&data[off];
-			off += sizeof(u16);
+			numlines = *(uint16_t*)&data[off];
+			off += sizeof(uint16_t);
 
 			/* If there is no code line, it's just a heading
 			   Example: *Action Mission Codes */
@@ -98,10 +99,10 @@ int CbcExtractCheats(const u8 *data, int datasize, int dodecrypt)
 				/* Process code line(s)
 				   Example: 1A3EDED4 000003E7 */
 				while (numlines--) {
-					code[0] = *(u32*)&data[off];
-					off += sizeof(u32);
-					code[1] = *(u32*)&data[off];
-					off += sizeof(u32);
+					code[0] = *(uint32_t*)&data[off];
+					off += sizeof(uint32_t);
+					code[1] = *(uint32_t*)&data[off];
+					off += sizeof(uint32_t);
 
 					/* Decrypt code */
 					if (dodecrypt)
