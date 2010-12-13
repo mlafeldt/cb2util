@@ -25,33 +25,36 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "cbc.h"
+#include <getopt.h>
 #include "cb2_crypto.h"
 
-/* Print CBC file header (V8+) */
-void CbcPrintHeader(const cbc_hdr_t *hdr)
-{
-	printf("CBC File Header\n");
-	printf("  File ID             : 0x%08X\n", hdr->fileid);
-	printf("  RSA signature       : %02X %02X %02X %02X ... %02X %02X %02X %02X\n",
-		hdr->rsasig[0], hdr->rsasig[1], hdr->rsasig[2], hdr->rsasig[3],
-		hdr->rsasig[252], hdr->rsasig[253], hdr->rsasig[254], hdr->rsasig[255]);
-	printf("  Required CB version : %d.%d\n",
-		(hdr->cbvers >> 8) & 0xFF, (hdr->cbvers & 0xFF));
-	printf("  Game title          : %s\n", hdr->gametitle);
-	printf("  Data section offset : 0x%08X\n", hdr->dataoff);
-}
+/* CBC file header */
+typedef struct {
+	uint32_t	fileid;		/* must be CBC_FILE_ID */
+	uint8_t		rsasig[256];	/* 2048-bit RSA signature */
+	uint32_t	cbvers;		/* required CB version */
+	char		gametitle[72];
+	uint32_t	dataoff;	/* file offset of data section */
+	uint32_t	zero;		/* always 0 */
+	uint8_t		data[0];
+} cbc_hdr_t;
 
-/* Check whether it's a valid V7 header */
-int CbcIsV7Header(const uint8_t *hdr, const uint8_t *data)
-{
-	/* Compare game title in header with game title in data section */
-	return !strcmp((char*)hdr, (char*)data);
-}
+#define CBC_FILE_ID	0x01554643	/* "CFU", 1 */
+
+/* offset of data hashed for RSA signature */
+#define CBC_HASH_OFFSET	0x00000104
+
+/* CBC v7 file header */
+typedef struct {
+	char		gametitle[64];
+	uint8_t		data[0];
+} cbc7_hdr_t;
+
 
 /* Extract cheats from data section and print them to stdout */
-int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
+static int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
 {
 	char *p;
 	int off = 0;
@@ -116,4 +119,119 @@ int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
 
 	/* Return total number of codes */
 	return totcodes;
+}
+
+extern int read_file(uint8_t **buf, size_t *size, const char *path);
+
+int cmd_cbc(int argc, char **argv)
+{
+	const char *usage = "cb2util cbc [-7] [-c|-d] <file>...";
+	const char *shortopts = "7cd";
+	const struct option longopts[] = {
+		{ "check", no_argument, NULL, 'c' },
+		{ "decrypt", no_argument, NULL, 'd' },
+		{ NULL, 0, NULL, 0 }
+	};
+	enum {
+		MODE_DEFAULT,
+		MODE_CHECK,
+		MODE_DECRYPT
+	};
+	int mode = MODE_DEFAULT;
+	int v7 = 0;
+	int numcodes = 0;
+	int errors = 0;
+	int ret;
+
+	while ((ret = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
+		switch (ret) {
+		case '7':
+			v7 = 1;
+			break;
+		case 'c':
+			mode = MODE_CHECK;
+			break;
+		case 'd':
+			mode = MODE_DECRYPT;
+			break;
+		default:
+			fprintf(stderr, "usage: %s\n", usage);
+			return 1;
+		}
+	}
+
+	if (optind == argc) {
+		fprintf(stderr, "usage: %s\n", usage);
+		return 1;
+	}
+	if (v7 && mode == MODE_CHECK) {
+		fprintf(stderr, "CBC v7 files don't have a signature\n");
+		return 1;
+	}
+
+	while (optind < argc) {
+		const char *filename = argv[optind++];
+		uint8_t *buf;
+		size_t buflen;
+
+		if (read_file(&buf, &buflen, filename)) {
+			fprintf(stderr, "%s: read error\n", filename);
+			errors++;
+			continue;
+		}
+
+		if (v7) {
+			cbc7_hdr_t *hdr = (cbc7_hdr_t*)buf;
+			int datalen = buflen - sizeof(cbc7_hdr_t);
+
+			if (datalen < 0) {
+				fprintf(stderr, "%s: not a CBC v7 file\n", filename);
+				errors++;
+				goto next_file;
+			}
+
+			CBCryptFileData(hdr->data, datalen);
+
+			if (strcmp(hdr->gametitle, (char*)hdr->data)) {
+				fprintf(stderr, "%s: invalid CBC v7 header\n", filename);
+				errors++;
+				goto next_file;
+			}
+
+			if (numcodes)
+				printf("\n");
+			numcodes += CbcExtractCheats(hdr->data, datalen, mode == MODE_DECRYPT);
+		} else {
+			cbc_hdr_t *hdr = (cbc_hdr_t*)buf;
+			int datalen = buflen - hdr->dataoff;
+
+			if (datalen < 0) {
+				fprintf(stderr, "%s: not a CBC file\n", filename);
+				errors++;
+				goto next_file;
+			}
+			if (hdr->fileid != CBC_FILE_ID) {
+				fprintf(stderr, "%s: invalid CBC file ID\n", filename);
+				errors++;
+				goto next_file;
+			}
+
+			if (mode == MODE_CHECK) {
+				ret = CBVerifyFileSig(hdr->rsasig, buf + CBC_HASH_OFFSET,
+						buflen - CBC_HASH_OFFSET, NULL, NULL);
+				printf("%s: %s\n", filename, ret ? "FAILED" : "OK");
+				errors += ret;
+			} else {
+				CBCryptFileData(buf + hdr->dataoff, datalen);
+				if (numcodes)
+					printf("\n");
+				numcodes += CbcExtractCheats(buf + hdr->dataoff,
+						datalen, mode == MODE_DECRYPT);
+			}
+		}
+next_file:
+		free(buf);
+	}
+
+	return errors ? 1 : 0;
 }
