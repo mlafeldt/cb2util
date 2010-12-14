@@ -28,11 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include "cb2util.h"
-#include "cb2_crypto.h"
-#include "pcb.h"
 
 extern int cmd_cbc(int argc, char **argv);
+extern int cmd_pcb(int argc, char **argv);
 
 int read_file(uint8_t **buf, size_t *size, const char *path)
 {
@@ -61,6 +59,23 @@ int read_file(uint8_t **buf, size_t *size, const char *path)
 	return 0;
 }
 
+int write_file(const uint8_t *buf, size_t size, const char *path)
+{
+	FILE *fp;
+
+	fp = fopen(path, "wb");
+	if (fp == NULL)
+		return -1;
+
+	if (fwrite(buf, size, 1, fp) != 1) {
+		fclose(fp);
+		return -1;
+	}
+
+	fclose(fp);
+	return 0;
+}
+
 int cmd_help(int argc, char **argv)
 {
 	printf("not implemented yet\n");
@@ -79,6 +94,7 @@ static void handle_command(int argc, char **argv)
 	static struct cmd_struct commands[] = {
 		{ "help", cmd_help, 0 },
 		{ "cbc", cmd_cbc, 0 },
+		{ "pcb", cmd_pcb, 0 },
 		{ NULL, NULL, 0 }
 	};
 	struct cmd_struct *p = commands;
