@@ -37,7 +37,7 @@ install: $(PROG)
 	install $(PROG) $(prefix)/bin
 
 $(PROG): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $? $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
 	$(RM) $(PROG) $(OBJS)
