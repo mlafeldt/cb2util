@@ -30,50 +30,6 @@
 extern int cmd_cbc(int argc, char **argv);
 extern int cmd_pcb(int argc, char **argv);
 
-int read_file(uint8_t **buf, size_t *size, const char *path)
-{
-	FILE *fp;
-
-	fp = fopen(path, "rb");
-	if (fp == NULL)
-		return -1;
-
-	fseek(fp, 0, SEEK_END);
-	*size = ftell(fp);
-
-	*buf = malloc(*size);
-	if (*buf == NULL) {
-		fclose(fp);
-		return -1;
-	}
-
-	fseek(fp, 0, SEEK_SET);
-	if (fread(*buf, *size, 1, fp) != 1) {
-		fclose(fp);
-		return -1;
-	}
-
-	fclose(fp);
-	return 0;
-}
-
-int write_file(const uint8_t *buf, size_t size, const char *path)
-{
-	FILE *fp;
-
-	fp = fopen(path, "wb");
-	if (fp == NULL)
-		return -1;
-
-	if (fwrite(buf, size, 1, fp) != 1) {
-		fclose(fp);
-		return -1;
-	}
-
-	fclose(fp);
-	return 0;
-}
-
 int cmd_help(int argc, char **argv)
 {
 	printf("not implemented yet\n");

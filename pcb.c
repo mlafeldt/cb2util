@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include "ps2_elf.h"
 #include "cb2_crypto.h"
+#include "fileio.h"
 
 /* PCB file header */
 typedef struct {
@@ -43,9 +44,6 @@ typedef struct {
 
 /* address to which the PS2 first transfers control */
 #define PCB_ENTRY_ADDR	PCB_LOAD_ADDR
-
-extern int read_file(uint8_t **hdr, size_t *size, const char *path);
-extern int write_file(const uint8_t *hdr, size_t size, const char *path);
 
 static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 {

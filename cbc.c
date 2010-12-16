@@ -27,6 +27,7 @@
 #include <string.h>
 #include <getopt.h>
 #include "cb2_crypto.h"
+#include "fileio.h"
 
 /* CBC file header */
 typedef struct {
@@ -118,8 +119,6 @@ static int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
 	/* Return total number of codes */
 	return totcodes;
 }
-
-extern int read_file(uint8_t **buf, size_t *size, const char *path);
 
 static const char *cbc_usage =
 	"usage: cb2util cbc [-c|-d] <file>...\n"
