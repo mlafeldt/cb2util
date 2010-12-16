@@ -96,13 +96,13 @@ static void handle_command(int argc, char **argv)
 		{ NULL, NULL, 0 }
 	};
 	struct cmd_struct *p = commands;
-
+#if 0
 	/* turn "cmd --help" into "help cmd" */
 	if (argc > 1 && !strcmp(argv[1], "--help")) {
 		argv[1] = argv[0];
 		argv[0] = cmd = "help";
 	}
-
+#endif
 	while (p->cmd) {
 		if (!strcmp(p->cmd, cmd))
 			exit(p->fn(argc, argv));

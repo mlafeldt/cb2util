@@ -121,13 +121,21 @@ static int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
 
 extern int read_file(uint8_t **buf, size_t *size, const char *path);
 
+static const char *cbc_usage =
+	"usage: cb2util cbc [-c|-d] <file>...\n"
+	"   or: cb2util cbc -7 [-d] <file>...\n\n"
+	"    no option         extract cheats\n\n"
+	"    -7                files are in CBC v7 format\n"
+	"    -c, --check       check RSA signature\n"
+	"    -d, --decrypt     decrypt extracted cheats\n";
+
 int cmd_cbc(int argc, char **argv)
 {
-	const char *usage = "cb2util cbc [-7] [-c|-d] <file>...";
-	const char *shortopts = "7cd";
+	const char *shortopts = "7cdh";
 	const struct option longopts[] = {
 		{ "check", no_argument, NULL, 'c' },
 		{ "decrypt", no_argument, NULL, 'd' },
+		{ "help", no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
@@ -152,14 +160,17 @@ int cmd_cbc(int argc, char **argv)
 		case 'd':
 			mode = MODE_DECRYPT;
 			break;
+		case 'h':
+			printf("%s\n", cbc_usage);
+			return 0;
 		default:
-			fprintf(stderr, "usage: %s\n", usage);
+			fprintf(stderr, "%s\n", cbc_usage);
 			return 1;
 		}
 	}
 
 	if (optind == argc) {
-		fprintf(stderr, "usage: %s\n", usage);
+		fprintf(stderr, "%s\n", cbc_usage);
 		return 1;
 	}
 	if (v7 && mode == MODE_CHECK) {

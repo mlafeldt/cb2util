@@ -92,13 +92,21 @@ static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 	strcpy((char*)&hdr[sizeof(Elf32_Ehdr) + sizeof(Elf32_Phdr)], note);
 }
 
+static const char *pcb_usage =
+	"usage: cb2util pcb [-e|-s] <infile> <outfile>...\n"
+	"   or: cb2util pcb -c <file>...\n\n"
+	"    no option         encrypt/decrypt file\n\n"
+	"    -c, --check       check RSA signature\n"
+	"    -e, --elf         convert into ELF file\n"
+	"    -s, --strip       strip RSA signature\n";
+
 int cmd_pcb(int argc, char **argv)
 {
-	const char *usage = "cb2util pcb [-c|-e|-s] <infile> [outfile]...";
-	const char *shortopts = "ces";
+	const char *shortopts = "cehs";
 	const struct option longopts[] = {
 		{ "check", no_argument, NULL, 'c' },
 		{ "elf", no_argument, NULL, 'e' },
+		{ "help", no_argument, NULL, 'h' },
 		{ "strip", no_argument, NULL, 's' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -120,17 +128,20 @@ int cmd_pcb(int argc, char **argv)
 		case 'e':
 			mode = MODE_ELF;
 			break;
+		case 'h':
+			printf("%s\n", pcb_usage);
+			return 0;
 		case 's':
 			mode = MODE_STRIP;
 			break;
 		default:
-			fprintf(stderr, "usage: %s\n", usage);
+			fprintf(stderr, "%s\n", pcb_usage);
 			return 1;
 		}
 	}
 
 	if ((optind == argc) || (mode != MODE_CHECK && (argc - optind) & 1)) {
-		fprintf(stderr, "usage: %s\n", usage);
+		fprintf(stderr, "%s\n", pcb_usage);
 		return 1;
 	}
 
