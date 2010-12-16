@@ -1,9 +1,7 @@
 /*
- * cb2util/src/arcfour.c
- *
  * Implementation of the stream cipher ARCFOUR
  *
- * Copyright (C) 2006-2007 misfire
+ * Copyright (C) 2006-2010 Mathias Lafeldt <misfire@debugon.org>
  * Copyright (C) 1996-2000 Whistle Communications, Inc.
  * All rights reserved.
  *

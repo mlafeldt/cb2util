@@ -1,9 +1,7 @@
 /*
- * cb2util/src/cbc.c
- *
  * CBC file handling
  *
- * Copyright (C) 2006-2007 misfire
+ * Copyright (C) 2006-2010 Mathias Lafeldt <misfire@debugon.org>
  * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.
