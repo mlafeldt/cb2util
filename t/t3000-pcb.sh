@@ -6,24 +6,32 @@ test_description="Test PCB commands."
 
 type=pcb
 
-out="/dev/null"
+out=$(tempfile)
 
-for f in $type/*.bin; do
-    test_expect_success "($f) decrypt file" "
-        cb2util -t $type $f $out
+for file in $type/*.bin; do
+    prefix=${file%.*}
+
+    test_expect_success "($file) decrypt file" "
+        cb2util -t $type $file $out &&
+        test_cmp $out $prefix.decrypt
     "
 
-    test_expect_success "($f) decrypt file and strip header" "
-        cb2util -t $type -s $f $out
+    test_expect_success "($file) decrypt file and strip header" "
+        cb2util -t $type -s $file $out &&
+        test_cmp $out $prefix.strip
     "
 
-    test_expect_success "($f) convert to ELF" "
-        cb2util -t $type -e $f $out
+    test_expect_success "($file) convert to ELF" "
+        cb2util -t $type -e $file $out &&
+        test_cmp $out $prefix.elf
     "
 
-    test_expect_success "($f) verify signature" "
-        cb2util -t $type -c $f
+    test_expect_success "($file) verify signature" "
+        cb2util -t $type -c $file >$out &&
+        test_cmp $out $prefix.verify
     "
 done
+
+rm $out
 
 test_done

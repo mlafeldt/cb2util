@@ -6,18 +6,26 @@ test_description="Test CBC v7 commands."
 
 type=cbc7
 
-for f in $type/*.cbc; do
-    test_expect_success "($f) extract cheats" "
-        cb2util -t $type $f
+out=$(tempfile)
+
+for file in $type/*.cbc; do
+    prefix=${file%.*}
+
+    test_expect_success "($file) extract cheats" "
+        cb2util -t $type $file >$out &&
+        test_cmp $out $prefix.extract
     "
 
-    test_expect_success "($f) extract and decrypt cheats" "
-        cb2util -t $type -d $f
+    test_expect_success "($file) extract and decrypt cheats" "
+        cb2util -t $type -d $file >$out &&
+        test_cmp $out $prefix.decrypt
     "
 
-    test_expect_success "($f) has no signature" "
-        ! cb2util -t $type -c $f
+    test_expect_success "($file) has no signature" "
+        ! cb2util -t $type -c $file
     "
 done
+
+rm $out
 
 test_done
