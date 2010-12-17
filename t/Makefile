@@ -1,11 +1,11 @@
-PERL_PATH ?= /usr/bin/perl
+SHELL_PATH ?= /bin/sh
 TEST_OPTS =
 
-T = $(wildcard *.t)
+T = $(wildcard t[0-9][0-9][0-9][0-9]-*.sh)
 
 all: $(T)
 
 $(T):
-	@echo "*** $@ ***"; '$(PERL_PATH)' $@ $(TEST_OPTS)
+	@echo "*** $@ ***"; '$(SHELL_PATH)' $@ $(TEST_OPTS)
 
 .PHONY: $(T)
