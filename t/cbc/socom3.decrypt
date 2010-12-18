@@ -1,0 +1,356 @@
+"SOCOM 3-U.S. Navy Seals"
+Enable Code (Must Be On)
+BEEFC0DE 00000000
+000FFFFE 00000171
+000FFFFF 00000171
+901A9338 0C074318
+Infinite Health (You & Your Team)
+E005982D 0059AE40
+200C0220 3C013F80
+200C0224 AE810968
+200C0228 08166B98
+200C022C 928200F1
+2059AE5C 08030088
+Never Reload
+D04E1974 0000182B
+204E1988 00000000
+Idiot AI
+E0021B4C 004284F4
+204284D0 03E00008
+204284D4 00000000
+No Damage From Falling
+D0180208 000006BC
+2064C1E0 447A0000
+Super Jump
+E0021034 003AC4FC
+103AC502 00001000
+2064C1B8 41800000
+Ultra Jump
+E0021034 003AC4FC
+103AC502 00001000
+2064C1B8 42000000
+No Recoil-Weapons (Non-Zoom)
+D04F086C 0000282D
+204F0870 00000000
+No Recoil-Sniper (Zoom)
+E002A303 0037B9C8
+2037B9CC 00000000
+2037B9D0 00000000
+Perfect Shot
+E002A02D 0043E624
+2043E610 03E00008
+2043E614 00000000
+No Explosion Damage With Fall
+D03D3FF8 00000970
+203D3FFC 00000000
+No Explosion Damage With No Fall
+D03D3FA8 0000A036
+203D3FAC 1000000A
+No Scope Screen Blockage
+D05A0C20 0000282D
+205A0C34 00000000
+Fire Once For Max Shots Fired By Player
+D0374AD8 0000882D
+20374AC8 2406270F
+Hit Enemy Once For Max Shots Hit By Player
+D0375878 00001824
+20375868 2403270F
+Kill Enemy Once For Max Enemies Downed By Player
+D0374DB4 0000102B
+20374E00 2403270F
+P1 Press L1+Up For Moon Gravity
+D064F89C 0000FBEF
+2064C1B0 3F800000
+P1 Press L1+Down For Normal Gravity
+D064F89C 0000FBBF
+2064C1B0 436B0000
+P1 Press L1+L2+R1+R2 To Complete Mission Successfully
+D064F89C 0000F0FF
+00887F7C 00000001
+*Start On Mission Modifier Codes
+North Africa-Deep Strike
+D0688B80 00200001
+20688B80 00000001
+North Africa-Escalation
+D0688B80 00200002
+20688B80 00000002
+North Africa-Riposte's Primer
+D0688B80 00200003
+20688B80 00000003
+North Africa-In The Balance
+D0688B80 00200004
+20688B80 00000004
+North Africa-Day Of Reckoning
+D0688B80 00200005
+20688B80 00000005
+North Africa-Wake Of The Fallen
+D0688B80 00200006
+20688B80 00000006
+South Asia-Nautical Salvage
+D0688B80 00200007
+20688B80 00000007
+South Asia-Friend Or Foe
+D0688B80 00200008
+20688B80 00000008
+South Asia-Heart Of The Fist
+D0688B80 00200009
+20688B80 00000009
+Poland-Nightcrawler
+D0688B80 0020000A
+20688B80 0000000A
+Poland-State Security
+D0688B80 0020000B
+20688B80 0000000B
+Poland-Retribution
+D0688B80 0020000C
+20688B80 0000000C
+Poland-Waterlogged
+D0688B80 0020000D
+20688B80 0000000D
+Poland-Brewed Chaos
+D0688B80 0020000E
+20688B80 0000000E
+*Extras Codes
+*Career Stats Codes
+Always Low Player Hit Percentage
+20688FB0 00000000
+Max Average Accuracy Rating
+20688FB4 00000064
+No Average Accuracy Rating
+20688FB4 00000000
+Max Average Stealth Rating
+20688FB8 00000064
+No Average Stealth Rating
+20688FB8 00000000
+Max Average Teamwork Rating
+20688FBC 00000064
+No Average Teamwork Rating
+20688FBC 00000000
+Max Average Objective Completion
+20688FC0 00000064
+No Average Objective Completion
+20688FC0 00000000
+Max Enemies Captured
+20688FC4 000F423F
+No Enemies Captured
+20688FC4 00000000
+Max Enemies Downed
+20688FC8 000F423F
+No Enemies Downed
+20688FC8 00000000
+Max Friendly Kills
+20688FCC 000F423F
+No Friendly Kills
+20688FCC 00000000
+Max Stealth Kills
+20688FD0 000F423F
+No Stealth Kills
+20688FD0 00000000
+Max CQB Kills
+20688FD4 000F423F
+No CQB Kills
+20688FD4 00000000
+Max Shots Fired
+20688FD8 000F423F
+No Shots Fired
+20688FD8 00000000
+Max Head Shots
+20688FDC 000F423F
+No Head Shots
+20688FDC 00000000
+*Unlock Movies Codes
+SOCOM 3 Credits
+00688A7D 000000FF
+Making The Music
+00688A95 000000FF
+North Africa Intro Movie
+00688A96 000000FF
+South Asia Intro Movie
+00688A97 000000FF
+Pland Intro Movie
+00688A98 000000FF
+All Movies
+00688A7D 000000FF
+00688A95 000000FF
+10688A96 0000FFFF
+00688A98 000000FF
+*Unlock Weapons Codes
+Seal Weapons
+00688A7E 000000FF
+Terrorist Weapons
+00688A7F 000000FF
+GROM Weapons
+00688A80 000000FF
+SBS Weapons
+00688A81 000000FF
+IW-80 A2
+00688A82 000000FF
+STG 77
+00688A83 000000FF
+Medium Scope
+00688A84 000000FF
+Front Grip
+00688A85 000000FF
+ZX25 Airburst
+00688A86 000000FF
+All Weapons
+10688A7E 000000FF
+20688A80 FFFFFFFF
+10688A84 0000FFFF
+00688A86 000000FF
+*Unlock Unjukebox Codes
+Lieutenant Rank Required Songs
+00688A99 000000FF
+Captain Rank Required Songs
+00688A9A 000000FF
+*Unlock Character Codes
+*North Africa Character Codes
+Seal-Killjoy
+00688A89 000000FF
+Seal-Desert Ghille Suit
+00688A8A 000000FF
+Terrorist-Al-Kamil Sarwat
+00688A8B 000000FF
+Terrorist-Desert Ghillie Suit
+00688A8C 000000FF
+*South Asia Character Codes
+Seal-Chopper
+00688A8D 000000FF
+Seal-Jungle Ghillie Suit
+00688A8E 000000FF
+Terrorist-Hari Raman
+00688A8F 000000FF
+Terrorist-Jungle Ghillie Suit
+00688A90 000000FF
+*Poland Character Codes
+Seal-Coldkill
+00688A91 000000FF
+Seal-Winter Ghillie Suit
+00688A92 000000FF
+Terrorist-Dr. Basia Mironova
+00688A93 000000FF
+Terrorist-Winter Ghillie Suit
+00688A94 000000FF
+All Characters
+00688A89 000000FF
+10688A8A 0000FFFF
+20688A8C FFFFFFFF
+20688A90 FFFFFFFF
+00688A94 000000FF
+*Unlock Crosstalk Codes
+Deep Strike-Destroy Transmitter
+00688A9C 000000FF
+Escalation-Obtain Manifest
+00688A9D 000000FF
+Escalation-Obtain Ledger
+00688A9E 000000FF
+Escalation-Rescue Resistance Forces
+00688A9F 000000FF
+Riposte's Primer-Prevent Further Launches
+00688AA1 000000FF
+In The Balance-No CHA Points Overrun
+00688AA2 000000FF
+Day Of Reckoning-Obtain Intel
+00688AA3 000000FF
+Wake Of The Fallen-Capture NAPF Soldiers
+00688AA4 000000FF
+Wake Of The Fallen-Complete Mission
+00688AA5 000000FF
+Nautical Salvage-Overhear Arms Shipment
+00688AA6 000000FF
+Nautical Salvage-Recon Warehouse
+00688AA7 000000FF
+Nautical Salvage-Complete Mission
+00688AA8 000000FF
+Friend Or Foe-No Villagers Killed
+00688AA9 000000FF
+Friend Or Foe-Destroy Arms Shipment
+00688AAA 000000FF
+Friend Or Foe-Obtain Intel
+00688AAB 000000FF
+Friend Or Foe-Liberate Village
+00688AAC 000000FF
+Heart Of The Fist-Capture Abbas
+00688AAD 000000FF
+Heart Of The Fist-Secure Captain
+00688AAE 000000FF
+Heart Of The Fist-Secure Engineer
+00688AAF 000000FF
+Heart Of The Fist-Destroy Speedboat
+00688AB0 000000FF
+Heart Of The Fist-Obtain Contact List
+00688AB1 000000FF
+Heart Of The Fist-Secure Cargo
+00688AB2 000000FF
+Heart Of The Fist-Capture Raman
+00688AB3 000000FF
+Nightcrawler-Plant Bug
+00688AB4 000000FF
+Nightcrawler-Create Diversion
+00688AB5 000000FF
+State Security-No Damage To First Lady
+00688AB6 000000FF
+State Security-Complete Mission
+00688AB7 000000FF
+Retribution-Disable Generators
+00688AB8 000000FF
+Retribution-Secure Arms Dealer
+00688AB9 000000FF
+Waterlogged-No Terrorists Engaged
+00688ABA 000000FF
+Brewed Chaos-Neutralize Kryzstol Gryc
+00688ABB 000000FF
+Brewed Chaos-Neturalize Dr. Mironova
+00688ABC 000000FF
+Brewed Chaos-Clear Brewery
+00688ABD 000000FF
+Isolated Agent-Capture DDDBall
+00688ABE 000000FF
+Short Fuse-Capture NAPF Soldier
+00688ABF 000000FF
+Short Fuse-Photograph Sarwat
+00688AC0 000000FF
+Lethal Crossing-Destroy Trucks
+00688AC1 000000FF
+Desert Siege-Obtain Map
+00688AC2 000000FF
+Desert Siege-Obtain Memo
+00688AC3 000000FF
+Songbird-Extract MAGPIE Unharmed
+00688AC4 000000FF
+Biohazard-Obtain Training Film
+00688AC5 000000FF
+Under Fire-Obtain Intel
+00688AC6 000000FF
+Underflow-Ontain Laptop
+00688AC7 000000FF
+Village Recon-Eliminate All Anarchists
+00688AC8 000000FF
+Powderkeg-Photograph Gas Mas Crates
+00688AC9 000000FF
+Clean Sweap-Obtain Docs
+00688ACA 000000FF
+Supply And Demand-Secure Terrorist
+00688ACC 000000FF
+Supply And Demand-Retrive All Intell
+00688ACD 000000FF
+Undermining Authority-No Alarms
+00688ACE 000000FF
+Chemical Reaction-Remain Stealthy
+00688ACF 000000FF
+Chemical Reaction-Kill All NSO
+00688AD0 000000FF
+ZX25
+00688AD2 000000FF
+9MM Sub
+00688AD3 000000FF
+STG 77
+00688AD4 000000FF
+Al-Kamil Sarwat
+00688AD5 000000FF
+Gamal Imad
+00688AD6 000000FF
+Benito Salazar Zayas
+00688AD7 000000FF
+Dr. Basia Mironova
+00688AD8 000000FF
