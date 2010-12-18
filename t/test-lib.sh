@@ -35,6 +35,22 @@ test_expect_success() {
     echo >&3 ""
 }
 
+test_must_fail() {
+    "$@"
+    exit_code=$?
+    if [ $exit_code = 0 ]; then
+        echo >&2 "test_must_fail: command succeeded: $*"
+        return 1
+    elif [ $exit_code -gt 129 -a $exit_code -le 192 ]; then
+        echo >&2 "test_must_fail: died by signal: $*"
+        return 1
+    elif [ $exit_code = 127 ]; then
+        echo >&2 "test_must_fail: command not found: $*"
+        return 1
+    fi
+    return 0
+}
+
 test_cmp() {
     diff -u "$@"
 }

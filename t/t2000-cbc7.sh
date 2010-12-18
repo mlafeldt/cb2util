@@ -22,7 +22,7 @@ for file in $type/*.cbc; do
     "
 
     test_expect_success "($file) has no signature" "
-        ! cb2util -t $type -c $file
+        test_must_fail cb2util -t $type -c $file
     "
 done
 
