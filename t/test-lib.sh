@@ -42,3 +42,8 @@ test_cmp() {
 test_done() {
     echo "1..$test_count"
 }
+
+: ${TEST_DIR:=$(pwd)}
+BUILD_DIR="$TEST_DIR/.."
+PATH="$BUILD_DIR:$PATH"
+export PATH
