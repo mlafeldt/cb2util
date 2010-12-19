@@ -55,7 +55,7 @@ test_must_fail() {
 }
 
 test_cmp() {
-    diff -u "$@"
+    diff -u --strip-trailing-cr "$@"
 }
 
 test_done() {
