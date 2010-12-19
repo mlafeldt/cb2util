@@ -14,6 +14,8 @@ else
 fi
 
 test_count=0
+test_success=0
+test_failure=0
 
 test_run() {
     test_cleanup=:
@@ -25,11 +27,12 @@ test_run() {
 
 test_expect_success() {
     test_count=$((test_count + 1))
-
     echo >&3 "expecting success: $2"
     if test_run "$2"; then
+        test_success=$((test_success + 1))
         echo "ok $test_count - $1"
     else
+        test_failure=$((test_failure + 1))
         echo "not ok $test_count - $1"
     fi
     echo >&3 ""
@@ -56,6 +59,11 @@ test_cmp() {
 }
 
 test_done() {
+    if [ $test_failure = 0 ]; then
+        echo "# passed all $test_count test(s)"
+    else
+        echo "# failed $test_failure among $test_count test(s)"
+    fi
     echo "1..$test_count"
 }
 
