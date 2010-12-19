@@ -27,6 +27,8 @@
 #include <string.h>
 #include <getopt.h>
 #include "cb2_crypto.h"
+#include "compress.h"
+#include "fileio.h"
 
 /* "cheats" file header */
 typedef struct {
@@ -106,4 +108,89 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 
 	/* Return total number of codes */
 	return totcodes;
+}
+
+static const char *cheats_usage =
+	"usage: cb2util cheats [-d] <file>...\n\n"
+	"    no option         extract cheats\n\n"
+	"    -d, --decrypt     decrypt extracted cheats\n";
+
+int cmd_cheats(int argc, char **argv)
+{
+	const char *shortopts = "dh";
+	const struct option longopts[] = {
+		{ "decrypt", no_argument, NULL, 'd' },
+		{ "help", no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+	enum {
+		MODE_DEFAULT,
+		MODE_DECRYPT
+	};
+	int mode = MODE_DEFAULT;
+	int numcodes = 0;
+	int errors = 0;
+	int ret;
+
+	while ((ret = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
+		switch (ret) {
+		case 'd':
+			mode = MODE_DECRYPT;
+			break;
+		case 'h':
+			printf("%s\n", cheats_usage);
+			return 0;
+		default:
+			fprintf(stderr, "%s\n", cheats_usage);
+			return 1;
+		}
+	}
+
+	if (optind == argc) {
+		fprintf(stderr, "%s\n", cheats_usage);
+		return 1;
+	}
+
+	while (optind < argc) {
+		const char *filename = argv[optind++];
+		uint8_t *buf;
+		size_t buflen;
+		cheats_hdr_t *hdr;
+		int datalen;
+		uint8_t *unpacked;
+		unsigned long unpackedlen;
+
+		if (read_file(&buf, &buflen, filename)) {
+			fprintf(stderr, "%s: read error\n", filename);
+			errors++;
+			continue;
+		}
+
+		hdr = (cheats_hdr_t*)buf;
+		datalen = buflen - sizeof(cheats_hdr_t);
+
+		if (datalen < 0) {
+			fprintf(stderr, "%s: not a cheats file\n", filename);
+			errors++;
+			goto next_file;
+		}
+		if (hdr->fileid != CHEATS_FILE_ID) {
+			fprintf(stderr, "%s: invalid cheats file ID\n", filename);
+			errors++;
+			goto next_file;
+		}
+		if (zlib_uncompress(&unpacked, &unpackedlen, hdr->data, datalen)) {
+			fprintf(stderr, "%s: uncompress error\n", filename);
+			errors++;
+			goto next_file;
+		}
+
+		if (numcodes)
+			printf("\n");
+		numcodes += extract_cheats(stdout, unpacked, unpackedlen, mode == MODE_DECRYPT);
+next_file:
+		free(buf);
+	}
+
+	return errors ? 1 : 0;
 }

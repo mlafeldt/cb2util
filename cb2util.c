@@ -29,6 +29,7 @@
 
 extern int cmd_cbc(int argc, char **argv);
 extern int cmd_pcb(int argc, char **argv);
+extern int cmd_cheats(int argc, char **argv);
 
 int cmd_help(int argc, char **argv)
 {
@@ -49,6 +50,7 @@ static void handle_command(int argc, char **argv)
 		{ "help", cmd_help, 0 },
 		{ "cbc", cmd_cbc, 0 },
 		{ "pcb", cmd_pcb, 0 },
+		{ "cheats", cmd_cheats, 0 },
 		{ NULL, NULL, 0 }
 	};
 	struct cmd_struct *p = commands;
