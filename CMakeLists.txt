@@ -45,6 +45,10 @@ ADD_EXECUTABLE(cb2util
 	shs.c
 )
 
-TARGET_LINK_LIBRARIES(cb2util bigint ${ZLIB_LIBRARIES})
+TARGET_LINK_LIBRARIES(cb2util
+	bigint
+	cheats
+	${ZLIB_LIBRARIES}
+)
 
 INSTALL(TARGETS cb2util DESTINATION bin)

@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <libcheats.h>
 #include "cb2_crypto.h"
 #include "compress.h"
 #include "fileio.h"
@@ -39,6 +40,11 @@ typedef struct {
 
 #define CHEATS_FILE_ID		0x00554643 /* "CFU\0" */
 
+/* standard header */
+static const cheats_hdr_t _cheats_hdr = {
+	.fileid		= CHEATS_FILE_ID,
+	.unknown	= 0x00010000
+};
 
 int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 {
@@ -110,21 +116,85 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 	return totcodes;
 }
 
+int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
+{
+	game_t *game;
+	cheat_t *cheat;
+	code_t *code;
+	uint8_t *p;
+	uint16_t *numdesc;
+	uint16_t *numlines;
+	size_t used;
+
+	*dstlen = 1024 * 1024;
+	*dst = malloc(*dstlen);
+	if (*dst == NULL)
+		return -1;
+	p = *dst;
+
+	GAMES_FOREACH(game, &cheats->games) {
+		p += sprintf((char*)p, "%s%c", game->title, '\0');
+		numdesc = (uint16_t*)p;
+		*numdesc = 0;
+		p += sizeof(uint16_t);
+
+		CHEATS_FOREACH(cheat, &game->cheats) {
+			p += sprintf((char*)p, "%s%c", cheat->desc, '\0');
+			p++; /* skip desc type */
+			numlines = (uint16_t*)p;
+			*numlines = 0;
+			p += sizeof(uint16_t);
+
+			CODES_FOREACH(code, &cheat->codes) {
+				*(uint32_t*)p = code->addr;
+				p += sizeof(uint32_t);
+				*(uint32_t*)p = code->val;
+				p += sizeof(uint32_t);
+
+				(*numlines)++;
+			}
+
+			(*numdesc)++;
+		}
+
+		/* give us some more memory */
+		used = p - *dst;
+		if (used > (*dstlen / 2)) {
+			*dstlen *= 2;
+			*dst = realloc(*dst, *dstlen);
+			if (*dst == NULL)
+				return -1;
+			p = *dst + used;
+		}
+	}
+
+	*(uint16_t*)p = 0xffff;
+	p += sizeof(uint16_t);
+
+	*dstlen = p - *dst;
+
+	return 0;
+}
+
 static const char *cheats_usage =
-	"usage: cb2util cheats [-d] <file>...\n\n"
+	"usage: cb2util cheats [-d] <file>...\n"
+	"   or: cb2util cheats -c <infile> <outfile>...\n\n"
 	"    no option         extract cheats\n\n"
+	"    -c, --compile     compile text to cheats file\n"
 	"    -d, --decrypt     decrypt extracted cheats\n";
 
 int cmd_cheats(int argc, char **argv)
 {
-	const char *shortopts = "dh";
+	const char *shortopts = "cdh";
 	const struct option longopts[] = {
+		{ "compile", no_argument, NULL, 'c' },
 		{ "decrypt", no_argument, NULL, 'd' },
 		{ "help", no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
 		MODE_DEFAULT,
+		MODE_COMPILE,
 		MODE_DECRYPT
 	};
 	int mode = MODE_DEFAULT;
@@ -134,6 +204,10 @@ int cmd_cheats(int argc, char **argv)
 
 	while ((ret = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		switch (ret) {
+		case 'c':
+			mode = MODE_COMPILE;
+			break;
+
 		case 'd':
 			mode = MODE_DECRYPT;
 			break;
@@ -146,48 +220,93 @@ int cmd_cheats(int argc, char **argv)
 		}
 	}
 
-	if (optind == argc) {
+	if ((optind == argc) || (mode == MODE_COMPILE && (argc - optind) & 1)) {
 		fprintf(stderr, "%s\n", cheats_usage);
 		return 1;
 	}
 
 	while (optind < argc) {
-		const char *filename = argv[optind++];
-		uint8_t *buf;
+		const char *infile = argv[optind++];
+		const char *outfile = mode == MODE_COMPILE ? argv[optind++] : NULL;
+		uint8_t *buf = NULL;
 		size_t buflen;
-		cheats_hdr_t *hdr;
-		int datalen;
-		uint8_t *unpacked;
-		unsigned long unpackedlen;
 
-		if (read_file(&buf, &buflen, filename)) {
-			fprintf(stderr, "%s: read error\n", filename);
-			errors++;
-			continue;
-		}
+		if (mode == MODE_COMPILE) {
+			FILE *fp = NULL;
+			cheats_t cheats;
+			uint8_t *pack = NULL;
+			unsigned long packlen;
 
-		hdr = (cheats_hdr_t*)buf;
-		datalen = buflen - sizeof(cheats_hdr_t);
+			cheats_init(&cheats);
+			if (cheats_read_file(&cheats, infile) != CHEATS_TRUE) {
+				fprintf(stderr, "%s: line: %i\nerror: %s\n", infile,
+					cheats.error_line, cheats.error_text);
+				errors++;
+				goto compile_end;
+			}
+			if (compile_cheats(&buf, &buflen, &cheats)) {
+				fprintf(stderr, "%s: compile error\n", infile);
+				errors++;
+				goto compile_end;
+			}
+			if (zlib_compress(&pack, &packlen, buf, buflen)) {
+				fprintf(stderr, "%s: compress error\n", infile);
+				errors++;
+				goto compile_end;
+			}
 
-		if (datalen < 0) {
-			fprintf(stderr, "%s: not a cheats file\n", filename);
-			errors++;
-			goto next_file;
-		}
-		if (hdr->fileid != CHEATS_FILE_ID) {
-			fprintf(stderr, "%s: invalid cheats file ID\n", filename);
-			errors++;
-			goto next_file;
-		}
-		if (zlib_uncompress(&unpacked, &unpackedlen, hdr->data, datalen)) {
-			fprintf(stderr, "%s: uncompress error\n", filename);
-			errors++;
-			goto next_file;
-		}
+			fp = fopen(outfile, "wb");
+			if (fp == NULL) {
+				fprintf(stderr, "%s: write error\n", outfile);
+				errors++;
+				goto compile_end;
+			}
 
-		if (numcodes)
-			printf("\n");
-		numcodes += extract_cheats(stdout, unpacked, unpackedlen, mode == MODE_DECRYPT);
+			fwrite(&_cheats_hdr, sizeof(_cheats_hdr), 1, fp);
+			fwrite(pack, packlen, 1, fp);
+			fclose(fp);
+compile_end:
+			cheats_destroy(&cheats);
+			if (pack != NULL)
+				free(pack);
+		} else {
+			cheats_hdr_t *hdr;
+			int datalen;
+			uint8_t *unpack;
+			unsigned long unpacklen;
+
+			if (read_file(&buf, &buflen, infile)) {
+				fprintf(stderr, "%s: read error\n", infile);
+				errors++;
+				continue;
+			}
+
+			datalen = buflen - sizeof(cheats_hdr_t);
+			if (datalen < 0) {
+				fprintf(stderr, "%s: not a cheats file\n", infile);
+				errors++;
+				goto next_file;
+			}
+
+			hdr = (cheats_hdr_t*)buf;
+			if (hdr->fileid != CHEATS_FILE_ID) {
+				fprintf(stderr, "%s: invalid cheats file ID\n", infile);
+				errors++;
+				goto next_file;
+			}
+
+			if (zlib_uncompress(&unpack, &unpacklen, hdr->data, datalen)) {
+				fprintf(stderr, "%s: uncompress error\n", infile);
+				errors++;
+				goto next_file;
+			}
+
+			if (numcodes)
+				printf("\n");
+			numcodes += extract_cheats(stdout, unpack, unpacklen,
+					mode == MODE_DECRYPT);
+			free(unpack);
+		}
 next_file:
 		free(buf);
 	}

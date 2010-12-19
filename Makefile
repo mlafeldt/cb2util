@@ -3,7 +3,7 @@ BIGINT = libbig_int
 CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
 CFLAGS += -I$(BIGINT)/include
-LIBS = -lz
+LIBS = -lz -lcheats
 prefix = $(HOME)
 
 PROG = cb2util
