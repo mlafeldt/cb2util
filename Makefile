@@ -3,7 +3,7 @@ BIGINT = libbig_int
 CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
 CFLAGS += -I$(BIGINT)/include
-LIBS =
+LIBS = -lz
 prefix = $(HOME)
 
 PROG = cb2util
@@ -29,6 +29,7 @@ OBJS += cb2_crypto.o
 OBJS += cb2util.o
 OBJS += cbc.o
 OBJS += cheats.o
+OBJS += compress.o
 OBJS += fileio.o
 OBJS += pcb.o
 OBJS += shs.o

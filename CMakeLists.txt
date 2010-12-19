@@ -2,11 +2,16 @@ PROJECT("cb2util" C)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+FIND_PACKAGE(ZLIB REQUIRED)
+
 SET(BIGINT "libbig_int")
 
 SET(CMAKE_C_FLAGS "-Wall -Werror -O2 -s")
 
-INCLUDE_DIRECTORIES(${BIGINT}/include)
+INCLUDE_DIRECTORIES(
+	${BIGINT}/include
+	${ZLIB_INCLUDE_DIR}
+)
 
 ADD_LIBRARY(bigint
 	${BIGINT}/src/basic_funcs.c
@@ -34,11 +39,12 @@ ADD_EXECUTABLE(cb2util
 	cb2util.c
 	cbc.c
 	cheats.c
+	compress.c
 	fileio.c
 	pcb.c
 	shs.c
 )
 
-TARGET_LINK_LIBRARIES(cb2util bigint)
+TARGET_LINK_LIBRARIES(cb2util bigint ${ZLIB_LIBRARIES})
 
 INSTALL(TARGETS cb2util DESTINATION bin)
