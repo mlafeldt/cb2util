@@ -28,6 +28,7 @@ OBJS += arcfour.o
 OBJS += cb2_crypto.o
 OBJS += cb2util.o
 OBJS += cbc.o
+OBJS += cheats.o
 OBJS += fileio.o
 OBJS += pcb.o
 OBJS += shs.o

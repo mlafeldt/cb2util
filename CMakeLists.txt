@@ -33,6 +33,7 @@ ADD_EXECUTABLE(cb2util
 	cb2_crypto.c
 	cb2util.c
 	cbc.c
+	cheats.c
 	fileio.c
 	pcb.c
 	shs.c

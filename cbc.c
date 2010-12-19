@@ -52,73 +52,7 @@ typedef struct {
 } cbc7_hdr_t;
 
 
-/* Extract cheats from data section and print them to stdout */
-static int CbcExtractCheats(const uint8_t *data, int datasize, int dodecrypt)
-{
-	char *p;
-	int off = 0;
-	uint16_t numdesc, numlines;
-	uint32_t code[2];
-	int totcodes = 0;
-
-	/* Parse data section, print results to stdout */
-	while (off < datasize) {
-		/* Check for end marker */
-		if (*(uint32_t*)&data[off] == 0xFFFFFFFF)
-			break;
-
-		/* Reset CB encryption */
-		CBReset();
-
-		/* Process game title
-		   Example: "007 Agent Under Fire" */
-		p = (char*)&data[off];
-		printf("\"%s\"\n", p);
-		off += strlen(p) + 1;
-
-		numdesc = *(uint16_t*)&data[off];
-		off += sizeof(uint16_t);
-
-		/* Process code description(s)
-		   Example: Infinite Ammo */
-		while (numdesc--) {
-			p = (char*)&data[off];
-			off += strlen(p) + 1;
-			/* Skip desc type, we won't use it */
-			off++;
-
-			numlines = *(uint16_t*)&data[off];
-			off += sizeof(uint16_t);
-
-			/* If there is no code line, it's just a heading
-			   Example: *Action Mission Codes */
-			if (!numlines)
-				printf("*%s\n", p);
-			else {
-				printf("%s\n", p);
-				totcodes++;
-
-				/* Process code line(s)
-				   Example: 1A3EDED4 000003E7 */
-				while (numlines--) {
-					code[0] = *(uint32_t*)&data[off];
-					off += sizeof(uint32_t);
-					code[1] = *(uint32_t*)&data[off];
-					off += sizeof(uint32_t);
-
-					/* Decrypt code */
-					if (dodecrypt)
-						CBDecryptCode(&code[0], &code[1]);
-
-					printf("%08X %08X\n", code[0], code[1]);
-				}
-			}
-		}
-	}
-
-	/* Return total number of codes */
-	return totcodes;
-}
+extern int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt);
 
 static const char *cbc_usage =
 	"usage: cb2util cbc [-c|-d] <file>...\n"
@@ -208,7 +142,8 @@ int cmd_cbc(int argc, char **argv)
 
 			if (numcodes)
 				printf("\n");
-			numcodes += CbcExtractCheats(hdr->data, datalen, mode == MODE_DECRYPT);
+			numcodes += extract_cheats(stdout, hdr->data, datalen,
+						mode == MODE_DECRYPT);
 		} else {
 			cbc_hdr_t *hdr = (cbc_hdr_t*)buf;
 			int datalen = buflen - hdr->dataoff;
@@ -233,7 +168,7 @@ int cmd_cbc(int argc, char **argv)
 				CBCryptFileData(buf + hdr->dataoff, datalen);
 				if (numcodes)
 					printf("\n");
-				numcodes += CbcExtractCheats(buf + hdr->dataoff,
+				numcodes += extract_cheats(stdout, buf + hdr->dataoff,
 						datalen, mode == MODE_DECRYPT);
 			}
 		}
