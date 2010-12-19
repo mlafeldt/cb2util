@@ -4,29 +4,30 @@ test_description="Test CBC commands."
 
 . ./test-lib.sh
 
-type=cbc
+out=out
 
-out=$(tempfile)
+test_expect_success "setup" "
+    cd cbc &&
+    trap 'rm -f $out' EXIT
+"
 
-for file in $type/*.cbc; do
+for file in *.cbc; do
     prefix=${file%.*}
 
     test_expect_success "($file) extract cheats" "
-        cb2util -t $type $file >$out &&
+        cb2util -t cbc $file >$out &&
         test_cmp $out $prefix.extract
     "
 
     test_expect_success "($file) extract and decrypt cheats" "
-        cb2util -t $type -d $file >$out &&
+        cb2util -t cbc -d $file >$out &&
         test_cmp $out $prefix.decrypt
     "
 
     test_expect_success "($file) verify signature" "
-        cb2util -t $type -c $file >$out &&
+        cb2util -t cbc -c $file >$out &&
         test_cmp $out $prefix.verify
     "
 done
-
-rm $out
 
 test_done
