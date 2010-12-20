@@ -80,7 +80,7 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 		while (numdesc--) {
 			p = (char*)&buf[off];
 			off += strlen(p) + 1;
-			/* Skip desc type, we won't use it */
+			/* Skip description tag, we won't use it */
 			off++;
 
 			numlines = *(uint16_t*)&buf[off];
@@ -124,6 +124,7 @@ int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
 	uint8_t *p;
 	uint16_t *numdesc;
 	uint16_t *numlines;
+	uint8_t *tag;
 	size_t used;
 
 	*dstlen = 1024 * 1024;
@@ -140,7 +141,7 @@ int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
 
 		CHEATS_FOREACH(cheat, &game->cheats) {
 			p += sprintf((char*)p, "%s%c", cheat->desc, '\0');
-			p++; /* skip desc type */
+			tag = p++;
 			numlines = (uint16_t*)p;
 			*numlines = 0;
 			p += sizeof(uint16_t);
@@ -153,6 +154,9 @@ int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
 
 				(*numlines)++;
 			}
+
+			/* descriptions w/o codes get a special tag */
+			*tag = *numlines ? 0 : 4;
 
 			(*numdesc)++;
 		}
