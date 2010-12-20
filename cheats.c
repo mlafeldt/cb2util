@@ -62,6 +62,9 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 		/* Reset code encryption */
 		CBReset();
 
+		if (totcodes)
+			fprintf(fp, "\n");
+
 		/*
 		 * Process game title
 		 * Example: "007 Agent Under Fire\0"
@@ -86,11 +89,9 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 			numlines = *(uint16_t*)&buf[off];
 			off += sizeof(uint16_t);
 
-			/* If there is no code line, it's just a heading */
-			if (!numlines) {
-				fprintf(fp, "*%s\n", p);
-			} else {
-				fprintf(fp, "%s\n", p);
+			fprintf(fp, "%s\n", p);
+
+			if (numlines) {
 				totcodes++;
 
 				/*

@@ -67,7 +67,7 @@ D064F89C 0000FBBF
 P1 Press L1+L2+R1+R2 To Complete Mission Successfully
 D064F89C 0000F0FF
 00887F7C 00000001
-*Start On Mission Modifier Codes
+Start On Mission Modifier Codes
 North Africa-Deep Strike
 D0688B80 00200001
 20688B80 00000001
@@ -110,8 +110,8 @@ D0688B80 0020000D
 Poland-Brewed Chaos
 D0688B80 0020000E
 20688B80 0000000E
-*Extras Codes
-*Career Stats Codes
+Extras Codes
+Career Stats Codes
 Always Low Player Hit Percentage
 20688FB0 00000000
 Max Average Accuracy Rating
@@ -158,7 +158,7 @@ Max Head Shots
 20688FDC 000F423F
 No Head Shots
 20688FDC 00000000
-*Unlock Movies Codes
+Unlock Movies Codes
 SOCOM 3 Credits
 00688A7D 000000FF
 Making The Music
@@ -174,7 +174,7 @@ All Movies
 00688A95 000000FF
 10688A96 0000FFFF
 00688A98 000000FF
-*Unlock Weapons Codes
+Unlock Weapons Codes
 Seal Weapons
 00688A7E 000000FF
 Terrorist Weapons
@@ -198,13 +198,13 @@ All Weapons
 20688A80 FFFFFFFF
 10688A84 0000FFFF
 00688A86 000000FF
-*Unlock Unjukebox Codes
+Unlock Unjukebox Codes
 Lieutenant Rank Required Songs
 00688A99 000000FF
 Captain Rank Required Songs
 00688A9A 000000FF
-*Unlock Character Codes
-*North Africa Character Codes
+Unlock Character Codes
+North Africa Character Codes
 Seal-Killjoy
 00688A89 000000FF
 Seal-Desert Ghille Suit
@@ -213,7 +213,7 @@ Terrorist-Al-Kamil Sarwat
 00688A8B 000000FF
 Terrorist-Desert Ghillie Suit
 00688A8C 000000FF
-*South Asia Character Codes
+South Asia Character Codes
 Seal-Chopper
 00688A8D 000000FF
 Seal-Jungle Ghillie Suit
@@ -222,7 +222,7 @@ Terrorist-Hari Raman
 00688A8F 000000FF
 Terrorist-Jungle Ghillie Suit
 00688A90 000000FF
-*Poland Character Codes
+Poland Character Codes
 Seal-Coldkill
 00688A91 000000FF
 Seal-Winter Ghillie Suit
@@ -237,7 +237,7 @@ All Characters
 20688A8C FFFFFFFF
 20688A90 FFFFFFFF
 00688A94 000000FF
-*Unlock Crosstalk Codes
+Unlock Crosstalk Codes
 Deep Strike-Destroy Transmitter
 00688A9C 000000FF
 Escalation-Obtain Manifest

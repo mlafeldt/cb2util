@@ -37,7 +37,7 @@ C01D30A8 064E03E8
 Infinite Stamina
 C01D30A8 0A127530
 C01D30A8 0A147530
-*Ending Rank Codes
+Ending Rank Codes
 No Times Continued
 C01D30A8 00340000
 No Times Saved
@@ -53,7 +53,7 @@ C01D30A8 00460000
 Always Low Play Time
 C01D30A8 004C0000
 C01D30A8 004E0000
-*Infinite Ammo Codes
+Infinite Ammo Codes
 Cigar Gas-Spray
 C00C0000 00C003E7
 Handkerchief
@@ -102,7 +102,7 @@ Book
 C00C0000 063803E7
 Mousetrap
 C00C0000 067003E7
-*Max Ammo Codes
+Max Ammo Codes
 Cigar Gas-Spray
 C00C0000 00C203E7
 Handkerchief
@@ -151,7 +151,7 @@ Book
 C00C0000 063A03E7
 Mousetrap
 C00C0000 067203E7
-*Never Reload Codes
+Never Reload Codes
 Cigar Gas-Spray
 C00C0000 00C20005
 Handkerchief
@@ -180,7 +180,7 @@ RPG-7
 C00C0000 03D40001
 Grenade
 C00C0000 04440005
-*Have Backpack Item Codes
+Have Backpack Item Codes
 Survival Knife
 C00C0000 00500001
 Fork
@@ -241,7 +241,7 @@ Bug Juice
 C00C0000 22000019
 Monkey Mask
 C00C0000 22380001
-*Have Camouflage Uniform Codes
+Have Camouflage Uniform Codes
 Olive Drab
 C00C0000 25B80001
 Tiger Stripe
@@ -306,7 +306,7 @@ Fly
 C00C0000 2C480001
 Banana
 C00C0000 2C800001
-*Have Camouflage Face Codes
+Have Camouflage Face Codes
 No Paint
 C00C0000 2CF00001
 Woodland
@@ -335,7 +335,7 @@ Brown
 C00C0000 2F900001
 Infinity
 C00C0000 2FC80001
-*Snake Vs. Monkey Codes
+Snake Vs. Monkey Codes
 Press L1+Up For All Monkeys-Stage 1
 D0210E5C 0000FBEF
 214F3CB0 00090009

@@ -54,7 +54,7 @@ Unlock Ada's Reports (Extras)
 70430F66 00000001
 Have All Ada's Reports
 00430F6D 00000004
-*Unlock Character Codes
+Unlock Character Codes
 Albert Wesker
 70430F67 00000001
 Jack Krauser
@@ -65,7 +65,7 @@ Ada Wong
 70430F67 00000008
 All Characters
 70430F67 0000000F
-*Character 1 Codes
+Character 1 Codes
 Infinite Health
 1042DA76 00000960
 Max Health
@@ -74,7 +74,7 @@ Super Infinite Health
 10246F36 00001000
 Infinite Health (Alternate)
 201C27FC 00000000
-*Character Modifier Codes
+Character Modifier Codes
 Leon
 0042DA8A 00000000
 Ashley
@@ -87,7 +87,7 @@ Krauser
 0042DA8A 00000004
 Wesker
 0042DA8A 00000005
-*Costume Modifier Codes
+Costume Modifier Codes
 Always Costume 1
 0042DA8B 00000000
 Always Costume 2
@@ -96,7 +96,7 @@ Always Costume 3
 0042DA8B 00000002
 Always Costume 4 (Leon Only)
 0042DA8B 00000003
-*Character 2 Codes
+Character 2 Codes
 Infinite Health
 1042DA7A 000004B0
 Max Health
@@ -109,7 +109,7 @@ Always Present
 0042DAFF 00000004
 Never Present
 0042DAFF 00000000
-*Costume Modifier Codes
+Costume Modifier Codes
 Always Costume 1
 0042DA8D 00000000
 Always Costume 2
@@ -118,7 +118,7 @@ Always Costume 3
 0042DA8D 00000002
 Always Costume 4 (Leon Only)
 0042DA8D 00000003
-*The Mercenaries Codes
+The Mercenaries Codes
 Quick Score Gain
 103CFA6C 0000FFFF
 Max Score

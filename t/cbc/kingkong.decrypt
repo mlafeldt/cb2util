@@ -46,14 +46,14 @@ Have Game Progress 100%
 206AFA74 00000007
 Unlock All Levels
 20DA4654 00000029
-*Unlock Online Extra Codes
+Unlock Online Extra Codes
 Online 3
 20DA54EC 00000001
 Online 2
 20DA54F0 00000001
 Online 1
 20DA551C 00000001
-*Activate Cheat Codes
+Activate Cheat Codes
 1-Hit Kills
 70DA0250 00000002
 Enable Cheats Menu Option
@@ -78,7 +78,7 @@ Have Sniper Weapon
 20DA29A8 00000004
 Max Ammo
 20DA2BB0 000003E7
-*Game Speed Modifier Codes
+Game Speed Modifier Codes
 P1 Press L1+Up For Quick Game Speed
 E002FBEF 00671802
 103BA404 00004000
@@ -95,7 +95,7 @@ P1 Press L1+Left For Normal Game Speed
 E002FB7F 00671802
 103BA404 00003F80
 20613000 3F800000
-*Max Score Codes
+Max Score Codes
 Scene 1
 206AFA84 000061A8
 Scene 2
