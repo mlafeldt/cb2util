@@ -30,37 +30,64 @@
 extern int cmd_cbc(int argc, char **argv);
 extern int cmd_pcb(int argc, char **argv);
 extern int cmd_cheats(int argc, char **argv);
-
-int cmd_help(int argc, char **argv)
-{
-	printf("not implemented yet\n");
-	return 0;
-}
+static int cmd_help(int argc, char **argv);
 
 struct cmd_struct {
 	const char *cmd;
 	int (*fn)(int argc, char **argv);
-	int option;
 };
+
+static const struct cmd_struct _commands[] = {
+	{ "help", cmd_help },
+	{ "cbc", cmd_cbc },
+	{ "pcb", cmd_pcb },
+	{ "cheats", cmd_cheats },
+	{ NULL, NULL }
+};
+
+static const char *cb2util_usage =
+	"usage: cb2util [--version] [--help] <command> [<args>]\n\n"
+	"The available commands are:\n";
+
+static void show_usage(void)
+{
+	const struct cmd_struct *p = _commands;
+
+	printf("%s", cb2util_usage);
+
+	p++; /* skip help */
+	while (p->cmd) {
+		printf("    %s\n", p->cmd);
+		p++;
+	}
+
+	printf("\nTry 'cb2util help <command>' for more information.\n");
+}
+
+static void show_version(void)
+{
+	/* TODO use git describe */
+	printf("cb2util v1.1\n");
+}
+
+static int cmd_help(int argc, char **argv)
+{
+	show_usage();
+
+	return 0;
+}
 
 static void handle_command(int argc, char **argv)
 {
 	char *cmd = argv[0];
-	static struct cmd_struct commands[] = {
-		{ "help", cmd_help, 0 },
-		{ "cbc", cmd_cbc, 0 },
-		{ "pcb", cmd_pcb, 0 },
-		{ "cheats", cmd_cheats, 0 },
-		{ NULL, NULL, 0 }
-	};
-	struct cmd_struct *p = commands;
-#if 0
-	/* turn "cmd --help" into "help cmd" */
-	if (argc > 1 && !strcmp(argv[1], "--help")) {
-		argv[1] = argv[0];
-		argv[0] = cmd = "help";
+	const struct cmd_struct *p = _commands;
+
+	/* turn "help cmd" into "cmd --help" */
+	if (argc > 1 && !strcmp(argv[0], "help")) {
+		argv[0] = cmd = argv[1];
+		argv[1] = "--help";
 	}
-#endif
+
 	while (p->cmd) {
 		if (!strcmp(p->cmd, cmd))
 			exit(p->fn(argc, argv));
@@ -75,11 +102,18 @@ int main(int argc, char **argv)
 	argc--;
 	argv++;
 	if (!argc) {
-		printf("args missing\n");
+		show_usage();
 		exit(1);
 	}
-	cmd = argv[0];
 
+	if (!strcmp(argv[0], "--help")) {
+		argv[0] = "help";
+	} else if (!strcmp(argv[0], "--version")) {
+		show_version();
+		return 0;
+	}
+
+	cmd = argv[0];
 	handle_command(argc, argv);
 	fprintf(stderr, "Failed to run command %s\n", cmd);
 	return 1;
