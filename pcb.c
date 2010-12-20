@@ -84,7 +84,7 @@ static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 	phdr->p_filesz = datalen;
 	phdr->p_memsz = datalen;
 	phdr->p_flags = PF_X | PF_W | PF_R;
-	phdr->p_align = sizeof(hdr);
+	phdr->p_align = 0; /* XXX set correct alignment */
 
 	/* append note */
 	strcpy((char*)&hdr[sizeof(Elf32_Ehdr) + sizeof(Elf32_Phdr)], note);
