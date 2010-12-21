@@ -2,3 +2,4 @@
 *.o
 build/
 cb2util
+release/

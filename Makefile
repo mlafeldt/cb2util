@@ -1,3 +1,5 @@
+CB2UTIL_VERSION = 1.1
+
 BIGINT = libbig_int
 LIBCHEATS = libcheats
 
@@ -60,7 +62,23 @@ $(PROG): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	$(RM) $(PROG) $(OBJS)
+	rm -f $(PROG) $(OBJS)
+	rm -rf release/
 
 test: all
 	$(MAKE) -C t/ all
+
+PACKAGE = cb2util-$(CB2UTIL_VERSION)
+release: all
+	echo "* Building $(PACKAGE) release packages ..."
+	rm -rf release
+	mkdir -p release/$(PACKAGE)
+	cp $(PROG) release/$(PACKAGE)/
+ifeq ($(BUILD_MINGW),1)
+	cp $(ZLIB_PATH)/zlib1.dll release/$(PACKAGE)/
+endif
+	cp CHANGES COPYING README release/$(PACKAGE)/
+	cd release && \
+		tar -cjf $(PACKAGE).tar.bz2 $(PACKAGE)/; \
+		zip -qr $(PACKAGE).zip $(PACKAGE)/; \
+		sha1sum $(PACKAGE).* > $(PACKAGE).sha1
