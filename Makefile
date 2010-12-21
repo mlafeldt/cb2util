@@ -1,12 +1,23 @@
 BIGINT = libbig_int
+LIBCHEATS = libcheats
 
 CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
-CFLAGS += -I$(BIGINT)/include
-LIBS = -lz -lcheats
+CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include
+CFLAGS += -DHAVE_STDINT_H
+LIBS =
 prefix = $(HOME)
 
-PROG = cb2util
+ifeq ($(BUILD_MINGW),1)
+  CC = i586-mingw32msvc-gcc
+  CFLAGS += -I$(ZLIB_PATH)/include -L$(ZLIB_PATH)/lib
+  LIBS += -lzdll
+  PROG = cb2util.exe
+else
+  LIBS += -lz
+  PROG = cb2util
+endif
+
 OBJS += $(BIGINT)/src/basic_funcs.o
 OBJS += $(BIGINT)/src/bitset_funcs.o
 OBJS += $(BIGINT)/src/low_level_funcs/add.o
@@ -24,6 +35,12 @@ OBJS += $(BIGINT)/src/modular_arithmetic.o
 OBJS += $(BIGINT)/src/number_theory.o
 OBJS += $(BIGINT)/src/service_funcs.o
 OBJS += $(BIGINT)/src/str_funcs.o
+
+OBJS += $(LIBCHEATS)/src/cheatlist.o
+OBJS += $(LIBCHEATS)/src/libcheats.o
+OBJS += $(LIBCHEATS)/src/mystring.o
+OBJS += $(LIBCHEATS)/src/parser.o
+
 OBJS += arcfour.o
 OBJS += cb2_crypto.o
 OBJS += cb2util.o
