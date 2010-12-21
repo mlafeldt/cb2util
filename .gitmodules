@@ -1,0 +1,3 @@
+[submodule "libcheats"]
+	path = libcheats
+	url = git://github.com/misfire/libcheats.git
