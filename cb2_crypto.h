@@ -27,23 +27,23 @@
 #include <stdint.h>
 
 /* CB V1 code encryption */
-void CB1EncryptCode(uint32_t *addr, uint32_t *val);
-void CB1DecryptCode(uint32_t *addr, uint32_t *val);
+void cb1_encrypt_code(uint32_t *addr, uint32_t *val);
+void cb1_decrypt_code(uint32_t *addr, uint32_t *val);
 
 /* CB V7 code encryption */
-void CB7Beefcode(int init, uint32_t val);
-void CB7EncryptCode(uint32_t *addr, uint32_t *val);
-void CB7DecryptCode(uint32_t *addr, uint32_t *val);
-int CB7SelfTest(void);
+void cb7_beefcode(int init, uint32_t val);
+void cb7_encrypt_code(uint32_t *addr, uint32_t *val);
+void cb7_decrypt_code(uint32_t *addr, uint32_t *val);
+int cb7_self_test(void);
 
 /* All versions */
-void CBReset(void);
-void CBSetCommonV7(void);
-void CBEncryptCode(uint32_t *addr, uint32_t *val);
-void CBDecryptCode(uint32_t *addr, uint32_t *val);
+void cb_reset(void);
+void cb_set_common_v7(void);
+void cb_encrypt_code(uint32_t *addr, uint32_t *val);
+void cb_decrypt_code(uint32_t *addr, uint32_t *val);
 
 /* CBC/PCB file functions */
-int CBVerifyFileSig(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash);
-void CBCryptFileData(uint8_t *data, int datasize);
+int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash);
+void cb_crypt_data(uint8_t *data, int datasize);
 
 #endif /*_CB2_CRYPTO_H_*/

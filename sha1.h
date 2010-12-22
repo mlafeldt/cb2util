@@ -27,13 +27,13 @@
 #include "shs.h"
 
 /* Some aliases */
-#define SHA_CTX		SHS_INFO
-#define sha_init 	shsInit
-#define sha_update 	shsUpdate
-#define sha_final 	shsFinal
-#define sha_file	shsFile
+#define sha1_ctx_t	SHS_INFO
+#define sha1_init 	shsInit
+#define sha1_update 	shsUpdate
+#define sha1_final 	shsFinal
+#define sha1_file	shsFile
 
-#define SHA_DATASIZE	SHS_DATASIZE
-#define SHA_DIGESTSIZE	SHS_DIGESTSIZE
+#define SHA1_DATASIZE	SHS_DATASIZE
+#define SHA1_DIGESTSIZE	SHS_DIGESTSIZE
 
 #endif /* _SHA1_H_ */

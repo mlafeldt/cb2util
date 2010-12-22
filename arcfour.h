@@ -39,9 +39,4 @@ typedef struct {
 void arc4_init(arc4_ctx_t *ctx, const unsigned char *key, int keylen);
 void arc4_crypt(arc4_ctx_t *ctx, unsigned char *buf, int bufsize);
 
-/* Some aliases */
-#define ARC4_CTX	arc4_ctx_t
-#define ARC4Init	arc4_init
-#define ARC4Crypt	arc4_crypt
-
 #endif /*_ARCFOUR_H_*/

@@ -167,11 +167,11 @@ int cmd_pcb(int argc, char **argv)
 		}
 
 		if (mode == MODE_CHECK) {
-			ret = CBVerifyFileSig(hdr->rsasig, hdr->data, datalen, NULL, NULL);
+			ret = cb_verify_signature(hdr->rsasig, hdr->data, datalen, NULL, NULL);
 			printf("%s: %s\n", infile, ret ? "FAILED" : "OK");
 			errors += ret;
 		} else {
-			CBCryptFileData(hdr->data, datalen);
+			cb_crypt_data(hdr->data, datalen);
 
 			if (mode == MODE_ELF) {
 				/* replace signature with ELF header */

@@ -132,7 +132,7 @@ int cmd_cbc(int argc, char **argv)
 				goto next_file;
 			}
 
-			CBCryptFileData(hdr->data, datalen);
+			cb_crypt_data(hdr->data, datalen);
 
 			if (strcmp(hdr->gametitle, (char*)hdr->data)) {
 				fprintf(stderr, "%s: invalid CBC v7 header\n", filename);
@@ -160,12 +160,12 @@ int cmd_cbc(int argc, char **argv)
 			}
 
 			if (mode == MODE_CHECK) {
-				ret = CBVerifyFileSig(hdr->rsasig, buf + CBC_HASH_OFFSET,
+				ret = cb_verify_signature(hdr->rsasig, buf + CBC_HASH_OFFSET,
 						buflen - CBC_HASH_OFFSET, NULL, NULL);
 				printf("%s: %s\n", filename, ret ? "FAILED" : "OK");
 				errors += ret;
 			} else {
-				CBCryptFileData(buf + hdr->dataoff, datalen);
+				cb_crypt_data(buf + hdr->dataoff, datalen);
 				if (numcodes)
 					printf("\n");
 				numcodes += extract_cheats(stdout, buf + hdr->dataoff,

@@ -58,7 +58,7 @@ static const uint32_t seedtable[3][16] = {
 /*
  * Encrypts a V1 code.
  */
-void CB1EncryptCode(uint32_t *addr, uint32_t *val)
+void cb1_encrypt_code(uint32_t *addr, uint32_t *val)
 {
 	uint32_t tmp;
 	uint8_t cmd = *addr >> 28;
@@ -73,7 +73,7 @@ void CB1EncryptCode(uint32_t *addr, uint32_t *val)
 /*
  * Decrypts a V1 code.
  */
-void CB1DecryptCode(uint32_t *addr, uint32_t *val)
+void cb1_decrypt_code(uint32_t *addr, uint32_t *val)
 {
 	uint32_t tmp;
 	uint8_t cmd = *addr >> 28;
@@ -219,7 +219,7 @@ static const uint64_t rsa_enc_key = 2682110966135737091ULL;
 static uint8_t seeds[5][256];	// Current set of seeds
 static uint32_t key[5];		// Current ARCFOUR key
 static uint32_t oldkey[5];	// Backup of ARCFOUR key
-static ARC4_CTX ctx;		// ARCFOUR context
+static arc4_ctx_t ctx;		// ARCFOUR context
 static int v7enc;		// Flag: Use V7 encryption?
 static int v7init;		// Flag: V7 encryption already initialized?
 static int beefcodf;		// Flag: Is it BEEFC0DF?
@@ -229,7 +229,7 @@ static int beefcodf;		// Flag: Is it BEEFC0DF?
  * Computes the multiplicative inverse of @word, modulo (2^32).
  * I think this is borrowed from IDEA. ;)
  */
-static uint32_t MulInverse(uint32_t word)
+static uint32_t mul_inverse(uint32_t word)
 {
 	// Original MIPS R5900 coding converted to C
 	uint32_t a0, a1, a2, a3;
@@ -263,7 +263,7 @@ static uint32_t MulInverse(uint32_t word)
 /*
  * Multiplication, modulo (2^32)
  */
-static uint32_t MulEncrypt(uint32_t a, uint32_t b)
+static uint32_t mul_encrypt(uint32_t a, uint32_t b)
 {
 	return (a * (b | 1));
 }
@@ -271,9 +271,9 @@ static uint32_t MulEncrypt(uint32_t a, uint32_t b)
 /*
  * Multiplication with multiplicative inverse, modulo (2^32)
  */
-static uint32_t MulDecrypt(uint32_t a, uint32_t b)
+static uint32_t mul_decrypt(uint32_t a, uint32_t b)
 {
-	return (a * MulInverse(b | 1));
+	return (a * mul_inverse(b | 1));
 }
 
 /*
@@ -282,7 +282,7 @@ static uint32_t MulDecrypt(uint32_t a, uint32_t b)
  * NOTE: Uses the excellent BIG_INT library by
  * Alexander Valyalkin (valyala@gmail.com)
  */
-static void RSACrypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
+static void rsa_crypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
 {
 	big_int *code, *exp, *mod;
 	int cmp_flag;
@@ -327,7 +327,7 @@ static void RSACrypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
  * "Beefcode" is the new V7+ seed code:
  * BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
  */
-void CB7Beefcode(int init, uint32_t val)
+void cb7_beefcode(int init, uint32_t val)
 {
 	int i;
 	uint8_t *p = (uint8_t*)&val; // Easy access to all bytes of val
@@ -365,11 +365,11 @@ void CB7Beefcode(int init, uint32_t val)
 	// Use key to encrypt seeds with ARCFOUR algorithm
 	for (i = 0; i < 5; i++) {
 		// Setup ARCFOUR context with key
-		ARC4Init(&ctx, (uint8_t*)key, 20);
+		arc4_init(&ctx, (uint8_t*)key, 20);
 		// Encrypt seeds
-		ARC4Crypt(&ctx, &seeds[i][0], 256);
+		arc4_crypt(&ctx, &seeds[i][0], 256);
 		// Encrypt original key for next round
-		ARC4Crypt(&ctx, (uint8_t*)key, 20);
+		arc4_crypt(&ctx, (uint8_t*)key, 20);
 	}
 
 	// Backup key
@@ -379,7 +379,7 @@ void CB7Beefcode(int init, uint32_t val)
 /*
  * Encrypts a V7+ code.
  */
-void CB7EncryptCode(uint32_t *addr, uint32_t *val)
+void cb7_encrypt_code(uint32_t *addr, uint32_t *val)
 {
 	int i;
 	uint32_t code[2];
@@ -389,19 +389,19 @@ void CB7EncryptCode(uint32_t *addr, uint32_t *val)
 	oldval  = *val;
 
 	// Step 1: Multiplication, modulo (2^32)
-	*addr = MulEncrypt(*addr, oldkey[0] - oldkey[1]);
-	*val  = MulEncrypt(*val,  oldkey[2] + oldkey[3]);
+	*addr = mul_encrypt(*addr, oldkey[0] - oldkey[1]);
+	*val  = mul_encrypt(*val,  oldkey[2] + oldkey[3]);
 
 	// Step 2: ARCFOUR
 	code[0] = *addr;
 	code[1] = *val;
-	ARC4Init(&ctx, (uint8_t*)key, 20);
-	ARC4Crypt(&ctx, (uint8_t*)code, 8);
+	arc4_init(&ctx, (uint8_t*)key, 20);
+	arc4_crypt(&ctx, (uint8_t*)code, 8);
 	*addr = code[0];
 	*val  = code[1];
 
 	// Step 3: RSA
-	RSACrypt(addr, val, rsa_enc_key);
+	rsa_crypt(addr, val, rsa_enc_key);
 
 	// Step 4: Encryption loop of 64 cycles, using the generated seeds
 	for (i = 0; i <= 63; i++) {
@@ -411,7 +411,7 @@ void CB7EncryptCode(uint32_t *addr, uint32_t *val)
 
 	// BEEFC0DE
 	if ((oldaddr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		CB7Beefcode(0, oldval);
+		cb7_beefcode(0, oldval);
 		//beefcodf = 1;
 		return;
 	}
@@ -420,8 +420,8 @@ void CB7EncryptCode(uint32_t *addr, uint32_t *val)
 	if (beefcodf) {
 		code[0] = oldaddr;
 		code[1] = oldval;
-		ARC4Init(&ctx, (uint8_t*)code, 8);
-		ARC4Crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
+		arc4_init(&ctx, (uint8_t*)code, 8);
+		arc4_crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
 		//unkwn = 0;
 		return;
@@ -431,7 +431,7 @@ void CB7EncryptCode(uint32_t *addr, uint32_t *val)
 /*
  * Decrypts a V7+ code.
  */
-void CB7DecryptCode(uint32_t *addr, uint32_t *val)
+void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 {
 	int i;
 	uint32_t code[2];
@@ -443,26 +443,26 @@ void CB7DecryptCode(uint32_t *addr, uint32_t *val)
 	}
 
 	// Step 2: RSA
-	RSACrypt(addr, val, rsa_dec_key);
+	rsa_crypt(addr, val, rsa_dec_key);
 
 	// Step 3: ARCFOUR
 	code[0] = *addr;
 	code[1] = *val;
-	ARC4Init(&ctx, (uint8_t*)key, 20);
-	ARC4Crypt(&ctx, (uint8_t*)code, 8);
+	arc4_init(&ctx, (uint8_t*)key, 20);
+	arc4_crypt(&ctx, (uint8_t*)code, 8);
 	*addr = code[0];
 	*val  = code[1];
 
 	// Step 4: Multiplication with multiplicative inverse, modulo (2^32)
-	*addr = MulDecrypt(*addr, oldkey[0] - oldkey[1]);
-	*val  = MulDecrypt(*val,  oldkey[2] + oldkey[3]);
+	*addr = mul_decrypt(*addr, oldkey[0] - oldkey[1]);
+	*val  = mul_decrypt(*val,  oldkey[2] + oldkey[3]);
 
 	// BEEFC0DF
 	if (beefcodf) {
 		code[0] = *addr;
 		code[1] = *val;
-		ARC4Init(&ctx, (uint8_t*)code, 8);
-		ARC4Crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
+		arc4_init(&ctx, (uint8_t*)code, 8);
+		arc4_crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
 		//unkwn = 0;
 		return;
@@ -470,7 +470,7 @@ void CB7DecryptCode(uint32_t *addr, uint32_t *val)
 
 	// BEEFC0DE
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		CB7Beefcode(0, *val);
+		cb7_beefcode(0, *val);
 		//beefcodf = 1;
 		return;
 	}
@@ -490,7 +490,7 @@ void CB7DecryptCode(uint32_t *addr, uint32_t *val)
  */
 #define NUM_TESTCODES	3
 
-int CB7SelfTest(void)
+int cb7_self_test(void)
 {
 	static const uint32_t testcodes[NUM_TESTCODES*2] = {
 		0x000FFFFE, 0x0000007D,
@@ -501,16 +501,16 @@ int CB7SelfTest(void)
 	int i;
 
 	// Generate some random seeds
-	CB7Beefcode(1, (uint32_t)rand());
-	CB7Beefcode(0, (uint32_t)rand());
+	cb7_beefcode(1, (uint32_t)rand());
+	cb7_beefcode(0, (uint32_t)rand());
 
 	// Check if D(E(M)) = M
 	for (i = 0; i < NUM_TESTCODES; i++) {
 		addr = testcodes[i*2];
 		val  = testcodes[i*2+1];
 
-		CB7EncryptCode(&addr, &val);
-		CB7DecryptCode(&addr, &val);
+		cb7_encrypt_code(&addr, &val);
+		cb7_decrypt_code(&addr, &val);
 
 		if ((addr != testcodes[i*2]) || (val != testcodes[i*2+1]))
 			return -1;
@@ -526,9 +526,9 @@ int CB7SelfTest(void)
 
 /*
  * Resets the CB encryption.  Must be called before processing
- * a code list using CBEncryptCode() or CBDecryptCode()!
+ * a code list using cb_encrypt_code() or cb_decrypt_code()!
  */
-void CBReset(void)
+void cb_reset(void)
 {
 	// Clear flags
 	v7enc = 0;
@@ -539,10 +539,10 @@ void CBReset(void)
 /*
  * Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
  */
-void CBSetCommonV7(void)
+void cb_set_common_v7(void)
 {
 	v7enc = 1;
-	CB7Beefcode(1, 0);
+	cb7_beefcode(1, 0);
 	v7init = 1;
 	beefcodf = 0;
 }
@@ -550,7 +550,7 @@ void CBSetCommonV7(void)
 /*
  * Used to encrypt a list of CB codes (V1 + V7).
  */
-void CBEncryptCode(uint32_t *addr, uint32_t *val)
+void cb_encrypt_code(uint32_t *addr, uint32_t *val)
 {
 	uint32_t oldaddr, oldval;
 
@@ -558,18 +558,18 @@ void CBEncryptCode(uint32_t *addr, uint32_t *val)
 	oldval  = *val;
 
 	if (v7enc)
-		CB7EncryptCode(addr, val);
+		cb7_encrypt_code(addr, val);
 	else
-		CB1EncryptCode(addr, val);
+		cb1_encrypt_code(addr, val);
 
 	if ((oldaddr & 0xFFFFFFFE) == 0xBEEFC0DE) {
 		if (!v7init) {
 			// Init seeds
-			CB7Beefcode(1, oldval);
+			cb7_beefcode(1, oldval);
 			v7init = 1;
 		} else {
 			// Change original seeds
-			CB7Beefcode(0, oldval);
+			cb7_beefcode(0, oldval);
 		}
 		v7enc = 1;
 		beefcodf = oldaddr & 1;
@@ -579,21 +579,21 @@ void CBEncryptCode(uint32_t *addr, uint32_t *val)
 /*
  * Used to decrypt a list of CB codes (V1 + V7).
  */
-void CBDecryptCode(uint32_t *addr, uint32_t *val)
+void cb_decrypt_code(uint32_t *addr, uint32_t *val)
 {
 	if (v7enc)
-		CB7DecryptCode(addr, val);
+		cb7_decrypt_code(addr, val);
 	else
-		CB1DecryptCode(addr, val);
+		cb1_decrypt_code(addr, val);
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
 		if (!v7init) {
 			// Init seeds
-			CB7Beefcode(1, *val);
+			cb7_beefcode(1, *val);
 			v7init = 1;
 		} else {
 			// Change original seeds
-			CB7Beefcode(0, *val);
+			cb7_beefcode(0, *val);
 		}
 		v7enc = 1;
 		beefcodf = *addr & 1;
@@ -737,10 +737,10 @@ static const uint8_t rsa_file_mod[256] = {
 #define RSA_SIG_SIZE		256
 
 /* Verify the digital signature on CBC and PCB files */
-int CBVerifyFileSig(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash)
+int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash)
 {
 	big_int *bsig, *exp, *mod;
-	SHA_CTX ctx;
+	sha1_ctx_t ctx;
 	int ret;
 
 	/* Setup big_int number for signature */
@@ -762,18 +762,18 @@ int CBVerifyFileSig(const uint8_t *sig, const uint8_t *data, int datasize, uint3
 	big_int_powmod(bsig, exp, mod, bsig);
 
 	/* Calculate actual hash of data */
-	sha_init(&ctx);
-	sha_update(&ctx, (uint8_t*)data, datasize);
-	sha_final(&ctx);
+	sha1_init(&ctx);
+	sha1_update(&ctx, (uint8_t*)data, datasize);
+	sha1_final(&ctx);
 
 	/* Signature is valid if both hashes are equal */
-	ret = !memcmp(bsig->num, &ctx.digest, SHA_DIGESTSIZE) ? 0 : -1;
+	ret = !memcmp(bsig->num, &ctx.digest, SHA1_DIGESTSIZE) ? 0 : -1;
 
 	/* Return hashes for later use */
 	if (sighash != NULL)
-		memcpy(sighash, bsig->num, SHA_DIGESTSIZE);
+		memcpy(sighash, bsig->num, SHA1_DIGESTSIZE);
 	if (calchash != NULL)
-		memcpy(calchash, &ctx.digest, SHA_DIGESTSIZE);
+		memcpy(calchash, &ctx.digest, SHA1_DIGESTSIZE);
 
 	/* Deallocate big_int numbers */
 	big_int_destroy(bsig);
@@ -784,10 +784,10 @@ int CBVerifyFileSig(const uint8_t *sig, const uint8_t *data, int datasize, uint3
 }
 
 /* Encrypt/decrypt CBC/PCB file data */
-void CBCryptFileData(uint8_t *data, int datasize)
+void cb_crypt_data(uint8_t *data, int datasize)
 {
-	ARC4_CTX ctx;
+	arc4_ctx_t ctx;
 
-	ARC4Init(&ctx, filekey, sizeof(filekey));
-	ARC4Crypt(&ctx, data, datasize);
+	arc4_init(&ctx, filekey, sizeof(filekey));
+	arc4_crypt(&ctx, data, datasize);
 }

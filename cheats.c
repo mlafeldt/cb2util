@@ -60,7 +60,7 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 			break;
 
 		/* Reset code encryption */
-		CBReset();
+		cb_reset();
 
 		if (totcodes)
 			fprintf(fp, "\n");
@@ -105,7 +105,7 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 					off += sizeof(uint32_t);
 
 					if (decrypt)
-						CBDecryptCode(&code[0], &code[1]);
+						cb_decrypt_code(&code[0], &code[1]);
 
 					fprintf(fp, "%08X %08X\n", code[0], code[1]);
 				}
