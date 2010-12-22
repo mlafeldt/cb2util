@@ -14,16 +14,16 @@ for file in *.cheats; do
 
     test_expect_success "($file) extract cheats" "
         cb2util cheats $file >out &&
-        test_cmp $prefix.extract out
+        test_cmp $prefix.enc out
     "
 
     test_expect_success "($file) extract and decrypt cheats" "
         cb2util cheats -d $file >out &&
-        test_cmp $prefix.decrypt out
+        test_cmp $prefix.raw out
     "
 done
 
-for file in *.decrypt; do
+for file in *.raw; do
     test_expect_success "($file) compile cheats" "
         cb2util cheats -c $file out &&
         cb2util cheats out >out2 &&

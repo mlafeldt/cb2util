@@ -16,12 +16,12 @@ for file in *.cbc; do
 
     test_expect_success "($file) extract cheats" "
         cb2util cbc -7 $file >$out &&
-        test_cmp $prefix.extract $out
+        test_cmp $prefix.enc $out
     "
 
     test_expect_success "($file) extract and decrypt cheats" "
         cb2util cbc -7 -d $file >$out &&
-        test_cmp $prefix.decrypt $out
+        test_cmp $prefix.raw $out
     "
 
     test_expect_success "($file) has no signature" "

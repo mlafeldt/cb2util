@@ -16,7 +16,7 @@ for file in *.bin; do
 
     test_expect_success "($file) decrypt file" "
         cb2util pcb $file $out &&
-        test_cmp $prefix.decrypt $out
+        test_cmp $prefix.raw $out
     "
 
     test_expect_success "($file) decrypt file and strip header" "
@@ -31,7 +31,7 @@ for file in *.bin; do
 
     test_expect_success "($file) verify signature" "
         cb2util pcb -c $file >$out &&
-        test_cmp $prefix.verify $out
+        test_cmp $prefix.sig $out
     "
 done
 
