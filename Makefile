@@ -1,4 +1,10 @@
-CB2UTIL_VERSION = 1.1
+all:
+
+# Generate version info
+CB2UTIL-VERSION-FILE: FORCE
+	@./CB2UTIL-VERSION-GEN
+-include CB2UTIL-VERSION-FILE
+export CB2UTIL_VERSION
 
 BIGINT = libbig_int
 LIBCHEATS = libcheats
@@ -61,16 +67,19 @@ install: all
 $(PROG): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
+cb2util.o: CB2UTIL-VERSION-FILE
+cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
+
 clean:
 	rm -f $(PROG) $(OBJS)
 	rm -rf release/
+	rm -f CB2UTIL-VERSION-FILE
 
 test: all
 	$(MAKE) -C t/ all
 
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
 release: all
-	echo "* Building $(PACKAGE) release packages ..."
 	rm -rf release
 	mkdir -p release/$(PACKAGE)
 	cp $(PROG) release/$(PACKAGE)/
@@ -82,3 +91,5 @@ endif
 		tar -cjf $(PACKAGE).tar.bz2 $(PACKAGE)/; \
 		zip -qr $(PACKAGE).zip $(PACKAGE)/; \
 		sha1sum $(PACKAGE).* > $(PACKAGE).sha1
+
+.PHONY: FORCE

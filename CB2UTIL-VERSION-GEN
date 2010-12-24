@@ -1,0 +1,28 @@
+#!/bin/sh
+
+VF=CB2UTIL-VERSION-FILE
+
+cmake=
+[ "$1" = "--cmake" ] && cmake=yes
+
+version=$(git describe --tags --match "v[0-9]*" --abbrev=4 --dirty 2>/dev/null ||
+	head -n1 CHANGES | cut -f1 -d " ")
+version=$(expr "$version" : v*'\(.*\)' | sed -e 's/-/./g')
+
+cur_ver=
+if [ -r "$VF" ]; then
+	if [ "$cmake" ]; then
+		cur_ver=$(sed -e 's/^SET(CB2UTIL_VERSION //;s/)$//' <$VF)
+	else
+		cur_ver=$(sed -e 's/^CB2UTIL_VERSION = //' <$VF)
+	fi
+fi
+
+if [ "$version" != "$cur_ver" ]; then
+	echo "CB2UTIL_VERSION = $version"
+	if [ "$cmake" ]; then
+		echo "SET(CB2UTIL_VERSION $version)" >$VF
+	else
+		echo "CB2UTIL_VERSION = $version" >$VF
+	fi
+fi

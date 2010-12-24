@@ -66,8 +66,7 @@ static void show_usage(void)
 
 static void show_version(void)
 {
-	/* TODO use git describe */
-	printf("cb2util v1.1\n");
+	printf("cb2util version %s\n", CB2UTIL_VERSION);
 }
 
 static int cmd_help(int argc, char **argv)

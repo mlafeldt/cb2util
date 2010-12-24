@@ -1,5 +1,6 @@
 *.exe
 *.o
-build/
-cb2util
-release/
+/CB2UTIL-VERSION-FILE
+/build/
+/cb2util
+/release/
