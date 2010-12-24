@@ -78,6 +78,9 @@ clean:
 test: all
 	$(MAKE) -C t/ all
 
+prove: all
+	$(MAKE) -C t/ prove
+
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
 release: all
 	rm -rf release
