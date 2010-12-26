@@ -43,7 +43,7 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val);
 void cb_decrypt_code(uint32_t *addr, uint32_t *val);
 
 /* CBC/PCB file functions */
-int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash);
+int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize);
 void cb_crypt_data(uint8_t *data, int datasize);
 
 #endif /*_CB2_CRYPTO_H_*/

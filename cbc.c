@@ -161,7 +161,7 @@ int cmd_cbc(int argc, char **argv)
 
 			if (mode == MODE_CHECK) {
 				ret = cb_verify_signature(hdr->rsasig, buf + CBC_HASH_OFFSET,
-						buflen - CBC_HASH_OFFSET, NULL, NULL);
+						buflen - CBC_HASH_OFFSET);
 				printf("%s: %s\n", filename, ret ? "FAILED" : "OK");
 				errors += ret;
 			} else {

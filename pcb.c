@@ -167,7 +167,7 @@ int cmd_pcb(int argc, char **argv)
 		}
 
 		if (mode == MODE_CHECK) {
-			ret = cb_verify_signature(hdr->rsasig, hdr->data, datalen, NULL, NULL);
+			ret = cb_verify_signature(hdr->rsasig, hdr->data, datalen);
 			printf("%s: %s\n", infile, ret ? "FAILED" : "OK");
 			errors += ret;
 		} else {

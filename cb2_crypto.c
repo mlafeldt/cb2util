@@ -737,7 +737,7 @@ static const uint8_t rsa_file_mod[256] = {
 #define RSA_SIG_SIZE		256
 
 /* Verify the digital signature on CBC and PCB files */
-int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize, uint32_t *sighash, uint32_t *calchash)
+int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize)
 {
 	big_int *bsig, *exp, *mod;
 	sha1_ctx_t ctx;
@@ -767,13 +767,7 @@ int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize, u
 	sha1_final(&ctx);
 
 	/* Signature is valid if both hashes are equal */
-	ret = !memcmp(bsig->num, &ctx.digest, SHA1_DIGESTSIZE) ? 0 : -1;
-
-	/* Return hashes for later use */
-	if (sighash != NULL)
-		memcpy(sighash, bsig->num, SHA1_DIGESTSIZE);
-	if (calchash != NULL)
-		memcpy(calchash, &ctx.digest, SHA1_DIGESTSIZE);
+	ret = memcmp(bsig->num, &ctx.digest, SHA1_DIGESTSIZE);
 
 	/* Deallocate big_int numbers */
 	big_int_destroy(bsig);
