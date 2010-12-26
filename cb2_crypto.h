@@ -24,6 +24,7 @@
 #ifndef _CB2_CRYPTO_H_
 #define _CB2_CRYPTO_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 /* CB V1 code encryption */
@@ -41,8 +42,8 @@ void cb_set_common_v7(void);
 void cb_encrypt_code(uint32_t *addr, uint32_t *val);
 void cb_decrypt_code(uint32_t *addr, uint32_t *val);
 
-/* CBC/PCB file functions */
-int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize);
-void cb_crypt_data(uint8_t *data, int datasize);
+/* CB file functions */
+int cb_verify_signature(const uint8_t *sig, const uint8_t *buf, size_t buflen);
+void cb_crypt_data(uint8_t *buf, size_t buflen);
 
-#endif /*_CB2_CRYPTO_H_*/
+#endif /* _CB2_CRYPTO_H_ */

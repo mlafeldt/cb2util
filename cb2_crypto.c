@@ -22,12 +22,10 @@
  */
 
 #include <stdint.h>
-#include <stdlib.h> /* for rand() */
 #include "arcfour.h"
-#include "sha1.h"
 #include "big_int_full.h"
 #include "cb2_crypto.h"
-
+#include "sha1.h"
 
 /**
  * The old, crappy CB V1 code encryption...
@@ -474,7 +472,7 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 		//beefcodf = 1;
 		return;
 	}
-/*
+#if 0
 	if (unkwn) {
 		key[0] = *addr ^ oldkey[0];
 		key[1] = *val  ^ oldkey[1];
@@ -482,7 +480,7 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 		key[3] = *val  + oldkey[3];
 		key[4] = (*addr - *val) ^ oldkey[4];
 	}
-*/
+#endif
 }
 
 
@@ -568,10 +566,10 @@ void cb_decrypt_code(uint32_t *addr, uint32_t *val)
 
 
 /**
- * CBC/PCB file functions
+ * CB file functions
  */
 
-/* 1024-byte ARCFOUR key used to encrypt/decrypt CBC and PCB files */
+/* 1024-byte ARCFOUR key used to encrypt/decrypt CB files */
 static const uint8_t filekey[1024] = {
 	0x2B, 0xF3, 0x2C, 0x6A, 0x73, 0x33, 0xCC, 0xD6, 0x01, 0x8F, 0x28, 0x26, 0xF0, 0xD6, 0xAF, 0xBF,
 	0xEB, 0x7C, 0xCF, 0x96, 0xAD, 0x40, 0x35, 0x16, 0xB1, 0x84, 0x8D, 0x29, 0x08, 0x86, 0x78, 0xE5,
@@ -663,7 +661,7 @@ static const uint8_t filekey[1024] = {
 	0x6B, 0x65, 0x72, 0x2E, 0x63, 0x6F, 0x6D, 0x29, 0x0A, 0x00, 0x00, 0x00, 0xBE, 0xEF, 0xBE, 0xEF
 };
 
-/* RSA public key parameters used to verify the digital signature on CBC and PCB files */
+/* RSA public key parameters used to verify the digital signature on CB files */
 
 /* Public exponent (17 bits) */
 static const int rsa_file_exp = 65537;
@@ -702,8 +700,10 @@ static const uint8_t rsa_file_mod[256] = {
 /* RSA signature size */
 #define RSA_SIG_SIZE		256
 
-/* Verify the digital signature on CBC and PCB files */
-int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize)
+/*
+ * Verify digital signature on CB files
+ */
+int cb_verify_signature(const uint8_t *sig, const uint8_t *buf, size_t buflen)
 {
 	big_int *bsig, *exp, *mod;
 	sha1_ctx_t ctx;
@@ -729,7 +729,7 @@ int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize)
 
 	/* Calculate actual hash of data */
 	sha1_init(&ctx);
-	sha1_update(&ctx, (uint8_t*)data, datasize);
+	sha1_update(&ctx, (uint8_t*)buf, buflen);
 	sha1_final(&ctx);
 
 	/* Signature is valid if both hashes are equal */
@@ -743,11 +743,13 @@ int cb_verify_signature(const uint8_t *sig, const uint8_t *data, int datasize)
 	return ret;
 }
 
-/* Encrypt/decrypt CBC/PCB file data */
-void cb_crypt_data(uint8_t *data, int datasize)
+/*
+ * Encrypt or decrypt CB file data
+ */
+void cb_crypt_data(uint8_t *buf, size_t buflen)
 {
 	arc4_ctx_t ctx;
 
 	arc4_init(&ctx, filekey, sizeof(filekey));
-	arc4_crypt(&ctx, data, datasize);
+	arc4_crypt(&ctx, buf, buflen);
 }
