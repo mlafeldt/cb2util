@@ -588,7 +588,7 @@ static const uint8_t filekey[1024] = {
 	/*
 	 * The following bytes of the key in ASCII:
 	 *
-	 *	Copyright 2003 © Pelican Accessories, Inc., CMGSCCC.com & Smiley
+	 *	Copyright 2003 (C) Pelican Accessories, Inc., CMGSCCC.com & Smiley
 	 *
 	 *	  A BIG shoutout (/sarcasm) goes out to the losers who set us
 	 *	back 9 months from kicking ass in the cheat market (you know who
