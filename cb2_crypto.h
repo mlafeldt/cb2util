@@ -34,7 +34,6 @@ void cb1_decrypt_code(uint32_t *addr, uint32_t *val);
 void cb7_beefcode(int init, uint32_t val);
 void cb7_encrypt_code(uint32_t *addr, uint32_t *val);
 void cb7_decrypt_code(uint32_t *addr, uint32_t *val);
-int cb7_self_test(void);
 
 /* All versions */
 void cb_reset(void);

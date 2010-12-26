@@ -485,40 +485,6 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 */
 }
 
-/*
- * Checks if V7 encryption/decryption works properly.
- */
-#define NUM_TESTCODES	3
-
-int cb7_self_test(void)
-{
-	static const uint32_t testcodes[NUM_TESTCODES*2] = {
-		0x000FFFFE, 0x0000007D,
-		0x90175B28, 0x0C061A24,
-		0x20323260, 0xFFFFFFFF
-	};
-	uint32_t addr, val;
-	int i;
-
-	// Generate some random seeds
-	cb7_beefcode(1, (uint32_t)rand());
-	cb7_beefcode(0, (uint32_t)rand());
-
-	// Check if D(E(M)) = M
-	for (i = 0; i < NUM_TESTCODES; i++) {
-		addr = testcodes[i*2];
-		val  = testcodes[i*2+1];
-
-		cb7_encrypt_code(&addr, &val);
-		cb7_decrypt_code(&addr, &val);
-
-		if ((addr != testcodes[i*2]) || (val != testcodes[i*2+1]))
-			return -1;
-	}
-
-	return 0;
-}
-
 
 /**
  * Common functions for both V1 and V7.
