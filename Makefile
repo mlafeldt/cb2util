@@ -13,6 +13,7 @@ CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
 CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include
 CFLAGS += -DHAVE_STDINT_H
+LDFLAGS =
 LIBS =
 prefix = $(HOME)
 
@@ -59,13 +60,44 @@ OBJS += fileio.o
 OBJS += pcb.o
 OBJS += shs.o
 
+
+QUIET_SUBDIR0  = +$(MAKE) -C # space to separate -C and subdir
+QUIET_SUBDIR1  =
+
+ifneq ($(findstring $(MAKEFLAGS),w),w)
+PRINT_DIR = --no-print-directory
+else # "make -w"
+NO_SUBDIR = :
+endif
+
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifndef V
+	QUIET_CC       = @echo '   ' CC $@;
+	QUIET_AR       = @echo '   ' AR $@;
+	QUIET_LINK     = @echo '   ' LINK $@;
+	QUIET_BUILT_IN = @echo '   ' BUILTIN $@;
+	QUIET_GEN      = @echo '   ' GEN $@;
+	QUIET_LNCP     = @echo '   ' LN/CP $@;
+	QUIET_GCOV     = @echo '   ' GCOV $@;
+	QUIET_SUBDIR0  = +@subdir=
+	QUIET_SUBDIR1  = ;$(NO_SUBDIR) echo '   ' SUBDIR $$subdir; \
+			 $(MAKE) $(PRINT_DIR) -C $$subdir
+	export V
+	export QUIET_GEN
+	export QUIET_BUILT_IN
+endif
+endif
+
+$(OBJS): %.o: %.c
+	$(QUIET_CC)$(CC) -o $*.o -c $(CFLAGS) $<
+
 all: $(PROG)
 
 install: all
 	install $(PROG) $(prefix)/bin
 
 $(PROG): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
 
 cb2util.o: CB2UTIL-VERSION-FILE
 cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
@@ -76,10 +108,10 @@ clean:
 	rm -f CB2UTIL-VERSION-FILE
 
 test: all
-	$(MAKE) -C t/ all
+	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) all
 
 prove: all
-	$(MAKE) -C t/ prove
+	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) prove
 
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
 release: all
