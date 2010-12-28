@@ -6,16 +6,22 @@ CB2UTIL-VERSION-FILE: FORCE
 -include CB2UTIL-VERSION-FILE
 export CB2UTIL_VERSION
 
+prefix = $(HOME)
 BIGINT = libbig_int
 LIBCHEATS = libcheats
 
 CC = gcc
+INSTALL = install
+RM = rm -f
+SHA1SUM = sha1sum
+TAR = tar
+ZIP = zip
+
 CFLAGS = -Wall -Werror -O2 -s
 CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include
 CFLAGS += -DHAVE_STDINT_H
 LDFLAGS =
 LIBS =
-prefix = $(HOME)
 
 ifeq ($(BUILD_MINGW),1)
   CC = i586-mingw32msvc-gcc
@@ -94,7 +100,7 @@ $(OBJS): %.o: %.c
 all: $(PROG)
 
 install: all
-	install $(PROG) $(prefix)/bin
+	$(INSTALL) $(PROG) $(prefix)/bin/
 
 $(PROG): $(OBJS)
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
@@ -103,9 +109,9 @@ cb2util.o: CB2UTIL-VERSION-FILE
 cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
 
 clean:
-	rm -f $(PROG) $(OBJS)
-	rm -rf release/
-	rm -f CB2UTIL-VERSION-FILE
+	$(RM) $(PROG) $(OBJS)
+	$(RM) CB2UTIL-VERSION-FILE
+	$(RM) -r release/
 
 test: all
 	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) all
@@ -115,16 +121,17 @@ prove: all
 
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
 release: all
-	rm -rf release
-	mkdir -p release/$(PACKAGE)
-	cp $(PROG) release/$(PACKAGE)/
+	$(RM) -r release/
+	$(INSTALL) -d -m 755 release/$(PACKAGE)
+	$(INSTALL) $(PROG) release/$(PACKAGE)/
 ifeq ($(BUILD_MINGW),1)
-	cp $(ZLIB_PATH)/zlib1.dll release/$(PACKAGE)/
+	$(INSTALL) -m 644 $(ZLIB_PATH)/zlib1.dll release/$(PACKAGE)/
 endif
-	cp CHANGES COPYING README release/$(PACKAGE)/
+	$(INSTALL) -m 644 CHANGES COPYING README release/$(PACKAGE)/
 	cd release && \
-		tar -cjf $(PACKAGE).tar.bz2 $(PACKAGE)/; \
-		zip -qr $(PACKAGE).zip $(PACKAGE)/; \
-		sha1sum $(PACKAGE).* > $(PACKAGE).sha1
+		$(TAR) -cjf $(PACKAGE).tar.bz2 $(PACKAGE)/; \
+		$(ZIP) -qr $(PACKAGE).zip $(PACKAGE)/; \
+		$(SHA1SUM) $(PACKAGE).* > $(PACKAGE).sha1
 
+.PHONY: all install clean test prove release
 .PHONY: FORCE
