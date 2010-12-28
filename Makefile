@@ -1,4 +1,9 @@
+# The default make target
 all:
+
+# Define V=1 to have a more verbose compile.
+#
+# Define BUILD_MINGW=1 to cross-compile cb2util for Win32 using MinGW.
 
 # Generate version info
 CB2UTIL-VERSION-FILE: FORCE
@@ -66,7 +71,9 @@ OBJS += fileio.o
 OBJS += pcb.o
 OBJS += shs.o
 
-
+#
+# Quiet build
+#
 QUIET_SUBDIR0  = +$(MAKE) -C # space to separate -C and subdir
 QUIET_SUBDIR1  =
 
