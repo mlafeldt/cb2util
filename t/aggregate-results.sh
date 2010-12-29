@@ -27,8 +27,8 @@ do
 	done <"$file"
 done
 
-#printf "%-8s%d\n" fixed $fixed
+printf "%-8s%d\n" fixed $fixed
 printf "%-8s%d\n" success $success
 printf "%-8s%d\n" failed $failed
-#printf "%-8s%d\n" broken $broken
+printf "%-8s%d\n" broken $broken
 printf "%-8s%d\n" total $total

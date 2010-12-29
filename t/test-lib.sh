@@ -16,6 +16,8 @@ fi
 test_count=0
 test_success=0
 test_failure=0
+test_fixed=0
+test_broken=0
 
 test_run() {
     test_cleanup=:
@@ -37,6 +39,19 @@ test_expect_success() {
     else
         test_failure=$((test_failure + 1))
         echo "not ok $test_count - $1"
+    fi
+    echo >&3 ""
+}
+
+test_expect_failure() {
+    test_count=$((test_count + 1))
+    echo >&3 "checking known breakage: $2"
+    if test_run "$2"; then
+        test_fixed=$((test_fixed + 1))
+        echo "ok $test_count - $1 # TODO known breakage"
+    else
+        test_broken=$((test_broken + 1))
+        echo "not ok $test_count - $1 # TODO known breakage"
     fi
     echo >&3 ""
 }
@@ -74,6 +89,8 @@ test_done() {
         echo "total $test_count" >> $test_results_path
         echo "success $test_success" >> $test_results_path
         echo "failed $test_failure" >> $test_results_path
+        echo "fixed $test_fixed" >> $test_results_path
+        echo "broken $test_broken" >> $test_results_path
         echo "" >> $test_results_path
     fi
 
