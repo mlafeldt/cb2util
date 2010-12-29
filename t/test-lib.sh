@@ -79,9 +79,14 @@ test_done() {
 
     if [ $test_failure = 0 ]; then
         echo "# passed all $test_count test(s)"
+
+        [ -d "$remove_trash" ] &&
+        cd "$(dirname "$remove_trash")" &&
+        rm -rf "$(basename "$remove_trash")"
     else
         echo "# failed $test_failure among $test_count test(s)"
     fi
+
     echo "1..$test_count"
 }
 
@@ -89,3 +94,24 @@ test_done() {
 BUILD_DIR="$TEST_DIR/.."
 PATH="$BUILD_DIR:$PATH"
 export PATH
+
+#
+# prepare test area
+#
+test="trash.$(basename "$0" .sh)"
+case "$test" in
+    /*) TRASH_DIR="$test" ;;
+    *)  TRASH_DIR="$TEST_DIR/$test" ;;
+esac
+remove_trash="$TRASH_DIR"
+
+rm -rf "$test" || {
+    echo >&5 "FATAL: Cannot prepare test area"
+    exit 1
+}
+
+mkdir -p "$test" || exit 1
+cd -P "$test" || exit 1
+
+HOME=$(pwd)
+export HOME

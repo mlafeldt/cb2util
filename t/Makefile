@@ -24,7 +24,7 @@ pre-clean:
 	$(RM) -r test-results
 
 clean:
-	$(RM) -r test-results
+	$(RM) -r trash.* test-results
 	$(RM) .prove
 
 aggregate-results-and-cleanup: $(T)

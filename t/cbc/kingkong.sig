@@ -1,1 +1,0 @@
-kingkong.cbc: OK
