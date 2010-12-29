@@ -22,6 +22,9 @@ test_run() {
     eval >&3 2>&4 "$1"
     eval_ret=$?
     eval >&3 2>&4 "$test_cleanup"
+    if [ "$verbose" = "t" -a -n "$HARNESS_ACTIVE" ]; then
+        echo ""
+    fi
     return $eval_ret
 }
 
@@ -59,6 +62,17 @@ test_cmp() {
 }
 
 test_done() {
+    if [ -z "$HARNESS_ACTIVE" ]; then
+        test_results_dir="$TEST_DIR/test-results"
+        mkdir -p "$test_results_dir"
+        test_results_path="$test_results_dir/${0%.sh}-$$.counts"
+
+        echo "total $test_count" >> $test_results_path
+        echo "success $test_success" >> $test_results_path
+        echo "failed $test_failure" >> $test_results_path
+        echo "" >> $test_results_path
+    fi
+
     if [ $test_failure = 0 ]; then
         echo "# passed all $test_count test(s)"
     else

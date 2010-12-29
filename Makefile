@@ -119,6 +119,7 @@ clean:
 	$(RM) $(PROG) $(OBJS)
 	$(RM) CB2UTIL-VERSION-FILE
 	$(RM) -r release/
+	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) clean
 
 test: all
 	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) all
