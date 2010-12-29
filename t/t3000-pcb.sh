@@ -16,17 +16,17 @@ for file in *.bin; do
 
     test_expect_success "($file) decrypt file" "
         cb2util pcb $file $out &&
-        test_cmp $prefix.raw $out
+        test_cmp_bin $prefix.raw $out
     "
 
     test_expect_success "($file) decrypt file and strip header" "
         cb2util pcb -s $file $out &&
-        test_cmp $prefix.strip $out
+        test_cmp_bin $prefix.strip $out
     "
 
     test_expect_success "($file) convert to ELF" "
         cb2util pcb -e $file $out &&
-        test_cmp $prefix.elf $out
+        test_cmp_bin $prefix.elf $out
     "
 
     test_expect_success "($file) verify signature" "

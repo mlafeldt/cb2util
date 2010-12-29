@@ -61,6 +61,10 @@ test_cmp() {
     diff -u --strip-trailing-cr "$@"
 }
 
+test_cmp_bin() {
+    cmp -b -l "$@"
+}
+
 test_done() {
     if [ -z "$HARNESS_ACTIVE" ]; then
         test_results_dir="$TEST_DIR/test-results"
