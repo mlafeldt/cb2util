@@ -4,7 +4,7 @@ test_description="cb2util cheats: compile cheats"
 
 . ./test-lib.sh
 
-for file in $TEST_DIR/cheats/*.raw; do
+for file in $TEST_DIR/cheats/*.txt; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "

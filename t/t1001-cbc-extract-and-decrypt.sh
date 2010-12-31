@@ -10,7 +10,7 @@ for file in $TEST_DIR/cbc/*.cbc; do
 
     test_expect_success "$basename" "
         cb2util cbc -d $file >out &&
-        test_cmp $prefix.raw out
+        test_cmp $prefix.txt out
     "
 done
 
@@ -20,7 +20,7 @@ for file in $TEST_DIR/cbc7/*.cbc; do
 
     test_expect_success "$basename (v7)" "
         cb2util cbc -7 -d $file >out &&
-        test_cmp $prefix.raw out
+        test_cmp $prefix.txt out
     "
 done
 
