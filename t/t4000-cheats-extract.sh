@@ -8,9 +8,15 @@ for file in $TEST_DIR/cheats/*.cheats; do
     prefix=${file%.*}
     basename=$(basename "$file")
 
+    if [ -f "$prefix.enc" ]; then
+        expect=$prefix.enc
+    else
+        expect=$prefix.txt
+    fi
+
     test_expect_success "$basename" "
         cb2util cheats $file >out &&
-        test_cmp $prefix.enc out
+        test_cmp $expect out
     "
 done
 
