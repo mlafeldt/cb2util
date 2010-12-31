@@ -79,15 +79,18 @@ test_done() {
 
     if [ $test_failure = 0 ]; then
         echo "# passed all $test_count test(s)"
+        echo "1..$test_count"
 
         [ -d "$remove_trash" ] &&
         cd "$(dirname "$remove_trash")" &&
         rm -rf "$(basename "$remove_trash")"
+
+        exit 0
     else
         echo "# failed $test_failure among $test_count test(s)"
+        echo "1..$test_count"
+        exit 1
     fi
-
-    echo "1..$test_count"
 }
 
 : ${TEST_DIR:=$(pwd)}
