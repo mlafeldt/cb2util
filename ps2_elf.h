@@ -5,8 +5,8 @@
  * Library (elf.h). Usually, there is no such file on Windows, and I want to
  * support it too.
  *
- * Copyright (C) 2006-2010 Mathias Lafeldt <misfire@debugon.org>
- * Copyright (C) 1995-2010 Free Software Foundation, Inc.
+ * Copyright (C) 2006-2011 Mathias Lafeldt <misfire@debugon.org>
+ * Copyright (C) 1995-2011 Free Software Foundation, Inc.
  * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.

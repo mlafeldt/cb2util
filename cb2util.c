@@ -1,7 +1,7 @@
 /*
  * Main project file
  *
- * Copyright (C) 2006-2010 Mathias Lafeldt <misfire@debugon.org>
+ * Copyright (C) 2006-2011 Mathias Lafeldt <misfire@debugon.org>
  * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.

@@ -1,7 +1,7 @@
 /*
  * Implementation of the stream cipher ARCFOUR
  *
- * Copyright (C) 2006-2010 Mathias Lafeldt <misfire@debugon.org>
+ * Copyright (C) 2006-2011 Mathias Lafeldt <misfire@debugon.org>
  * Copyright (C) 1996-2000 Whistle Communications, Inc.
  * All rights reserved.
  *
