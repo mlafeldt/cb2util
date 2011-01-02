@@ -41,6 +41,7 @@ void cb_reset(void);
 void cb_set_common_v7(void);
 void cb_encrypt_code(uint32_t *addr, uint32_t *val);
 void cb_decrypt_code(uint32_t *addr, uint32_t *val);
+void cb_decrypt_code2(uint32_t *addr, uint32_t *val);
 
 /* CB file functions */
 int cb_verify_signature(const uint8_t *sig, const uint8_t *buf, size_t buflen);

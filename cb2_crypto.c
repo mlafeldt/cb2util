@@ -218,9 +218,16 @@ static uint8_t seeds[5][256];	// Current set of seeds
 static uint32_t key[5];		// Current ARCFOUR key
 static uint32_t oldkey[5];	// Backup of ARCFOUR key
 static arc4_ctx_t ctx;		// ARCFOUR context
-static int v7enc;		// Flag: Use V7 encryption?
-static int v7init;		// Flag: V7 encryption already initialized?
-static int beefcodf;		// Flag: Is it BEEFC0DF?
+
+enum {
+	ENC_MODE_RAW,
+	ENC_MODE_V1,
+	ENC_MODE_V7
+};
+static int enc_mode = ENC_MODE_RAW;
+static int v7_init;		// V7 encryption initialized?
+static int beefcodf;		// BEEFC0DF?
+static int code_lines;
 //uint32_t unkwn;
 
 /*
@@ -494,10 +501,10 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
  */
 void cb_reset(void)
 {
-	// Clear flags
-	v7enc = 0;
-	v7init = 0;
+	enc_mode = ENC_MODE_RAW;
+	v7_init = 0;
 	beefcodf = 0;
+	code_lines = 0;
 }
 
 /*
@@ -505,10 +512,11 @@ void cb_reset(void)
  */
 void cb_set_common_v7(void)
 {
-	v7enc = 1;
+	enc_mode = ENC_MODE_V7;
 	cb7_beefcode(1, 0);
-	v7init = 1;
+	v7_init = 1;
 	beefcodf = 0;
+	code_lines = 0;
 }
 
 /*
@@ -521,21 +529,19 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val)
 	oldaddr = *addr;
 	oldval  = *val;
 
-	if (v7enc)
+	if (enc_mode == ENC_MODE_V7)
 		cb7_encrypt_code(addr, val);
 	else
 		cb1_encrypt_code(addr, val);
 
 	if ((oldaddr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7init) {
-			// Init seeds
+		if (!v7_init) {
 			cb7_beefcode(1, oldval);
-			v7init = 1;
+			v7_init = 1;
 		} else {
-			// Change original seeds
 			cb7_beefcode(0, oldval);
 		}
-		v7enc = 1;
+		enc_mode = ENC_MODE_V7;
 		beefcodf = oldaddr & 1;
 	}
 }
@@ -545,22 +551,88 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val)
  */
 void cb_decrypt_code(uint32_t *addr, uint32_t *val)
 {
-	if (v7enc)
+	if (enc_mode == ENC_MODE_V7)
 		cb7_decrypt_code(addr, val);
 	else
 		cb1_decrypt_code(addr, val);
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7init) {
-			// Init seeds
+		if (!v7_init) {
 			cb7_beefcode(1, *val);
-			v7init = 1;
+			v7_init = 1;
 		} else {
-			// Change original seeds
 			cb7_beefcode(0, *val);
 		}
-		v7enc = 1;
+		enc_mode = ENC_MODE_V7;
 		beefcodf = *addr & 1;
+	}
+}
+
+static int num_code_lines(uint32_t addr)
+{
+	uint8_t cmd = addr >> 28;
+
+	if (cmd < 3 || cmd > 6)
+		return 1;
+	else if (cmd == 3)
+		return (addr & 0x00400000) ? 2 : 1;
+	else
+		return 2;
+}
+
+/*
+ * Smart version of cb_decrypt_code().
+ *
+ * Detect if a code needs to be decrypted and how.
+ */
+void cb_decrypt_code2(uint32_t *addr, uint32_t *val)
+{
+	if (enc_mode != ENC_MODE_V7) {
+		if (!code_lines) {
+			code_lines = num_code_lines(*addr);
+			if ((*addr >> 24) & 0x0E) {
+				if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
+					enc_mode = ENC_MODE_V7;
+					code_lines++;
+					return;
+				} else {
+					enc_mode = ENC_MODE_V1;
+					code_lines--;
+					cb1_decrypt_code(addr, val);
+				}
+			} else {
+				enc_mode = ENC_MODE_RAW;
+				code_lines--;
+			}
+		} else {
+			code_lines--;
+			if (enc_mode == ENC_MODE_RAW)
+				return;
+			cb1_decrypt_code(addr, val);
+		}
+	} else {
+		cb7_decrypt_code(addr, val);
+		if (!code_lines) {
+			code_lines = num_code_lines(*addr);
+			if (code_lines == 1 && *addr == 0xFFFFFFFF) {
+				/* TODO change encryption options */
+				code_lines = 0;
+				return;
+			}
+		}
+		code_lines--;
+	}
+
+	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
+		if (!v7_init) {
+			cb7_beefcode(1, *val);
+			v7_init = 1;
+		} else {
+			cb7_beefcode(0, *val);
+		}
+		enc_mode = ENC_MODE_V7;
+		beefcodf = *addr & 1;
+		code_lines = 1;
 	}
 }
 
