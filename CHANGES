@@ -1,5 +1,21 @@
-v1.2 (draft)
+v1.2 (Jan 3 2011)
 ------------
+
+ * Added smart decryption of extracted cheats:
+   The commands "cheats -d" and "cbc -d" tried to decrypt all codes, even if
+   they were already in raw format. A mechanism has been added to detect which
+   codes need to be decrypted and how. Now users can properly import "cheats"
+   files with both encrypted and decrypted codes. (Suggested by dlanor)
+
+ * Improved Makefile:
+   - auto-generate version info
+   - quiet build
+
+ * Improved automated tests:
+   - aggregate test results
+   - create test area for each test
+   - split up tests in multiple files
+   - add more test data
 
 
 v1.1 (Dec 21 2010)
