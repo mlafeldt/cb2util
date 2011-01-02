@@ -109,12 +109,12 @@ int cmd_pcb(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
-		MODE_DEFAULT,
+		MODE_CRYPT,
 		MODE_CHECK,
 		MODE_ELF,
 		MODE_STRIP
 	};
-	int mode = MODE_DEFAULT;
+	int mode = MODE_CRYPT;
 	int errors = 0;
 	int ret;
 
@@ -179,7 +179,7 @@ int cmd_pcb(int argc, char **argv)
 				ret = write_file(buf, buflen, outfile);
 			} else if (mode == MODE_STRIP) {
 				ret = write_file(hdr->data, datalen, outfile);
-			} else {
+			} else if (mode == MODE_CRYPT) {
 				ret = write_file(buf, buflen, outfile);
 			}
 

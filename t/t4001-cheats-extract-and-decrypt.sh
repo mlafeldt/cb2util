@@ -8,7 +8,7 @@ for file in $TEST_DIR/cheats/*.cheats; do
     prefix=${file%.*}
     basename=$(basename "$file")
 
-    test_expect_failure "$basename" "
+    test_expect_success "$basename" "
         cb2util cheats -d $file >out &&
         test_cmp $prefix.txt out
     "

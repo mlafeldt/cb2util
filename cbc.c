@@ -27,6 +27,7 @@
 #include <string.h>
 #include <getopt.h>
 #include "cb2_crypto.h"
+#include "cheats.h"
 #include "fileio.h"
 
 /* CBC file header */
@@ -51,9 +52,6 @@ typedef struct {
 	uint8_t		data[0];
 } cbc7_hdr_t;
 
-
-extern int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt);
-
 static const char *cbc_usage =
 	"usage: cb2util cbc [-c|-d] <file>...\n"
 	"   or: cb2util cbc -7 [-d] <file>...\n\n"
@@ -64,19 +62,19 @@ static const char *cbc_usage =
 
 int cmd_cbc(int argc, char **argv)
 {
-	const char *shortopts = "7cdh";
+	const char *shortopts = "7cd::h";
 	const struct option longopts[] = {
 		{ "check", no_argument, NULL, 'c' },
-		{ "decrypt", no_argument, NULL, 'd' },
+		{ "decrypt", optional_argument, NULL, 'd' },
 		{ "help", no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
-		MODE_DEFAULT,
-		MODE_CHECK,
-		MODE_DECRYPT
+		MODE_EXTRACT,
+		MODE_CHECK
 	};
-	int mode = MODE_DEFAULT;
+	int mode = MODE_EXTRACT;
+	int decrypt = DECRYPT_OFF;
 	int v7 = 0;
 	int numcodes = 0;
 	int errors = 0;
@@ -91,7 +89,18 @@ int cmd_cbc(int argc, char **argv)
 			mode = MODE_CHECK;
 			break;
 		case 'd':
-			mode = MODE_DECRYPT;
+			if (optarg != NULL) {
+				if (!strcmp(optarg, "auto")) {
+					decrypt = DECRYPT_AUTO;
+				} else if (!strcmp(optarg, "force")) {
+					decrypt = DECRYPT_FORCE;
+				} else {
+					fprintf(stderr, "%s\n", cbc_usage);
+					return 1;
+				}
+			} else {
+				decrypt = DECRYPT_AUTO;
+			}
 			break;
 		case 'h':
 			printf("%s\n", cbc_usage);
@@ -142,8 +151,7 @@ int cmd_cbc(int argc, char **argv)
 
 			if (numcodes)
 				printf("\n");
-			numcodes += extract_cheats(stdout, hdr->data, datalen,
-						mode == MODE_DECRYPT);
+			numcodes += extract_cheats(stdout, hdr->data, datalen, decrypt);
 		} else {
 			cbc_hdr_t *hdr = (cbc_hdr_t*)buf;
 			int datalen = buflen - hdr->dataoff;
@@ -164,12 +172,12 @@ int cmd_cbc(int argc, char **argv)
 						buflen - CBC_HASH_OFFSET);
 				printf("%s: %s\n", filename, ret ? "FAILED" : "OK");
 				errors += ret;
-			} else {
+			} else if (mode == MODE_EXTRACT) {
 				cb_crypt_data(buf + hdr->dataoff, datalen);
 				if (numcodes)
 					printf("\n");
 				numcodes += extract_cheats(stdout, buf + hdr->dataoff,
-						datalen, mode == MODE_DECRYPT);
+						datalen, decrypt);
 			}
 		}
 next_file:

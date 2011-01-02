@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <libcheats.h>
 #include "cb2_crypto.h"
+#include "cheats.h"
 #include "compress.h"
 #include "fileio.h"
 
@@ -104,8 +105,10 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 					code[1] = *(uint32_t*)&buf[off];
 					off += sizeof(uint32_t);
 
-					if (decrypt)
+					if (decrypt == DECRYPT_FORCE)
 						cb_decrypt_code(&code[0], &code[1]);
+					else if (decrypt == DECRYPT_AUTO)
+						cb_decrypt_code2(&code[0], &code[1]);
 
 					fprintf(fp, "%08X %08X\n", code[0], code[1]);
 				}
@@ -182,27 +185,27 @@ int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
 }
 
 static const char *cheats_usage =
-	"usage: cb2util cheats [-d] <file>...\n"
+	"usage: cb2util cheats [-d [auto|force]] <file>...\n"
 	"   or: cb2util cheats -c <infile> <outfile>...\n\n"
 	"    no option         extract cheats\n\n"
 	"    -c, --compile     compile text to cheats file\n"
-	"    -d, --decrypt     decrypt extracted cheats\n";
+	"    -d, --decrypt [auto|force]     decrypt extracted cheats\n";
 
 int cmd_cheats(int argc, char **argv)
 {
-	const char *shortopts = "cdh";
+	const char *shortopts = "cd::h";
 	const struct option longopts[] = {
 		{ "compile", no_argument, NULL, 'c' },
-		{ "decrypt", no_argument, NULL, 'd' },
+		{ "decrypt", optional_argument, NULL, 'd' },
 		{ "help", no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
-		MODE_DEFAULT,
-		MODE_COMPILE,
-		MODE_DECRYPT
+		MODE_EXTRACT,
+		MODE_COMPILE
 	};
-	int mode = MODE_DEFAULT;
+	int mode = MODE_EXTRACT;
+	int decrypt = DECRYPT_OFF;
 	int numcodes = 0;
 	int errors = 0;
 	int ret;
@@ -214,7 +217,18 @@ int cmd_cheats(int argc, char **argv)
 			break;
 
 		case 'd':
-			mode = MODE_DECRYPT;
+			if (optarg != NULL) {
+				if (!strcmp(optarg, "auto")) {
+					decrypt = DECRYPT_AUTO;
+				} else if (!strcmp(optarg, "force")) {
+					decrypt = DECRYPT_FORCE;
+				} else {
+					fprintf(stderr, "%s\n", cheats_usage);
+					return 1;
+				}
+			} else {
+				decrypt = DECRYPT_AUTO;
+			}
 			break;
 		case 'h':
 			printf("%s\n", cheats_usage);
@@ -274,7 +288,7 @@ compile_end:
 			cheats_destroy(&cheats);
 			if (pack != NULL)
 				free(pack);
-		} else {
+		} else if (mode == MODE_EXTRACT) {
 			cheats_hdr_t *hdr;
 			int datalen;
 			uint8_t *unpack;
@@ -308,8 +322,7 @@ compile_end:
 
 			if (numcodes)
 				printf("\n");
-			numcodes += extract_cheats(stdout, unpack, unpacklen,
-					mode == MODE_DECRYPT);
+			numcodes += extract_cheats(stdout, unpack, unpacklen, decrypt);
 			free(unpack);
 		}
 next_file:
