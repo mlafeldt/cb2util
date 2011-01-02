@@ -91,12 +91,17 @@ static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 }
 
 static const char *pcb_usage =
-	"usage: cb2util pcb [-e|-s] <infile> <outfile>...\n"
+	"usage: cb2util pcb [-s] <infile> <outfile>...\n"
+	"   or: cb2util pcb -e <infile> <outfile>...\n"
 	"   or: cb2util pcb -c <file>...\n\n"
-	"    no option         encrypt/decrypt file\n\n"
-	"    -c, --check       check RSA signature\n"
-	"    -e, --elf         convert into ELF file\n"
-	"    -s, --strip       strip RSA signature\n";
+	"    no option\n"
+	"        encrypt/decrypt file\n\n"
+	"    -s, --strip\n"
+	"        strip RSA signature\n\n"
+	"    -e, --elf\n"
+	"        convert into ELF file\n\n"
+	"    -c, --check\n"
+	"        check RSA signature\n";
 
 int cmd_pcb(int argc, char **argv)
 {

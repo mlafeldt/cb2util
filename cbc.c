@@ -53,12 +53,17 @@ typedef struct {
 } cbc7_hdr_t;
 
 static const char *cbc_usage =
-	"usage: cb2util cbc [-c|-d] <file>...\n"
-	"   or: cb2util cbc -7 [-d] <file>...\n\n"
-	"    no option         extract cheats\n\n"
-	"    -7                files are in CBC v7 format\n"
-	"    -c, --check       check RSA signature\n"
-	"    -d, --decrypt     decrypt extracted cheats\n";
+	"usage: cb2util cbc [-c | -d[mode]] <file>...\n"
+	"   or: cb2util cbc -7 [-d[mode]] <file>...\n\n"
+	"    no option\n"
+	"        extract cheats\n\n"
+	"    -d[mode], --decrypt[=mode]\n"
+	"        decrypt extracted cheats\n"
+	"        mode can be \"auto\" (default) or \"force\"\n\n"
+	"    -c, --check\n"
+	"        check RSA signature\n\n"
+	"    -7\n"
+	"        files are in CBC v7 format\n";
 
 int cmd_cbc(int argc, char **argv)
 {

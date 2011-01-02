@@ -185,11 +185,15 @@ int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats)
 }
 
 static const char *cheats_usage =
-	"usage: cb2util cheats [-d [auto|force]] <file>...\n"
+	"usage: cb2util cheats [-d[mode]] <file>...\n"
 	"   or: cb2util cheats -c <infile> <outfile>...\n\n"
-	"    no option         extract cheats\n\n"
-	"    -c, --compile     compile text to cheats file\n"
-	"    -d, --decrypt [auto|force]     decrypt extracted cheats\n";
+	"    no option\n"
+	"        extract cheats\n\n"
+	"    -d[mode], --decrypt[=mode]\n"
+	"        decrypt extracted cheats\n"
+	"        mode can be \"auto\" (default) or \"force\"\n\n"
+	"    -c, --compile\n"
+	"        compile text to cheats file\n";
 
 int cmd_cheats(int argc, char **argv)
 {

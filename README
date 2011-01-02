@@ -56,22 +56,32 @@ Code saves (also known as Day1 or CBC files) store cheat codes that can be added
 to your CodeBreaker's code list. While older code saves for CB v7 are only
 encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well.
 
-usage: cb2util cbc [-c|-d] <file>...
-   or: cb2util cbc -7 [-d] <file>...
+usage: cb2util cbc [-c | -d[mode]] <file>...
+   or: cb2util cbc -7 [-d[mode]] <file>...
 
-    no option         extract cheats
+    no option
+        extract cheats
 
-    -7                files are in CBC v7 format
-    -c, --check       check RSA signature
-    -d, --decrypt     decrypt extracted cheats
+    -d[mode], --decrypt[=mode]
+        decrypt extracted cheats
+        mode can be "auto" (default) or "force"
+
+    -c, --check
+        check RSA signature
+
+    -7
+        files are in CBC v7 format
 
 Examples:
 
 Extract cheats from mgs3.cbc and print them to screen:
 $ cb2util cbc mgs3.cbc
 
-Extract and decrypt cheats from mgs3.cbc, print them to screen:
+Extract cheats, decrypt encrypted cheats, and print them to screen:
 $ cb2util cbc -d mgs3.cbc
+
+Same as previous example, but force decryption of _all_ cheats:
+$ cb2util cbc -dforce mgs3.cbc
 
 Check digital signature of re4.cbc:
 $ cb2util cbc -c re4.cbc
@@ -90,14 +100,21 @@ PCB files are encrypted and digitally signed binaries that can be executed by
 the CodeBreaker PS2. In theory, this could be any application; we've seen
 upgrades and homebrew so far.
 
-usage: cb2util pcb [-e|-s] <infile> <outfile>...
+usage: cb2util pcb [-s] <infile> <outfile>...
+   or: cb2util pcb -e <infile> <outfile>...
    or: cb2util pcb -c <file>...
 
-    no option         encrypt/decrypt file
+    no option
+        encrypt/decrypt file
 
-    -c, --check       check RSA signature
-    -e, --elf         convert into ELF file
-    -s, --strip       strip RSA signature
+    -s, --strip
+        strip RSA signature
+
+    -e, --elf
+        convert into ELF file
+
+    -c, --check
+        check RSA signature
 
 Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
 doesn't care if it's encrypting or decrypting.
@@ -124,21 +141,29 @@ $ cb2util pcb -c pelican.bin
 The "cheats" file is CodeBreaker's internal code database. It is usually saved
 to memory card (mc0:/PCB/cheats) and updated everytime the code list is changed.
 
-usage: cb2util cheats [-d] <file>...
+usage: cb2util cheats [-d[mode]] <file>...
    or: cb2util cheats -c <infile> <outfile>...
 
-    no option         extract cheats
+    no option
+        extract cheats
 
-    -c, --compile     compile text to cheats file
-    -d, --decrypt     decrypt extracted cheats
+    -d[mode], --decrypt[=mode]
+        decrypt extracted cheats
+        mode can be "auto" (default) or "force"
+
+    -c, --compile
+        compile text to cheats file
 
 Examples:
 
-Extract all cheats from "cheats" file, print them to screen:
+Extract all cheats from "cheats" file and print them to screen:
 $ cb2util cheats /path/to/cheats
 
-Extract and decrypt all cheats from "cheats" file, print them to screen:
+Extract all cheats, decrypt encrypted cheats, and print them to screen:
 $ cb2util cheats -d /path/to/cheats
+
+Same as previous example, but force decryption of _all_ cheats:
+$ cb2util cheats -dforce /path/to/cheats
 
 Compile cheats in mygames.txt to "cheats" file:
 $ cb2util cheats -c mygames.txt /path/to/cheats
