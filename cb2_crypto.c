@@ -233,7 +233,6 @@ static int enc_mode = ENC_MODE_RAW;
 static int v7_init;		// V7 encryption initialized?
 static int beefcodf;		// BEEFC0DF?
 static int code_lines;
-//uint32_t unkwn;
 
 /*
  * Computes the multiplicative inverse of @word, modulo (2^32).
@@ -347,7 +346,6 @@ void cb7_beefcode(int init, uint32_t val)
 	// Setup key and seeds
 	if (init) {
 		beefcodf = 0;
-		//unkwn = 0;
 		memcpy(key, defkey, sizeof(defkey));
 
 		if (val) {
@@ -436,7 +434,6 @@ void cb7_encrypt_code(uint32_t *addr, uint32_t *val)
 		arc4_init(&ctx, (uint8_t*)code, 8);
 		arc4_crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
-		//unkwn = 0;
 		return;
 	}
 }
@@ -478,7 +475,6 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 		arc4_init(&ctx, (uint8_t*)code, 8);
 		arc4_crypt(&ctx, (uint8_t*)seeds, sizeof(seeds));
 		beefcodf = 0;
-		//unkwn = 0;
 		return;
 	}
 
@@ -488,15 +484,6 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 		//beefcodf = 1;
 		return;
 	}
-#if 0
-	if (unkwn) {
-		key[0] = *addr ^ oldkey[0];
-		key[1] = *val  ^ oldkey[1];
-		key[2] = *addr - oldkey[2];
-		key[3] = *val  + oldkey[3];
-		key[4] = (*addr - *val) ^ oldkey[4];
-	}
-#endif
 }
 
 
