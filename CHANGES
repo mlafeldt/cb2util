@@ -1,5 +1,9 @@
-v1.2 (Jan 3 2011)
+v1.3 (draft)
 ------------
+
+
+v1.2 (Jan 3 2011)
+-----------------
 
  * Added smart decryption of extracted cheats:
    The commands "cheats -d" and "cbc -d" tried to decrypt all codes, even if
