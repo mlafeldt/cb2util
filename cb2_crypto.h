@@ -28,18 +28,24 @@
 #include <stdint.h>
 
 /* CB V1 code encryption */
+#ifdef CODE_ENCRYPTION
 void cb1_encrypt_code(uint32_t *addr, uint32_t *val);
+#endif
 void cb1_decrypt_code(uint32_t *addr, uint32_t *val);
 
 /* CB V7 code encryption */
 void cb7_beefcode(int init, uint32_t val);
+#ifdef CODE_ENCRYPTION
 void cb7_encrypt_code(uint32_t *addr, uint32_t *val);
+#endif
 void cb7_decrypt_code(uint32_t *addr, uint32_t *val);
 
 /* All versions */
 void cb_reset(void);
 void cb_set_common_v7(void);
+#ifdef CODE_ENCRYPTION
 void cb_encrypt_code(uint32_t *addr, uint32_t *val);
+#endif
 void cb_decrypt_code(uint32_t *addr, uint32_t *val);
 void cb_decrypt_code2(uint32_t *addr, uint32_t *val);
 

@@ -53,6 +53,7 @@ static const uint32_t seedtable[3][16] = {
 	}
 };
 
+#ifdef CODE_ENCRYPTION
 /*
  * Encrypts a V1 code.
  */
@@ -67,6 +68,7 @@ void cb1_encrypt_code(uint32_t *addr, uint32_t *val)
 
 	if (cmd > 2) *val = *addr ^ (*val + seedtable[2][cmd]);
 }
+#endif
 
 /*
  * Decrypts a V1 code.
@@ -190,6 +192,8 @@ static const uint32_t defkey[5] = {
 // RSA parameters
 static const uint64_t rsa_modulus = 18446744073709551605ULL; // = 0xFFFFFFFFFFFFFFF5
 static const uint64_t rsa_dec_key = 11;
+
+#ifdef CODE_ENCRYPTION
 /*
  * This is how I calculated the encryption key e from d:
  * (some number theory)
@@ -213,6 +217,7 @@ static const uint64_t rsa_dec_key = 11;
  *	e = 2682110966135737091
  */
 static const uint64_t rsa_enc_key = 2682110966135737091ULL;
+#endif
 
 static uint8_t seeds[5][256];	// Current set of seeds
 static uint32_t key[5];		// Current ARCFOUR key
@@ -265,6 +270,7 @@ static uint32_t mul_inverse(uint32_t word)
 	return t1;
 }
 
+#ifdef CODE_ENCRYPTION
 /*
  * Multiplication, modulo (2^32)
  */
@@ -272,6 +278,7 @@ static uint32_t mul_encrypt(uint32_t a, uint32_t b)
 {
 	return (a * (b | 1));
 }
+#endif
 
 /*
  * Multiplication with multiplicative inverse, modulo (2^32)
@@ -381,6 +388,7 @@ void cb7_beefcode(int init, uint32_t val)
 	memcpy(oldkey, key, sizeof(key));
 }
 
+#ifdef CODE_ENCRYPTION
 /*
  * Encrypts a V7+ code.
  */
@@ -432,6 +440,7 @@ void cb7_encrypt_code(uint32_t *addr, uint32_t *val)
 		return;
 	}
 }
+#endif
 
 /*
  * Decrypts a V7+ code.
@@ -519,6 +528,7 @@ void cb_set_common_v7(void)
 	code_lines = 0;
 }
 
+#ifdef CODE_ENCRYPTION
 /*
  * Used to encrypt a list of CB codes (V1 + V7).
  */
@@ -545,6 +555,7 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val)
 		beefcodf = oldaddr & 1;
 	}
 }
+#endif
 
 /*
  * Used to decrypt a list of CB codes (V1 + V7).
