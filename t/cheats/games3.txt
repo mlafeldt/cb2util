@@ -466,3 +466,12 @@ Infinite Time
 201F6024 00000000
 Max Pro Points
 2096F5B8 000000BE
+
+"Game 9: raw and beefcode"
+Enable Code (Must Be On)
+BEEFC0DE 00000000
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
