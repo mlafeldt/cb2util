@@ -590,8 +590,10 @@ void cb_decrypt_code2(uint32_t *addr, uint32_t *val)
 			code_lines = num_code_lines(*addr);
 			if ((*addr >> 24) & 0x0E) {
 				if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-					enc_mode = ENC_MODE_V7;
-					code_lines++;
+					/*
+					 * ignore raw beefcode
+					 */
+					code_lines--;
 					return;
 				} else {
 					enc_mode = ENC_MODE_V1;
