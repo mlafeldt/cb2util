@@ -1,5 +1,11 @@
-v1.3 (draft)
-------------
+v1.3 (Jan 6 2011)
+-----------------
+
+ * Decrypting extracted cheats now also discards "beefcodes" and succeeding
+   000FFFFE/000FFFFF lines. Those codes are nothing more than CB bloat and
+   useless on other cheat devices. (Requested by dlanor)
+
+ * Disable code encryption in cb2_crypto.c - not needed by cb2util.
 
 
 v1.2 (Jan 3 2011)
