@@ -54,6 +54,8 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 	uint16_t numdesc, numlines;
 	uint32_t code[2];
 	int totcodes = 0;
+	int beefcodf;
+	int fix_beef;
 
 	while (off < buflen) {
 		/* Check for end marker */
@@ -62,6 +64,8 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 
 		/* Reset code encryption */
 		cb_reset();
+		beefcodf = 0;
+		fix_beef = 0;
 
 		if (totcodes)
 			fprintf(fp, "\n");
@@ -105,11 +109,41 @@ int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt)
 					code[1] = *(uint32_t*)&buf[off];
 					off += sizeof(uint32_t);
 
+					/*
+					 * decrypt code
+					 */
 					if (decrypt == DECRYPT_FORCE)
 						cb_decrypt_code(&code[0], &code[1]);
 					else if (decrypt == DECRYPT_AUTO)
 						cb_decrypt_code2(&code[0], &code[1]);
 
+					/*
+					 * discard beefcode and other junk
+					 */
+					if (beefcodf) {
+						beefcodf = 0;
+						continue;
+					}
+					if (fix_beef) {
+						if (code[0] == 0x000FFFFE || code[0] == 0x000FFFFF) {
+							fix_beef--;
+							continue;
+						} else {
+							fix_beef = 0;
+						}
+					}
+					if ((code[0] & 0xFFFFFFFE) == 0xBEEFC0DE) {
+						beefcodf = code[0] & 1;
+						fix_beef = 2;
+						continue;
+					} else {
+						beefcodf = 0;
+						fix_beef = 0;
+					}
+
+					/*
+					 * finally, output result
+					 */
 					fprintf(fp, "%08X %08X\n", code[0], code[1]);
 				}
 			}

@@ -117,9 +117,6 @@ Devil Hunter Rank-Rank S
 
 "Gran Turismo 4-The Real Driving Simulator"
 Enable Code (Must Be On)
-BEEFC0DE 00000000
-000FFFFE 000000DE
-000FFFFF 000000DE
 9058EF88 0C1691C9
 1 Billion Credits
 20A1FCA8 57F6985E
@@ -412,7 +409,6 @@ Max Pro Points
 
 "Game 3: v7 encrypted"
 Enable Code (Must Be On)
-BEEFC0DE 00000000
 9029BEAC 0C0A9225
 Infinite Time
 201F6024 00000000
@@ -425,7 +421,6 @@ Enable Code (Must Be On)
 Infinite Time
 201F6024 00000000
 Max Pro Points
-BEEFC0DE 00000000
 2096F5B8 000000BE
 
 "Game 5: raw, v1 and v7 encrypted"
@@ -434,12 +429,10 @@ Enable Code (Must Be On)
 Infinite Time
 201F6024 00000000
 Max Pro Points
-BEEFC0DE 00000000
 2096F5B8 000000BE
 
 "Game 6: v7 encrypted (2)"
 Enable Code (Must Be On)
-BEEFC0DE DEADFACE
 9029BEAC 0C0A9225
 Infinite Time
 201F6024 00000000
@@ -448,8 +441,6 @@ Max Pro Points
 
 "Game 7: v7 encrypted (3)"
 Enable Code (Must Be On)
-BEEFC0DF B16B00B5
-01234567 89ABCDEF
 9029BEAC 0C0A9225
 Infinite Time
 201F6024 00000000
@@ -458,18 +449,6 @@ Max Pro Points
 
 "Game 8: v7 encrypted (4)"
 Enable Code (Must Be On)
-BEEFC0DE 00000000
-BEEFC0DF B16B00B5
-01234567 89ABCDEF
-9029BEAC 0C0A9225
-Infinite Time
-201F6024 00000000
-Max Pro Points
-2096F5B8 000000BE
-
-"Game 9: raw and beefcode"
-Enable Code (Must Be On)
-BEEFC0DE 00000000
 9029BEAC 0C0A9225
 Infinite Time
 201F6024 00000000

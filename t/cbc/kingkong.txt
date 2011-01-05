@@ -1,8 +1,5 @@
 "Peter Jackson's King Kong-The Official Game Of The Movie"
 Enable Code (Must Be On)
-BEEFC0DE 00000000
-000FFFFE 000001AE
-000FFFFF 000001AE
 90606840 0C17B2AA
 God Mode
 102D5412 00001000
