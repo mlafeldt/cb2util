@@ -5,6 +5,8 @@ v1.3 (Jan 6 2011)
    000FFFFE/000FFFFF lines. Those codes are nothing more than CB bloat and
    useless on other cheat devices. (Requested by dlanor)
 
+ * Fix: Do not decrypt raw codes with leading beefcode. (Reported by dlanor)
+
  * Disable code encryption in cb2_crypto.c - not needed by cb2util.
 
 
