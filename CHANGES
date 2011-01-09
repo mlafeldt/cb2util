@@ -1,3 +1,11 @@
+v1.4 (draft)
+------------
+
+ * The "cheats" compiler no longer supports script-style '#' comments. The
+   character '#' is often used in cheat descriptions to mean "number".
+   Treating it as comment would mangle such lines. (Suggested by dlanor)
+
+
 v1.3 (Jan 6 2011)
 -----------------
 

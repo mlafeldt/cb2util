@@ -187,11 +187,8 @@ Cheat code 2
 "Game title 2"
 etc.
 
-Also, two types of comments are allowed:
-- Script-style comments. All text beginning with a ‘#’ character to the end of
-  the line is ignored.
-- C++-style comments. All text beginning with a ‘//’ sequence to the end of the
-  line is ignored.
+Also, C++-style comments are allowed; all text beginning with a '//' sequence to
+the end of the line is ignored.
 
 Sample:
 
