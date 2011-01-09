@@ -1,0 +1,63 @@
+"Test 1: raw"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 2: v1 encrypted"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 3: v7 encrypted"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 4: v1 and v7 encrypted"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 5: raw, v1 and v7 encrypted"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 6: v7 encrypted (2)"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 7: v7 encrypted (3)"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
+
+"Test 8: v7 encrypted (4)"
+Enable Code (Must Be On)
+9029BEAC 0C0A9225
+Infinite Time
+201F6024 00000000
+Max Pro Points
+2096F5B8 000000BE
