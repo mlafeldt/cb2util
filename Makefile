@@ -71,6 +71,8 @@ OBJS += fileio.o
 OBJS += pcb.o
 OBJS += shs.o
 
+DEPS = $(OBJS:%.o=%.d)
+
 #
 # Quiet build
 #
@@ -102,7 +104,9 @@ endif
 endif
 
 $(OBJS): %.o: %.c
-	$(QUIET_CC)$(CC) -o $*.o -c $(CFLAGS) $<
+	$(QUIET_CC)$(CC) -o $*.o -c $(CFLAGS) -MD -MP $<
+
+-include $(DEPS)
 
 all: $(PROG)
 
@@ -117,7 +121,7 @@ cb2util.o: CB2UTIL-VERSION-FILE
 cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
 
 clean:
-	$(RM) $(PROG) $(OBJS)
+	$(RM) $(PROG) $(OBJS) $(DEPS)
 	$(RM) CB2UTIL-VERSION-FILE
 	$(RM) -r release/
 	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) clean

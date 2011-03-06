@@ -1,3 +1,4 @@
+*.d
 *.exe
 *.o
 /CB2UTIL-VERSION-FILE
