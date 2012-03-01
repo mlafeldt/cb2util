@@ -107,7 +107,8 @@ $(OBJS): %.o: %.c
 all: $(PROG)
 
 install: all
-	$(INSTALL) $(PROG) $(prefix)/bin/
+	$(INSTALL) -d -m 755 '$(prefix)/bin/'
+	$(INSTALL) $(PROG) '$(prefix)/bin/'
 
 $(PROG): $(OBJS)
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
