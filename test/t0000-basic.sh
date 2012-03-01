@@ -8,7 +8,7 @@ if [ $? != 1 ]; then
     exit 1
 fi
 
-. ./test-lib.sh
+. ./sharness.sh
 
 test_expect_success "success is reported like this" "
     :

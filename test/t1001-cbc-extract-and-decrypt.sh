@@ -2,9 +2,9 @@
 
 test_description="cb2util cbc: extract and decrypt cheats"
 
-. ./test-lib.sh
+. ./sharness.sh
 
-for file in $TEST_DIR/cbc/*.cbc; do
+for file in $TEST_DIRECTORY/cbc/*.cbc; do
     prefix=${file%.*}
     basename=$(basename "$file")
 
@@ -14,7 +14,7 @@ for file in $TEST_DIR/cbc/*.cbc; do
     "
 done
 
-for file in $TEST_DIR/cbc7/*.cbc; do
+for file in $TEST_DIRECTORY/cbc7/*.cbc; do
     prefix=${file%.*}
     basename=$(basename "$file")
 

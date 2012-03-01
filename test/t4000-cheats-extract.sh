@@ -2,9 +2,9 @@
 
 test_description="cb2util cheats: extract cheats"
 
-. ./test-lib.sh
+. ./sharness.sh
 
-for file in $TEST_DIR/cheats/*.cheats; do
+for file in $TEST_DIRECTORY/cheats/*.cheats; do
     prefix=${file%.*}
     basename=$(basename "$file")
 

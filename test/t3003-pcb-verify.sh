@@ -2,9 +2,9 @@
 
 test_description="cb2util pcb: verify signature"
 
-. ./test-lib.sh
+. ./sharness.sh
 
-for file in $TEST_DIR/pcb/*.bin; do
+for file in $TEST_DIRECTORY/pcb/*.bin; do
     prefix=${file%.*}
     basename=$(basename "$file")
 

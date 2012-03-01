@@ -2,9 +2,9 @@
 
 test_description="cb2util cheats: compile cheats"
 
-. ./test-lib.sh
+. ./sharness.sh
 
-for file in $TEST_DIR/cheats/*.txt; do
+for file in $TEST_DIRECTORY/cheats/*.txt; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "
