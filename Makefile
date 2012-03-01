@@ -119,13 +119,13 @@ clean:
 	$(RM) $(PROG) $(OBJS)
 	$(RM) CB2UTIL-VERSION-FILE
 	$(RM) -r release/
-	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) clean
+	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) clean
 
 test: all
-	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) all
+	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) all
 
 prove: all
-	$(QUIET_SUBDIR0)t $(QUIET_SUBDIR1) prove
+	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) prove
 
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
 release: all
