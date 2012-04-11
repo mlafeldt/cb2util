@@ -658,7 +658,7 @@ end:
     /* free allocated memory */
     big_int_destroy(tmp);
 
-    return 0;
+    return result;
 }
 
 /**
