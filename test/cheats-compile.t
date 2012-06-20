@@ -1,10 +1,11 @@
 #!/bin/sh
+# vi: set ft=sh :
 
 test_description="cb2util cheats: compile cheats"
 
 . ./sharness.sh
 
-for file in $TEST_DIRECTORY/cheats/*.txt; do
+for file in $SHARNESS_TEST_DIRECTORY/cheats/*.txt; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "

@@ -1,10 +1,11 @@
 #!/bin/sh
+# vi: set ft=sh :
 
 test_description="cb2util pcb: decrypt file"
 
 . ./sharness.sh
 
-for file in $TEST_DIRECTORY/pcb/*.bin; do
+for file in $SHARNESS_TEST_DIRECTORY/pcb/*.bin; do
     prefix=${file%.*}
     basename=$(basename "$file")
 

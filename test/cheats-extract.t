@@ -1,10 +1,11 @@
 #!/bin/sh
+# vi: set ft=sh :
 
 test_description="cb2util cheats: extract cheats"
 
 . ./sharness.sh
 
-for file in $TEST_DIRECTORY/cheats/*.cheats; do
+for file in $SHARNESS_TEST_DIRECTORY/cheats/*.cheats; do
     prefix=${file%.*}
     basename=$(basename "$file")
 
