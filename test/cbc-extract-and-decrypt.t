@@ -10,7 +10,7 @@ for file in $SHARNESS_TEST_DIRECTORY/cbc/*.cbc; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "
-        cb2util cbc -d $file >out &&
+        cb2util cbc --decrypt $file >out &&
         test_cmp $prefix.txt out
     "
 done
@@ -20,7 +20,7 @@ for file in $SHARNESS_TEST_DIRECTORY/cbc7/*.cbc; do
     basename=$(basename "$file")
 
     test_expect_success "$basename (v7)" "
-        cb2util cbc -7 -d $file >out &&
+        cb2util cbc --decrypt -7 $file >out &&
         test_cmp $prefix.txt out
     "
 done

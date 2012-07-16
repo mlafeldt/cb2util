@@ -10,8 +10,8 @@ for file in $SHARNESS_TEST_DIRECTORY/pcb/*.bin; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "
-        cb2util pcb -s $file out &&
-        cmp -b -l $prefix.strip out
+        cb2util pcb --strip $file out &&
+        cmp --print-bytes --verbose $prefix.strip out
     "
 done
 

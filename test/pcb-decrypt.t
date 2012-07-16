@@ -11,7 +11,7 @@ for file in $SHARNESS_TEST_DIRECTORY/pcb/*.bin; do
 
     test_expect_success "$basename" "
         cb2util pcb $file out &&
-        cmp -b -l $prefix.raw out
+        cmp --print-bytes --verbose $prefix.raw out
     "
 done
 

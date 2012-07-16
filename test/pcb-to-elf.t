@@ -10,8 +10,8 @@ for file in $SHARNESS_TEST_DIRECTORY/pcb/*.bin; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "
-        cb2util pcb -e $file out &&
-        cmp -b -l $prefix.elf out
+        cb2util pcb --elf $file out &&
+        cmp --print-bytes --verbose $prefix.elf out
     "
 done
 

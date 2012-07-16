@@ -10,7 +10,7 @@ for file in $SHARNESS_TEST_DIRECTORY/cheats/*.cheats; do
     basename=$(basename "$file")
 
     test_expect_success "$basename" "
-        cb2util cheats -d $file >out &&
+        cb2util cheats --decrypt $file >out &&
         test_cmp $prefix.txt out
     "
 done
