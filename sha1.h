@@ -1,7 +1,7 @@
 /*
  * Wrapper for SHA-1 implementation
  *
- * Copyright (C) 2006-2011 Mathias Lafeldt <misfire@debugon.org>
+ * Copyright (C) 2006-2012 Mathias Lafeldt <mathias.lafeldt@gmail.com>
  * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.
