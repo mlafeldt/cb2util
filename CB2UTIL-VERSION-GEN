@@ -6,7 +6,7 @@ cmake=
 [ "$1" = "--cmake" ] && cmake=yes
 
 version=$(git describe --tags --match "v[0-9]*" --abbrev=4 --dirty 2>/dev/null ||
-	head -n1 CHANGES | cut -f1 -d " ")
+	awk '/^v/ {print $1; exit}' HISTORY.md)
 version=$(expr "$version" : v*'\(.*\)' | sed -e 's/-/./g')
 
 cur_ver=
