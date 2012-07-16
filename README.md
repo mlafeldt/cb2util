@@ -91,19 +91,19 @@ Extract cheats from mgs3.cbc and print them to screen:
 
 Extract cheats, decrypt encrypted cheats, and print them to screen:
 
-    $ cb2util cbc -d mgs3.cbc
+    $ cb2util cbc --decrypt mgs3.cbc
 
 Same as previous example, but force decryption of _all_ cheats:
 
-    $ cb2util cbc -dforce mgs3.cbc
+    $ cb2util cbc --decrypt=force mgs3.cbc
 
 Check digital signature of re4.cbc:
 
-    $ cb2util cbc -c re4.cbc
+    $ cb2util cbc --check re4.cbc
 
 Extract and decrypt cheats from v7 code save re4.cbc, write them to re4.txt:
 
-    $ cb2util cbc -7 -d re4.cbc > re4.txt
+    $ cb2util cbc --decrypt -7 re4.cbc > re4.txt
 
 
 ### PCB files
@@ -141,15 +141,15 @@ Decrypt pelican.bin to pelican.raw:
 
 Decrypt pelican.bin to pelican.raw and strip RSA signature:
 
-    $ cb2util pcb -s pelican.bin pelican.raw
+    $ cb2util pcb --strip pelican.bin pelican.raw
 
 Convert pelican.bin into the ELF file pelican.elf:
 
-    $ cb2util pcb -e pelican.bin pelican.elf
+    $ cb2util pcb --elf pelican.bin pelican.elf
 
 Check RSA signature of pelican.bin:
 
-    $ cb2util pcb -c pelican.bin
+    $ cb2util pcb --check pelican.bin
 
 
 ### "cheats" files
@@ -178,15 +178,15 @@ Extract all cheats from "cheats" file and print them to screen:
 
 Extract all cheats, decrypt encrypted cheats, and print them to screen:
 
-    $ cb2util cheats -d /path/to/cheats
+    $ cb2util cheats --decrypt /path/to/cheats
 
 Same as previous example, but force decryption of _all_ cheats:
 
-    $ cb2util cheats -dforce /path/to/cheats
+    $ cb2util cheats --decrypt=force /path/to/cheats
 
 Compile cheats in mygames.txt to "cheats" file:
 
-    $ cb2util cheats -c mygames.txt /path/to/cheats
+    $ cb2util cheats --compile mygames.txt /path/to/cheats
 
 You can use your own "cheats" file with CodeBreaker in just a few steps:
 
