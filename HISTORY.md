@@ -2,8 +2,8 @@ History
 =======
 
 
-v1.4 (draft)
-------------
+v1.4 (Jul 16 2012)
+------------------
 
 * The "cheats" compiler no longer supports script-style `#` comments. The
   character `#` is often used in cheat descriptions to mean "number".
