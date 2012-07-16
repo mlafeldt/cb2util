@@ -18,6 +18,23 @@ The features are:
 - check digital signature on code saves and PCB files
 
 
+Installation
+------------
+
+To build and install cb2util, simply run:
+
+    $ make
+    $ make install
+
+CMake is supported too:
+
+    $ mkdir build
+    $ cd build/
+    $ cmake ..
+    $ make
+    $ make install
+
+
 Usage
 -----
 
