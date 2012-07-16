@@ -9,6 +9,18 @@ v1.4 (draft)
   character `#` is often used in cheat descriptions to mean "number".
   Treating it as comment would mangle such lines. (Suggested by dlanor)
 
+* Fix `make install` to create target folder.
+
+* Fix return value of `big_int_hamming_distance()` in libbig_int.
+
+* Run tests using Sharness v0.2.4.
+
+* Add Travis CI config.
+
+* Update documentation and convert it to markdown.
+
+* Update license and copyright notices.
+
 
 v1.3 (Jan 6 2011)
 -----------------
