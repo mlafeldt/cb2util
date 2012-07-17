@@ -46,6 +46,9 @@ typedef struct {
 /* offset of data hashed for RSA signature */
 #define CBC_HASH_OFFSET	0x00000104
 
+/* when compiling CBC v8+ files, use this message as the signature */
+#define CBC_BANNER	"Created with cb2util - http://mlafeldt.github.com/cb2util"
+
 /* CBC v7 file header */
 typedef struct {
 	char		gametitle[64];
@@ -172,9 +175,10 @@ int cmd_cbc(int argc, char **argv)
 				cbc_hdr_t hdr;
 				memset(&hdr, 0, sizeof(hdr));
 				hdr.fileid = CBC_FILE_ID;
+				strcpy((char*)hdr.rsasig, CBC_BANNER);
 				hdr.cbvers = 0x0800;
-				hdr.dataoff = sizeof(hdr);
 				strncpy(hdr.gametitle, GAMES_FIRST(&cheats.games)->title, 72);
+				hdr.dataoff = sizeof(hdr);
 				fwrite(&hdr, sizeof(hdr), 1, fp);
 			}
 
