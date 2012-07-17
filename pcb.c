@@ -93,31 +93,31 @@ static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 static const char *pcb_usage =
 	"usage: cb2util pcb [-s] <infile> <outfile>...\n"
 	"   or: cb2util pcb -e <infile> <outfile>...\n"
-	"   or: cb2util pcb -c <file>...\n\n"
+	"   or: cb2util pcb -v <file>...\n\n"
 	"    no option\n"
 	"        encrypt/decrypt file\n\n"
 	"    -s, --strip\n"
 	"        strip RSA signature\n\n"
 	"    -e, --elf\n"
 	"        convert into ELF file\n\n"
-	"    -c, --check\n"
-	"        check RSA signature\n";
+	"    -v, --verify\n"
+	"        verify RSA signature\n";
 
 int cmd_pcb(int argc, char **argv)
 {
-	const char *shortopts = "cehs";
+	const char *shortopts = "ehsv";
 	const struct option longopts[] = {
-		{ "check", no_argument, NULL, 'c' },
 		{ "elf", no_argument, NULL, 'e' },
 		{ "help", no_argument, NULL, 'h' },
 		{ "strip", no_argument, NULL, 's' },
+		{ "verify", no_argument, NULL, 'v' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
 		MODE_CRYPT,
-		MODE_CHECK,
 		MODE_ELF,
-		MODE_STRIP
+		MODE_STRIP,
+		MODE_VERIFY
 	};
 	int mode = MODE_CRYPT;
 	int errors = 0;
@@ -125,9 +125,6 @@ int cmd_pcb(int argc, char **argv)
 
 	while ((ret = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		switch (ret) {
-		case 'c':
-			mode = MODE_CHECK;
-			break;
 		case 'e':
 			mode = MODE_ELF;
 			break;
@@ -137,20 +134,23 @@ int cmd_pcb(int argc, char **argv)
 		case 's':
 			mode = MODE_STRIP;
 			break;
+		case 'v':
+			mode = MODE_VERIFY;
+			break;
 		default:
 			fprintf(stderr, "%s\n", pcb_usage);
 			return 1;
 		}
 	}
 
-	if ((optind == argc) || (mode != MODE_CHECK && (argc - optind) & 1)) {
+	if ((optind == argc) || (mode != MODE_VERIFY && (argc - optind) & 1)) {
 		fprintf(stderr, "%s\n", pcb_usage);
 		return 1;
 	}
 
 	while (optind < argc) {
 		const char *infile = argv[optind++];
-		const char *outfile = mode != MODE_CHECK ? argv[optind++] : NULL;
+		const char *outfile = mode != MODE_VERIFY ? argv[optind++] : NULL;
 		uint8_t *buf;
 		size_t buflen;
 		pcb_hdr_t *hdr;
@@ -171,7 +171,7 @@ int cmd_pcb(int argc, char **argv)
 			goto next_file;
 		}
 
-		if (mode == MODE_CHECK) {
+		if (mode == MODE_VERIFY) {
 			ret = cb_verify_signature(hdr->rsasig, hdr->data, datalen);
 			printf("%s: %s\n", infile, ret ? "FAILED" : "OK");
 			errors += ret;

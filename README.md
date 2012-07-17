@@ -116,7 +116,7 @@ upgrades and homebrew so far.
 
     usage: cb2util pcb [-s] <infile> <outfile>...
        or: cb2util pcb -e <infile> <outfile>...
-       or: cb2util pcb -c <file>...
+       or: cb2util pcb -v <file>...
 
         no option
             encrypt/decrypt file
@@ -127,8 +127,8 @@ upgrades and homebrew so far.
         -e, --elf
             convert into ELF file
 
-        -c, --check
-            check RSA signature
+        -v, --verify
+            verify RSA signature
 
 Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
 doesn't care if it's encrypting or decrypting.
@@ -149,7 +149,7 @@ Convert pelican.bin into the ELF file pelican.elf:
 
 Check RSA signature of pelican.bin:
 
-    $ cb2util pcb --check pelican.bin
+    $ cb2util pcb --verify pelican.bin
 
 
 ### "cheats" files
