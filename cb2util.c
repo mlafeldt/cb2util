@@ -28,8 +28,8 @@
 #include <getopt.h>
 
 extern int cmd_cbc(int argc, char **argv);
-extern int cmd_pcb(int argc, char **argv);
 extern int cmd_cheats(int argc, char **argv);
+extern int cmd_pcb(int argc, char **argv);
 static int cmd_help(int argc, char **argv);
 
 struct cmd_struct {
@@ -40,8 +40,8 @@ struct cmd_struct {
 static const struct cmd_struct _commands[] = {
 	{ "help", cmd_help },
 	{ "cbc", cmd_cbc },
-	{ "pcb", cmd_pcb },
 	{ "cheats", cmd_cheats },
+	{ "pcb", cmd_pcb },
 	{ NULL, NULL }
 };
 

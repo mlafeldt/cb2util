@@ -6,8 +6,8 @@ cb2util was made to utilize different file formats of CodeBreaker PS2.
 It currently supports:
 
 - Code saves (v7 and v8+/Day1)
-- PCB files (upgrades/homebrew/etc)
 - "cheats" files (v7+)
+- PCB files (upgrades/homebrew/etc)
 
 The features are:
 
@@ -47,8 +47,8 @@ Using the `--help` option will display the following text:
 
     The available commands are:
         cbc
-        pcb
         cheats
+        pcb
 
     Try 'cb2util help <command>' for more information.
 
@@ -122,52 +122,6 @@ Compile cheats in mygame.txt to code save for CB v7:
 Note that the format of the text file to be compiled is described below.
 
 
-### PCB files
-
-File extension: `*.bin`
-
-PCB files are encrypted and digitally signed binaries that can be executed by
-the CodeBreaker PS2. In theory, this could be any application; we've seen
-upgrades and homebrew so far.
-
-    usage: cb2util pcb [-s] <infile> <outfile>...
-       or: cb2util pcb -e <infile> <outfile>...
-       or: cb2util pcb -v <file>...
-
-        no option
-            encrypt/decrypt file
-
-        -s, --strip
-            strip RSA signature
-
-        -e, --elf
-            convert into ELF file
-
-        -v, --verify
-            verify RSA signature
-
-Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
-doesn't care if it's encrypting or decrypting.
-
-Examples:
-
-Decrypt pelican.bin to pelican.raw:
-
-    $ cb2util pcb pelican.bin pelican.raw
-
-Decrypt pelican.bin to pelican.raw and strip RSA signature:
-
-    $ cb2util pcb --strip pelican.bin pelican.raw
-
-Convert pelican.bin into the ELF file pelican.elf:
-
-    $ cb2util pcb --elf pelican.bin pelican.elf
-
-Check RSA signature of pelican.bin:
-
-    $ cb2util pcb --verify pelican.bin
-
-
 ### "cheats" files
 
 The "cheats" file is CodeBreaker's internal code database. It is usually saved
@@ -239,6 +193,52 @@ Example:
     902D51F8 0C0B95F6
     Invincible
     203C8728 00000001
+
+
+### PCB files
+
+File extension: `*.bin`
+
+PCB files are encrypted and digitally signed binaries that can be executed by
+the CodeBreaker PS2. In theory, this could be any application; we've seen
+upgrades and homebrew so far.
+
+    usage: cb2util pcb [-s] <infile> <outfile>...
+       or: cb2util pcb -e <infile> <outfile>...
+       or: cb2util pcb -v <file>...
+
+        no option
+            encrypt/decrypt file
+
+        -s, --strip
+            strip RSA signature
+
+        -e, --elf
+            convert into ELF file
+
+        -v, --verify
+            verify RSA signature
+
+Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
+doesn't care if it's encrypting or decrypting.
+
+Examples:
+
+Decrypt pelican.bin to pelican.raw:
+
+    $ cb2util pcb pelican.bin pelican.raw
+
+Decrypt pelican.bin to pelican.raw and strip RSA signature:
+
+    $ cb2util pcb --strip pelican.bin pelican.raw
+
+Convert pelican.bin into the ELF file pelican.elf:
+
+    $ cb2util pcb --elf pelican.bin pelican.elf
+
+Check RSA signature of pelican.bin:
+
+    $ cb2util pcb --verify pelican.bin
 
 
 ### Game saves
