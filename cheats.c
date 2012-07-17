@@ -239,8 +239,8 @@ int cmd_cheats(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
-		MODE_EXTRACT,
-		MODE_COMPILE
+		MODE_COMPILE,
+		MODE_EXTRACT
 	};
 	int mode = MODE_EXTRACT;
 	int decrypt = DECRYPT_OFF;
@@ -253,7 +253,6 @@ int cmd_cheats(int argc, char **argv)
 		case 'c':
 			mode = MODE_COMPILE;
 			break;
-
 		case 'd':
 			if (optarg != NULL) {
 				if (!strcmp(optarg, "auto")) {
