@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <libcheats.h>
 
 enum {
 	DECRYPT_OFF,
@@ -34,5 +35,6 @@ enum {
 };
 
 int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt);
+int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats);
 
 #endif /* _CHEATS_H_ */

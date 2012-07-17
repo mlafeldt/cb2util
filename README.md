@@ -6,13 +6,13 @@ cb2util was made to utilize different file formats of CodeBreaker PS2.
 It currently supports:
 
 - Code saves (v7 and v8+/Day1)
-- PCB files (upgrades/homebrew/etc)
 - "cheats" files (v7+)
+- PCB files (upgrades/homebrew/etc)
 
 The features are:
 
 - extract (and decrypt) all cheats from code saves and "cheats" files
-- compile your own "cheats" files
+- compile your own code saves and "cheats" files
 - encrypt or decrypt PCB files
 - convert PCB files into ELF files
 - check digital signature on code saves and PCB files
@@ -47,8 +47,8 @@ Using the `--help` option will display the following text:
 
     The available commands are:
         cbc
-        pcb
         cheats
+        pcb
 
     Try 'cb2util help <command>' for more information.
 
@@ -65,10 +65,13 @@ File extension: `*.cbc`
 
 Code saves (also known as Day1 or CBC files) store cheat codes that can be added
 to your CodeBreaker's code list. While older code saves for CB v7 are only
-encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well.
+encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well. The
+latter is the reason why you need a hacked CB in order to use code saves compiled
+with cb2util (search the Web for _CodeBreaker RSA fix_).
 
-    usage: cb2util cbc [-c | -d[mode]] <file>...
+    usage: cb2util cbc [-d[mode] | -v] <file>...
        or: cb2util cbc -7 [-d[mode]] <file>...
+       or: cb2util cbc [-7] -c <infile> <outfile>...
 
         no option
             extract cheats
@@ -77,8 +80,11 @@ encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well.
             decrypt extracted cheats
             mode can be "auto" (default) or "force"
 
-        -c, --check
-            check RSA signature
+        -v, --verify
+            verify RSA signature
+
+        -c, --compile
+            compile text to CBC file
 
         -7
             files are in CBC v7 format
@@ -99,57 +105,21 @@ Same as previous example, but force decryption of _all_ cheats:
 
 Check digital signature of re4.cbc:
 
-    $ cb2util cbc --check re4.cbc
+    $ cb2util cbc --verify re4.cbc
 
 Extract and decrypt cheats from v7 code save re4.cbc, write them to re4.txt:
 
     $ cb2util cbc --decrypt -7 re4.cbc > re4.txt
 
+Compile cheats in mygame.txt to code save for CB v8+:
 
-### PCB files
+    $ cb2util cbc --compile mygame.txt /path/to/cbc
 
-File extension: `*.bin`
+Compile cheats in mygame.txt to code save for CB v7:
 
-PCB files are encrypted and digitally signed binaries that can be executed by
-the CodeBreaker PS2. In theory, this could be any application; we've seen
-upgrades and homebrew so far.
+    $ cb2util cbc --compile -7 mygame.txt /path/to/cbc
 
-    usage: cb2util pcb [-s] <infile> <outfile>...
-       or: cb2util pcb -e <infile> <outfile>...
-       or: cb2util pcb -c <file>...
-
-        no option
-            encrypt/decrypt file
-
-        -s, --strip
-            strip RSA signature
-
-        -e, --elf
-            convert into ELF file
-
-        -c, --check
-            check RSA signature
-
-Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
-doesn't care if it's encrypting or decrypting.
-
-Examples:
-
-Decrypt pelican.bin to pelican.raw:
-
-    $ cb2util pcb pelican.bin pelican.raw
-
-Decrypt pelican.bin to pelican.raw and strip RSA signature:
-
-    $ cb2util pcb --strip pelican.bin pelican.raw
-
-Convert pelican.bin into the ELF file pelican.elf:
-
-    $ cb2util pcb --elf pelican.bin pelican.elf
-
-Check RSA signature of pelican.bin:
-
-    $ cb2util pcb --check pelican.bin
+Note that the format of the text file to be compiled is described below.
 
 
 ### "cheats" files
@@ -195,7 +165,11 @@ You can use your own "cheats" file with CodeBreaker in just a few steps:
 3. use your favorite method to transfer the file to `mc0:/PCB/cheats`
 4. start CodeBreaker to see your cheats ready to be used
 
-The format of the text file is quite simple:
+
+#### Text file format
+
+To compile code saves and "cheats" files, cb2util uses [libcheats] for parsing
+cheat codes in text format. The format of the text file is quite simple:
 
     "Game title 1"
     Cheat description 1
@@ -211,7 +185,7 @@ The format of the text file is quite simple:
 Also, C++-style comments are allowed; all text beginning with a `//` sequence to
 the end of the line is ignored.
 
-Sample:
+Example:
 
     "TimeSplitters"
     // some senseless comment
@@ -219,6 +193,52 @@ Sample:
     902D51F8 0C0B95F6
     Invincible
     203C8728 00000001
+
+
+### PCB files
+
+File extension: `*.bin`
+
+PCB files are encrypted and digitally signed binaries that can be executed by
+the CodeBreaker PS2. In theory, this could be any application; we've seen
+upgrades and homebrew so far.
+
+    usage: cb2util pcb [-s] <infile> <outfile>...
+       or: cb2util pcb -e <infile> <outfile>...
+       or: cb2util pcb -v <file>...
+
+        no option
+            encrypt/decrypt file
+
+        -s, --strip
+            strip RSA signature
+
+        -e, --elf
+            convert into ELF file
+
+        -v, --verify
+            verify RSA signature
+
+Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
+doesn't care if it's encrypting or decrypting.
+
+Examples:
+
+Decrypt pelican.bin to pelican.raw:
+
+    $ cb2util pcb pelican.bin pelican.raw
+
+Decrypt pelican.bin to pelican.raw and strip RSA signature:
+
+    $ cb2util pcb --strip pelican.bin pelican.raw
+
+Convert pelican.bin into the ELF file pelican.elf:
+
+    $ cb2util pcb --elf pelican.bin pelican.elf
+
+Check RSA signature of pelican.bin:
+
+    $ cb2util pcb --verify pelican.bin
 
 
 ### Game saves
@@ -242,7 +262,7 @@ Public License. Please see file [COPYING] for further information.
 Special Thanks
 --------------
 
-- Thanks to the Free Software Foundation -- Open Source is a blessing!
+- Thanks to the Free Software Foundation - Open Source is a blessing!
 - Alexander Valyalkin for his great BIG_INT library.
 - Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
 - Vector for making PS2 Save Builder and saving me some time. ;)
@@ -260,3 +280,4 @@ Contact
 
 
 [COPYING]: https://github.com/mlafeldt/cb2util/blob/master/COPYING
+[libcheats]: https://github.com/mlafeldt/libcheats
