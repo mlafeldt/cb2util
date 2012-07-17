@@ -53,30 +53,30 @@ typedef struct {
 } cbc7_hdr_t;
 
 static const char *cbc_usage =
-	"usage: cb2util cbc [-c | -d[mode]] <file>...\n"
+	"usage: cb2util cbc [-d[mode] | -v] <file>...\n"
 	"   or: cb2util cbc -7 [-d[mode]] <file>...\n\n"
 	"    no option\n"
 	"        extract cheats\n\n"
 	"    -d[mode], --decrypt[=mode]\n"
 	"        decrypt extracted cheats\n"
 	"        mode can be \"auto\" (default) or \"force\"\n\n"
-	"    -c, --check\n"
-	"        check RSA signature\n\n"
+	"    -v, --verify\n"
+	"        verify RSA signature\n\n"
 	"    -7\n"
 	"        files are in CBC v7 format\n";
 
 int cmd_cbc(int argc, char **argv)
 {
-	const char *shortopts = "7cd::h";
+	const char *shortopts = "7d::vh";
 	const struct option longopts[] = {
-		{ "check", no_argument, NULL, 'c' },
 		{ "decrypt", optional_argument, NULL, 'd' },
 		{ "help", no_argument, NULL, 'h' },
+		{ "verify", no_argument, NULL, 'v' },
 		{ NULL, 0, NULL, 0 }
 	};
 	enum {
 		MODE_EXTRACT,
-		MODE_CHECK
+		MODE_VERIFY
 	};
 	int mode = MODE_EXTRACT;
 	int decrypt = DECRYPT_OFF;
@@ -89,9 +89,6 @@ int cmd_cbc(int argc, char **argv)
 		switch (ret) {
 		case '7':
 			v7 = 1;
-			break;
-		case 'c':
-			mode = MODE_CHECK;
 			break;
 		case 'd':
 			if (optarg != NULL) {
@@ -107,6 +104,9 @@ int cmd_cbc(int argc, char **argv)
 				decrypt = DECRYPT_AUTO;
 			}
 			break;
+		case 'v':
+			mode = MODE_VERIFY;
+			break;
 		case 'h':
 			printf("%s\n", cbc_usage);
 			return 0;
@@ -120,7 +120,7 @@ int cmd_cbc(int argc, char **argv)
 		fprintf(stderr, "%s\n", cbc_usage);
 		return 1;
 	}
-	if (v7 && mode == MODE_CHECK) {
+	if (v7 && mode == MODE_VERIFY) {
 		fprintf(stderr, "CBC v7 files don't have a signature\n");
 		return 1;
 	}
@@ -172,7 +172,7 @@ int cmd_cbc(int argc, char **argv)
 				goto next_file;
 			}
 
-			if (mode == MODE_CHECK) {
+			if (mode == MODE_VERIFY) {
 				ret = cb_verify_signature(hdr->rsasig, buf + CBC_HASH_OFFSET,
 						buflen - CBC_HASH_OFFSET);
 				printf("%s: %s\n", filename, ret ? "FAILED" : "OK");

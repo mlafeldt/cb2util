@@ -67,7 +67,7 @@ Code saves (also known as Day1 or CBC files) store cheat codes that can be added
 to your CodeBreaker's code list. While older code saves for CB v7 are only
 encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well.
 
-    usage: cb2util cbc [-c | -d[mode]] <file>...
+    usage: cb2util cbc [-d[mode] | -v] <file>...
        or: cb2util cbc -7 [-d[mode]] <file>...
 
         no option
@@ -77,8 +77,8 @@ encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well.
             decrypt extracted cheats
             mode can be "auto" (default) or "force"
 
-        -c, --check
-            check RSA signature
+        -v, --verify
+            verify RSA signature
 
         -7
             files are in CBC v7 format
@@ -99,7 +99,7 @@ Same as previous example, but force decryption of _all_ cheats:
 
 Check digital signature of re4.cbc:
 
-    $ cb2util cbc --check re4.cbc
+    $ cb2util cbc --verify re4.cbc
 
 Extract and decrypt cheats from v7 code save re4.cbc, write them to re4.txt:
 
