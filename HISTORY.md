@@ -2,6 +2,16 @@ History
 =======
 
 
+v1.5 (Jul 17 2012)
+------------------
+
+* Add ability to compile code saves for CB v7 and v8+. Note that you need a
+  hacked CB in order to use those files. (Requested by bfoos)
+
+* Rename `--check` option to `--verify` so that the short option `-c` is
+  available for the new compile feature.
+
+
 v1.4 (Jul 16 2012)
 ------------------
 
