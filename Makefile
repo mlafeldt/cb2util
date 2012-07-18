@@ -128,7 +128,13 @@ test: all
 prove: all
 	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) prove
 
-PACKAGE = cb2util-$(CB2UTIL_VERSION)
+# should work for major platforms
+ifeq ($(BUILD_MINGW),1)
+ARCH = win32
+else
+ARCH = $(shell test "$$(uname -m)" = x86_64 && echo amd64 || echo i386)
+endif
+PACKAGE = cb2util-$(CB2UTIL_VERSION)-$(ARCH)
 release: clean test
 	$(RM) -r release/
 	$(INSTALL) -d -m 755 release/$(PACKAGE)
