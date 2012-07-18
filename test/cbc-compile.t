@@ -13,6 +13,12 @@ for file in $SHARNESS_TEST_DIRECTORY/cbc/*.txt; do
         cb2util cbc out >out2 &&
         test_cmp $file out2
     "
+
+    banner="Compiled from $basename"
+    test_expect_success "$basename (custom banner)" "
+        cb2util cbc --compile --banner '$banner' $file out &&
+        strings out | grep -q '$banner'
+    "
 done
 
 for file in $SHARNESS_TEST_DIRECTORY/cbc7/*.txt; do
