@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>cb2util by mlafeldt</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>cb2util</h1>
+        <h2>CodeBreaker PS2 File Utility</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/mlafeldt/cb2util/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/mlafeldt/cb2util/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/mlafeldt/cb2util" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>cb2util - CodeBreaker PS2 File Utility</h1>
+
+<p>cb2util was made to utilize different file formats of CodeBreaker PS2.</p>
+
+<p>It currently supports:</p>
+
+<ul>
+<li>Code saves (v7 and v8+/Day1)</li>
+<li>"cheats" files (v7+)</li>
+<li>PCB files (upgrades/homebrew/etc)</li>
+</ul><p>The features are:</p>
+
+<ul>
+<li>extract (and decrypt) all cheats from code saves and "cheats" files</li>
+<li>compile your own code saves and "cheats" files</li>
+<li>encrypt or decrypt PCB files</li>
+<li>convert PCB files into ELF files</li>
+<li>check digital signature on code saves and PCB files</li>
+</ul><h2>Installation</h2>
+
+<p>The easiest and fastest way to get cb2util is to download the pre-built binaries
+for Windows or Linux from the <a href="https://github.com/mlafeldt/cb2util/downloads">Downloads</a> site.</p>
+
+<p>If you want to build cb2util from source, simply run:</p>
+
+<pre><code>$ git clone --recursive git://github.com/mlafeldt/cb2util.git
+$ cd cb2util/
+$ make
+$ make install
+</code></pre>
+
+<p>CMake is supported too:</p>
+
+<pre><code>$ mkdir build
+$ cd build/
+$ cmake ..
+$ make
+$ make install
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>As cb2util is a command-line application, you have to pass arguments to it.</p>
+
+<p>Using the <code>--help</code> option will display the following text:</p>
+
+<pre><code>$ cb2util --help
+usage: cb2util [--version] [--help] &lt;command&gt; [&lt;args&gt;]
+
+The available commands are:
+    cbc
+    cheats
+    pcb
+
+Try 'cb2util help &lt;command&gt;' for more information.
+</code></pre>
+
+<p>As written above, you must specify the command to use followed by its arguments.
+There's one command for each of the supported file formats, e.g. <code>cbc</code> for code
+saves. To learn how a command is supposed to work, run <code>cb2util help &lt;command&gt;</code>.</p>
+
+<p>Below are some notes and examples concerning the different file formats.</p>
+
+<h3>Code saves (v7 and v8+/Day1)</h3>
+
+<p>File extension: <code>*.cbc</code></p>
+
+<p>Code saves (also known as Day1 or CBC files) store cheat codes that can be added
+to your CodeBreaker's code list. While older code saves for CB v7 are only
+encrypted, newer files for CB v8+ and CB Day1 are digitally signed as well. The
+latter is the reason why you need a hacked CB in order to use code saves compiled
+with cb2util (search the Web for <em>CodeBreaker RSA fix</em>).</p>
+
+<pre><code>usage: cb2util cbc [-d[mode] | -v] &lt;file&gt;...
+   or: cb2util cbc -7 [-d[mode]] &lt;file&gt;...
+   or: cb2util cbc [-b &lt;banner&gt;] -c &lt;infile&gt; &lt;outfile&gt;...
+   or: cb2util cbc -7 -c &lt;infile&gt; &lt;outfile&gt;...
+
+    no option
+        extract cheats
+
+    -d[mode], --decrypt[=mode]
+        decrypt extracted cheats
+        mode can be "auto" (default) or "force"
+
+    -v, --verify
+        verify RSA signature
+
+    -c, --compile
+        compile text to CBC file
+
+    -b, --banner &lt;banner&gt;
+        custom banner inserted into compiled CBC v8+ files
+
+    -7
+        files are in CBC v7 format
+</code></pre>
+
+<p>Examples:</p>
+
+<p>Extract cheats from mgs3.cbc and print them to screen:</p>
+
+<pre><code>$ cb2util cbc mgs3.cbc
+</code></pre>
+
+<p>Extract cheats, decrypt encrypted cheats, and print them to screen:</p>
+
+<pre><code>$ cb2util cbc --decrypt mgs3.cbc
+</code></pre>
+
+<p>Same as previous example, but force decryption of <em>all</em> cheats:</p>
+
+<pre><code>$ cb2util cbc --decrypt=force mgs3.cbc
+</code></pre>
+
+<p>Check digital signature of re4.cbc:</p>
+
+<pre><code>$ cb2util cbc --verify re4.cbc
+</code></pre>
+
+<p>Extract and decrypt cheats from v7 code save re4.cbc, write them to re4.txt:</p>
+
+<pre><code>$ cb2util cbc --decrypt -7 re4.cbc &gt; re4.txt
+</code></pre>
+
+<p>Compile cheats in mygame.txt to code save for CB v8+:</p>
+
+<pre><code>$ cb2util cbc --compile mygame.txt /path/to/cbc
+</code></pre>
+
+<p>Compile cheats in mygame.txt to code save for CB v7:</p>
+
+<pre><code>$ cb2util cbc --compile -7 mygame.txt /path/to/cbc
+</code></pre>
+
+<p>Note that the format of the text file to be compiled is described below.</p>
+
+<h3>"cheats" files</h3>
+
+<p>The "cheats" file is CodeBreaker's internal code database. It is usually saved
+to memory card (<code>mc0:/PCB/cheats</code>) and updated everytime the code list is changed.</p>
+
+<pre><code>usage: cb2util cheats [-d[mode]] &lt;file&gt;...
+   or: cb2util cheats -c &lt;infile&gt; &lt;outfile&gt;...
+
+    no option
+        extract cheats
+
+    -d[mode], --decrypt[=mode]
+        decrypt extracted cheats
+        mode can be "auto" (default) or "force"
+
+    -c, --compile
+        compile text to cheats file
+</code></pre>
+
+<p>Examples:</p>
+
+<p>Extract all cheats from "cheats" file and print them to screen:</p>
+
+<pre><code>$ cb2util cheats /path/to/cheats
+</code></pre>
+
+<p>Extract all cheats, decrypt encrypted cheats, and print them to screen:</p>
+
+<pre><code>$ cb2util cheats --decrypt /path/to/cheats
+</code></pre>
+
+<p>Same as previous example, but force decryption of <em>all</em> cheats:</p>
+
+<pre><code>$ cb2util cheats --decrypt=force /path/to/cheats
+</code></pre>
+
+<p>Compile cheats in mygames.txt to "cheats" file:</p>
+
+<pre><code>$ cb2util cheats --compile mygames.txt /path/to/cheats
+</code></pre>
+
+<p>You can use your own "cheats" file with CodeBreaker in just a few steps:</p>
+
+<ol>
+<li>create a text file containing your cheats; the format is described below</li>
+<li>invoke cb2util to compile the text file to a "cheats" file</li>
+<li>use your favorite method to transfer the file to <code>mc0:/PCB/cheats</code>
+</li>
+<li>start CodeBreaker to see your cheats ready to be used</li>
+</ol><h4>Text file format</h4>
+
+<p>To compile code saves and "cheats" files, cb2util uses <a href="https://github.com/mlafeldt/libcheats">libcheats</a> for parsing
+cheat codes in text format. The format of the text file is quite simple:</p>
+
+<pre><code>"Game title 1"
+Cheat description 1
+Cheat code 1
+Cheat code 2
+Cheat description 2
+Cheat code 1
+Cheat code 2
+
+"Game title 2"
+etc.
+</code></pre>
+
+<p>Also, C++-style comments are allowed; all text beginning with a <code>//</code> sequence to
+the end of the line is ignored.</p>
+
+<p>Example:</p>
+
+<pre><code>"TimeSplitters"
+// some senseless comment
+Mastercode
+902D51F8 0C0B95F6
+Invincible
+203C8728 00000001
+</code></pre>
+
+<h3>PCB files</h3>
+
+<p>File extension: <code>*.bin</code></p>
+
+<p>PCB files are encrypted and digitally signed binaries that can be executed by
+the CodeBreaker PS2. In theory, this could be any application; we've seen
+upgrades and homebrew so far.</p>
+
+<pre><code>usage: cb2util pcb [-s] &lt;infile&gt; &lt;outfile&gt;...
+   or: cb2util pcb -e &lt;infile&gt; &lt;outfile&gt;...
+   or: cb2util pcb -v &lt;file&gt;...
+
+    no option
+        encrypt/decrypt file
+
+    -s, --strip
+        strip RSA signature
+
+    -e, --elf
+        convert into ELF file
+
+    -v, --verify
+        verify RSA signature
+</code></pre>
+
+<p>Note: PCB files are encrypted with a symmetric cipher (RC4) and cb2util actually
+doesn't care if it's encrypting or decrypting.</p>
+
+<p>Examples:</p>
+
+<p>Decrypt pelican.bin to pelican.raw:</p>
+
+<pre><code>$ cb2util pcb pelican.bin pelican.raw
+</code></pre>
+
+<p>Decrypt pelican.bin to pelican.raw and strip RSA signature:</p>
+
+<pre><code>$ cb2util pcb --strip pelican.bin pelican.raw
+</code></pre>
+
+<p>Convert pelican.bin into the ELF file pelican.elf:</p>
+
+<pre><code>$ cb2util pcb --elf pelican.bin pelican.elf
+</code></pre>
+
+<p>Check RSA signature of pelican.bin:</p>
+
+<pre><code>$ cb2util pcb --verify pelican.bin
+</code></pre>
+
+<h3>Game saves</h3>
+
+<p>File extension: <code>*.cbs</code></p>
+
+<p>Comming soon... ;)</p>
+
+<h2>Disclaimer</h2>
+
+<p>THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
+ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
+ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.</p>
+
+<p>cb2util comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
+Public License. Please see file <a href="https://github.com/mlafeldt/cb2util/blob/master/COPYING">COPYING</a> for further information.</p>
+
+<h2>Special Thanks</h2>
+
+<ul>
+<li>Thanks to the Free Software Foundation - Open Source is a blessing!</li>
+<li>Alexander Valyalkin for his great BIG_INT library.</li>
+<li>Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.</li>
+<li>Vector for making PS2 Save Builder and saving me some time. ;)</li>
+<li>Gtlcpimp who has awakened my interest in cb2util again and provided valuable
+information on the "cheats" compression.</li>
+<li>Greets to all the people that contribute to our code hacking community!</li>
+</ul><h2>Contact</h2>
+
+<ul>
+<li>Web: <a href="http://mlafeldt.github.com/cb2util">http://mlafeldt.github.com/cb2util</a>
+</li>
+<li>Mail: <a href="mailto:mathias.lafeldt@gmail.com">mathias.lafeldt@gmail.com</a>
+</li>
+<li>Twitter: <a href="https://twitter.com/mlafeldt">@mlafeldt</a>
+</li>
+</ul>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
