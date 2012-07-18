@@ -71,7 +71,8 @@ with cb2util (search the Web for _CodeBreaker RSA fix_).
 
     usage: cb2util cbc [-d[mode] | -v] <file>...
        or: cb2util cbc -7 [-d[mode]] <file>...
-       or: cb2util cbc [-7] -c <infile> <outfile>...
+       or: cb2util cbc [-b <banner>] -c <infile> <outfile>...
+       or: cb2util cbc -7 -c <infile> <outfile>...
 
         no option
             extract cheats
@@ -85,6 +86,9 @@ with cb2util (search the Web for _CodeBreaker RSA fix_).
 
         -c, --compile
             compile text to CBC file
+
+        -b, --banner <banner>
+            custom banner inserted into compiled CBC v8+ files
 
         -7
             files are in CBC v7 format

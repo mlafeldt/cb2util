@@ -46,7 +46,7 @@ typedef struct {
 /* offset of data hashed for RSA signature */
 #define CBC_HASH_OFFSET	0x00000104
 
-/* when compiling CBC v8+ files, use this message as the signature */
+/* when compiling CBC v8+ files, use this message as the signature by default */
 #define CBC_BANNER	"Created with cb2util - http://mlafeldt.github.com/cb2util"
 
 /* CBC v7 file header */
@@ -58,7 +58,8 @@ typedef struct {
 static const char *cbc_usage =
 	"usage: cb2util cbc [-d[mode] | -v] <file>...\n"
 	"   or: cb2util cbc -7 [-d[mode]] <file>...\n"
-	"   or: cb2util cbc [-7] -c <infile> <outfile>...\n\n"
+	"   or: cb2util cbc [-b <banner>] -c <infile> <outfile>...\n"
+	"   or: cb2util cbc -7 -c <infile> <outfile>...\n\n"
 	"    no option\n"
 	"        extract cheats\n\n"
 	"    -d[mode], --decrypt[=mode]\n"
@@ -68,13 +69,16 @@ static const char *cbc_usage =
 	"        verify RSA signature\n\n"
 	"    -c, --compile\n"
 	"        compile text to CBC file\n\n"
+	"    -b, --banner <banner>\n"
+	"        custom banner inserted into compiled CBC v8+ files\n\n"
 	"    -7\n"
 	"        files are in CBC v7 format\n";
 
 int cmd_cbc(int argc, char **argv)
 {
-	const char *shortopts = "7cd::hv";
+	const char *shortopts = "7b:cd::hv";
 	const struct option longopts[] = {
+		{ "banner", required_argument, NULL, 'b' },
 		{ "compile", no_argument, NULL, 'c' },
 		{ "decrypt", optional_argument, NULL, 'd' },
 		{ "help", no_argument, NULL, 'h' },
@@ -88,6 +92,7 @@ int cmd_cbc(int argc, char **argv)
 	};
 	int mode = MODE_EXTRACT;
 	int decrypt = DECRYPT_OFF;
+	char *banner = NULL;
 	int v7 = 0;
 	int numcodes = 0;
 	int errors = 0;
@@ -97,6 +102,9 @@ int cmd_cbc(int argc, char **argv)
 		switch (ret) {
 		case '7':
 			v7 = 1;
+			break;
+		case 'b':
+			banner = optarg;
 			break;
 		case 'c':
 			mode = MODE_COMPILE;
@@ -131,9 +139,16 @@ int cmd_cbc(int argc, char **argv)
 		fprintf(stderr, "%s\n", cbc_usage);
 		return 1;
 	}
-	if (v7 && mode == MODE_VERIFY) {
-		fprintf(stderr, "CBC v7 files don't have a signature\n");
-		return 1;
+
+	if (v7) {
+		if (mode == MODE_VERIFY) {
+			fprintf(stderr, "CBC v7 files don't have a signature\n");
+			return 1;
+		}
+		if (mode == MODE_COMPILE && banner != NULL) {
+			fprintf(stderr, "CBC v7 files can't have a custom banner\n");
+			return 1;
+		}
 	}
 
 	while (optind < argc) {
@@ -175,7 +190,7 @@ int cmd_cbc(int argc, char **argv)
 				cbc_hdr_t hdr;
 				memset(&hdr, 0, sizeof(hdr));
 				hdr.fileid = CBC_FILE_ID;
-				strcpy((char*)hdr.rsasig, CBC_BANNER);
+				strncpy((char*)hdr.rsasig, banner != NULL ? banner : CBC_BANNER, 256);
 				hdr.cbvers = 0x0800;
 				strncpy(hdr.gametitle, GAMES_FIRST(&cheats.games)->title, 72);
 				hdr.dataoff = sizeof(hdr);
