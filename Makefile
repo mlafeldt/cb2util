@@ -129,7 +129,7 @@ prove: all
 	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) prove
 
 PACKAGE = cb2util-$(CB2UTIL_VERSION)
-release: all
+release: clean test
 	$(RM) -r release/
 	$(INSTALL) -d -m 755 release/$(PACKAGE)
 	$(INSTALL) $(PROG) release/$(PACKAGE)/
