@@ -21,8 +21,13 @@ The features are:
 Installation
 ------------
 
-To build and install cb2util, simply run:
+The easiest and fastest way to get cb2util is to download the pre-built binaries
+for Windows or Linux from the [Downloads] site.
 
+If you want to build cb2util from source, simply run:
+
+    $ git clone --recursive git://github.com/mlafeldt/cb2util.git
+    $ cd cb2util/
     $ make
     $ make install
 
@@ -284,4 +289,5 @@ Contact
 
 
 [COPYING]: https://github.com/mlafeldt/cb2util/blob/master/COPYING
+[Downloads]: https://github.com/mlafeldt/cb2util/downloads
 [libcheats]: https://github.com/mlafeldt/libcheats
