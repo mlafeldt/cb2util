@@ -2,6 +2,16 @@ History
 =======
 
 
+v1.6 (Jul 18 2012)
+------------------
+
+* Allow to insert a custom banner text into compiled code saves (v8+ only).
+  As we cannot sign those files ourselves, there are 256 unused bytes we might
+  fill up with 2Pac lyrics or some other kind of credit message.
+
+* Update install instructions.
+
+
 v1.5 (Jul 17 2012)
 ------------------
 
