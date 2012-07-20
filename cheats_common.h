@@ -1,5 +1,5 @@
 /*
- * "cheats" file handling
+ * Extract and compile cheats
  *
  * Copyright (C) 2006-2012 Mathias Lafeldt <mathias.lafeldt@gmail.com>
  * All rights reserved.
@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _CHEATS_H_
-#define _CHEATS_H_
+#ifndef _CHEATS_COMMON_H_
+#define _CHEATS_COMMON_H_
 
 #include <stdint.h>
 #include <stdio.h>
@@ -37,4 +37,4 @@ enum {
 int extract_cheats(FILE *fp, const uint8_t *buf, int buflen, int decrypt);
 int compile_cheats(uint8_t **dst, size_t *dstlen, const cheats_t *cheats);
 
-#endif /* _CHEATS_H_ */
+#endif /* _CHEATS_COMMON_H_ */

@@ -68,6 +68,7 @@ OBJS += cb2_crypto.o
 OBJS += cb2util.o
 OBJS += cbc.o
 OBJS += cheats.o
+OBJS += cheats_common.o
 OBJS += compress.o
 OBJS += fileio.o
 OBJS += pcb.o

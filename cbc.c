@@ -26,8 +26,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include "cheats_common.h"
 #include "cb2_crypto.h"
-#include "cheats.h"
 #include "fileio.h"
 
 /* CBC file header */
