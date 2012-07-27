@@ -193,5 +193,5 @@ next_file:
 		free(buf);
 	}
 
-	return errors ? 1 : 0;
+	return !!errors;
 }
