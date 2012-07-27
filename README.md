@@ -269,8 +269,9 @@ THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
 ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
 ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 
-cb2util comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
-Public License. Please see file [COPYING] for further information.
+* cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
+* [Sharness] and all tests are licensed under the terms of the GNU General
+  Public License version 2 or higher. See file [COPYING] for full license text.
 
 
 Special Thanks
@@ -293,6 +294,8 @@ Contact
 * Twitter: [@mlafeldt](https://twitter.com/mlafeldt)
 
 
-[COPYING]: https://github.com/mlafeldt/cb2util/blob/master/COPYING
+[COPYING]: https://github.com/mlafeldt/cb2util/blob/master/test/COPYING
 [Downloads]: https://github.com/mlafeldt/cb2util/downloads
+[LICENSE]: https://github.com/mlafeldt/cb2util/blob/master/LICENSE
+[Sharness]: http://mlafeldt.github.com/sharness
 [libcheats]: https://github.com/mlafeldt/libcheats

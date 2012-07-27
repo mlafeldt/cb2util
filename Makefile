@@ -141,7 +141,7 @@ release: clean test
 ifeq ($(BUILD_MINGW),1)
 	$(INSTALL) -m 644 $(ZLIB_PATH)/zlib1.dll release/$(PACKAGE)/
 endif
-	$(INSTALL) -m 644 README.md HISTORY.md COPYING release/$(PACKAGE)/
+	$(INSTALL) -m 644 README.md HISTORY.md LICENSE release/$(PACKAGE)/
 	cd release && \
 		$(TAR) -cjf $(PACKAGE).tar.bz2 $(PACKAGE)/; \
 		$(ZIP) -qr $(PACKAGE).zip $(PACKAGE)/; \
