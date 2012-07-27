@@ -25,7 +25,7 @@
 VERSION=1.51
 
 # The URLs to get the files from
-URL_ROOT=http://www.cmgsccc.com/ps2/
+URL_ROOT=${1:-http://www.cmgsccc.com/ps2/}
 URL_DAY1=${URL_ROOT}day1/cb.php
 URL_SAVES=${URL_ROOT}saves/cb.php
 URL_UPDATES=${URL_ROOT}updates.php
