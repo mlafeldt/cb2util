@@ -39,6 +39,10 @@ CMake is supported too:
     $ make
     $ make install
 
+In case your system lacks `elf.h`, you can install it this way:
+
+    $ curl https://raw.github.com/gist/3885346/elf.h | sudo tee /usr/local/include/elf.h
+
 
 Usage
 -----

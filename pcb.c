@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include "ps2_elf.h"
+#include <elf.h>
 #include "cb2_crypto.h"
 #include "fileio.h"
 
@@ -31,6 +31,11 @@ typedef struct {
 
 /* address to which the PS2 first transfers control */
 #define PCB_ENTRY_ADDR	PCB_LOAD_ADDR
+
+/* PS2 processor-specific flags:
+   noreorder, MIPS R5900 CPU, eabi64, mips3
+   (value for e_flags field of Elf32_Ehdr) */
+#define _EF_PS2		0x20924001
 
 static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 {
