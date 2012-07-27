@@ -19,10 +19,11 @@ CC = gcc
 INSTALL = install
 RM = rm -f
 SHA1SUM = sha1sum
+STRIP = strip
 TAR = tar
 ZIP = zip
 
-CFLAGS = -Wall -Werror -O2 -s
+CFLAGS = -Wall -Werror -O2
 CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include
 CFLAGS += -DHAVE_STDINT_H
 LDFLAGS =
@@ -30,6 +31,7 @@ LIBS =
 
 ifeq ($(BUILD_MINGW),1)
   CC = i586-mingw32msvc-gcc
+  STRIP = i586-mingw32msvc-strip
   CFLAGS += -I$(ZLIB_PATH)/include -L$(ZLIB_PATH)/lib
   LIBS += -lzdll
   PROG = cb2util.exe
@@ -92,6 +94,7 @@ ifndef V
 	QUIET_GEN      = @echo '   ' GEN $@;
 	QUIET_LNCP     = @echo '   ' LN/CP $@;
 	QUIET_GCOV     = @echo '   ' GCOV $@;
+	QUIET_STRIP    = @echo '   ' STRIP $@;
 	QUIET_SUBDIR0  = +@subdir=
 	QUIET_SUBDIR1  = ;$(NO_SUBDIR) echo '   ' SUBDIR $$subdir; \
 			 $(MAKE) $(PRINT_DIR) -C $$subdir
@@ -112,6 +115,7 @@ install: all
 
 $(PROG): $(OBJS)
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
+	$(QUIET_STRIP)$(STRIP) $@
 
 cb2util.o: CB2UTIL-VERSION-FILE
 cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
