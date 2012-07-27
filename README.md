@@ -274,6 +274,8 @@ ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
 ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 
 * cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
+* The code in `arcfour.c` is licensed under the terms of the FreeBSD license,
+  which is believed to be compatible with the MIT license.
 * [Sharness] and all tests are licensed under the terms of the GNU General
   Public License version 2 or higher. See file [COPYING] for full license text.
 
