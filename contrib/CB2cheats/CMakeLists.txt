@@ -2,7 +2,7 @@ PROJECT("CB2cheats" C)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-SET(BIGINT "libbig_int")
+SET(BIGINT "../../libbig_int")
 
 SET(CMAKE_C_FLAGS "-Wall -Werror -O2 -s")
 

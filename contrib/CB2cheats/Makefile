@@ -1,4 +1,4 @@
-BIGINT = libbig_int
+BIGINT = ../../libbig_int
 
 CC = gcc
 CFLAGS = -Wall -Werror -O2 -s
