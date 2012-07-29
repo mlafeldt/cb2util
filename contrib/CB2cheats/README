@@ -1,0 +1,137 @@
+
+
+---=====================================---
+   Tutorial:  How to extract the pre-loaded
+   cheat codes from CodeBreaker PS2 V7+
+   written by misfire
+   Last updated on: Mar 28 2006
+---========================================---
+
+
+This document is designed to tell people how to extract the pre-loaded cheat
+codes from CodeBreaker PS2 version 7 or higher. After extracting the codes for
+the first time, I realized that distributing them could cause some legal issues.
+Therefore, instead of providing copyrighted material, I'll share the necessary
+knowledge and tools, so you can extract the codes on your own.
+
+What you will need:
+- PCSX2 (Version 0.8.1 or higher, www.pcsx2.net)
+- a working CB2 V7+ image/ELF file (Don't ask me about it!!)
+- Hex Editor such as "Hex Workshop"
+- CB2cheats (included in this package)
+
+First off, some background information. All of the pre-installed codes are
+stored compressed/encrypted in the CB2 ELF file. We'll use PCSX2 to decompress
+the ELF file in runtime, and take a RAM dump of the uncovered data -- the cheat
+codes in binary format. Then, we'll convert the dumped data with CB2cheats into
+readable text. Let's do it!
+
+
+---===============================---
+   Step 1: Unpacking the CB2 ELF file
+---==================================---
+
+Open PCSX2. Depending on your source, either click [File] -> [Run CD] or
+[File] -> [Open ELF File]. Wait for the following message box:
+
+,-------------------,
+| SETTING UP CHEATS |
+|  PLEASE WAIT....  |
+'-------------------'
+
+Immediately after the message has disappeared, press ESC to halt the program.
+The codes are now decompressed and ready to be dumped. ;)
+
+
+---===================================---
+   Step 2: Taking a RAM dump of the codes
+---======================================---
+
+In PCSX2 open [Debug] -> [Memory Dump] -> [Raw Dump].
+
+Start and end addresses are CB2 version dependent.
+
+Start Address:
+V7 - 01800000
+V8 - 01800000
+V9 - 01700000
+
+In memory it should look something like this...
+
+01700000 30 30 37 20 41 67 65 6E 74 20 55 6E 64 65 72 20 007 Agent Under
+01700010 46 69 72 65 00 0E 00 45 6E 61 62 6C 65 20 43 6F Fire...Enable Co
+01700020 64 65 20 28 4D 75 73 74 20 42 65 20 4F 6E 29 00 de (Must Be On).
+01700030 00 03 00 73 2B 24 9A F9 11 F7 18 06 5E AC 9A D5 ...s+$......^...
+01700040 06 7B 18 5F 4A DC 9A D0 AC 0E 18 41 63 74 69 6F .{._J......Actio
+01700050 6E 20 4D 69 73 73 69 6F 6E 20 43 6F 64 65 73 00 n Mission Codes.
+01700060 04 00 00 4E 65 76 65 72 20 52 65 6C 6F 61 64 00 ...Never Reload.
+01700070 00 02 00 36 C6 95 DA 38 BC B2 A2 81 2F 73 2A 00 ...6...8..../s*.
+01700080 00 00 00 49 6E 66 69 6E 69 74 65 20 41 6D 6D 6F ...Infinite Ammo
+
+To figure out the end address, you have to search the memory a bit. (Dumping the
+RAM to a file and using a hex editor is more comfortable than scrolling through
+memory in PCSX2.) Eventually, you'll find the byte sequence FF FF FF FF followed
+by lots of zero bytes. That's your end address.
+
+With the example below, the end address is 01A75EB8.
+
+01A75E50 2A 90 00 03 08 4D 61 78 20 49 6E 66 69 6E 69 74 *....Max Infinit
+01A75E60 65 20 53 75 62 20 45 6E 65 72 67 79 00 00 09 00 e Sub Energy....
+01A75E70 1F C9 6C 2A 21 00 03 3C 1F C9 68 2A 30 64 63 8C ..l*!..<..h*0dc.
+01A75E80 1F C9 54 2A 03 00 60 10 1F C9 50 2A 1D 46 01 3C ..T*..`...P*.F.<
+01A75E90 1F C9 5C 2A C8 14 61 AC 1F C9 58 2A CC 14 61 AC ..\*..a...X*..a.
+01A75EA0 1F C9 44 2A 08 00 E0 03 1F C9 40 2A 00 00 00 00 ..D*......@*....
+01A75EB0 65 31 BB 2A 98 00 03 08 FF FF FF FF 00 00 00 00 e1.*............
+01A75EC0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+
+Now that you know the addresses, chose "cheats.bin" as the filename, and take a
+RAM dump!
+
+
+---===========================================---
+   Step 3: Extracting the codes from the RAM dump
+---==============================================---
+
+Finally, we'll use CB2cheats, a simple console application I've written to
+extract all cheat codes from a RAM dump to a text file.
+Additionally, you can use the -d switch to decrypt the codes.
+
+Usage: CB2cheats <BIN file> <TXT file> [-d]
+
+This will extract and decrypt all cheat codes from cheats.bin to cheats.txt:
+
+> CB2cheats cheats.bin cheats.txt -d
+
+And there you have it...
+
+-misfire
+
+
+---=====---
+   Appendix
+---========---
+
+Some stats about various CB2 versions:
+(Note: # Lines = number of code lines)
+
+/====================|======================|=========|=========|=========\
+| Version info       | Compile date         | # Games | # Codes | # Lines |
+|====================|======================|=========|=========|=========|
+| V7b  (Build: 0dbb) | May  6 2003 22:27:32 |     431 |   44174 |   53712 |
+|--------------------|----------------------|---------|---------|---------|
+| V7.1 (Build: 10c3) | Nov  3 2003 23:43:15 |     560 |   34607 |   45764 |
+|--------------------|----------------------|---------|---------|---------|
+| V8.0 (Build: 13a3) | Jan  7 2004 10:09:38 |     644 |   39932 |   53148 |
+|--------------------|----------------------|---------|---------|---------|
+| V8.1 (Build: 13c5) | Mar 12 2004 10:02:09 |     667 |   47744 |   62347 |
+|--------------------|----------------------|---------|---------|---------|
+| V9.1 (Build: 1a91) | Mar 14 2005 19:45:45 |     972 |  101020 |  127648 |
+|--------------------|----------------------|---------|---------|---------|
+| V9.2 (Build: 1b20) | Jul 27 2005 15:30:27 |    1055 |  118581 |  149700 |
+\====================|======================|=========|=========|=========/
+
+
+---======================---
+   HACKING NEEDS TO BE FREE!
+---=========================---
+
