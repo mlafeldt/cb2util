@@ -1,0 +1,134 @@
+
+
+---=====================================---
+   cb2get - CodeBreaker PS2 Download Script
+   Copyright (C) 2007-2008 misfire
+---========================================---
+
+
+Welcome to cb2get, the CodeBreaker PS2 Download Script!
+
+
+---============---
+   Version history
+---===============---
+
+v1.51 (Aug 8 2008)
+* The script is public again. :)
+* Removed dos2unix dependency.
+
+v1.5 (Feb 25 2008) [Private Build]
+* The script's output is much more readable now.
++ Added a check to see if a file has already been downloaded and is up to date.
+* Minor other changes to the script.
+
+v1.3 (Jul 16 2007) [Private Build]
+* First off, a correction: Any changes applied to CMGSCCC's download system
+  (CAPTCHAs, limit) did NOT affect the CodeBreaker's download capability.
+  Actually, the website simply checks the HTTP header of requests to decide
+  whether it came from a CB or not. With the CB, you can download as many files
+  as you wish. Otherwise, if you use a browser, you are limited to 10 downloads
+  per day and have to pass CAPTCHA tests.
+
+  Using netcat, I was able to sniff the CodeBreaker's HTTP request:
+        listening on [any] 80 ...
+        connect to [192.168.0.2] from (UNKNOWN) [192.168.0.10] 4145
+        GET /ps2/day1/cb.php?date=2005-07-22 HTTP/1.0
+        Host: www.cmgsccc.com
+        User-Agent: PS2NET Client
+  I adapted my download script accordingly and it's working again. ;)
+
+  However, this is a private build. I guess this cat-and-mouse game will
+  continue until CMGSCCC actually disables the CB's download functionality. This
+  is not my intention; there will be no public release of v1.3.
+  The whole project is a good example of what happens, if security isn't
+  designed into a system from the bottom up. After all, the security policy of
+  CMGSCCC is a total failure.
+* This version is covered by the GPLv3.
+
+v1.2 (Feb 16 2007)
+* Next round: They have added a check to verify that HTTP requests are coming
+  from their website and not from other places like this download script.
+  This is a stupid way to check something so easily forged. Using curl, you can
+  put anything you want in the referer-field and thus be able to fool the
+  server into serving your request.
+* And by the way, CM, thanks for banning me from your website. This is almost as
+  ineffective as your last fix above. You'd rather do something about the popup
+  malware (EXP/Agent.B) on your forums.
+
+v1.1 (Feb 12 2007)
+* Looks like my download script has caught the attention of CMGSCCC, as they
+  have taken steps against it. Actually, I expected this to happen.
+    What they did was to completely remove the index files from the site, e.g.
+  http://www.cmgsccc.com/ps2/day1/cb.php is now empty. Further, you can't
+  download anything (Day1 files, etc.) without being logged into the site.
+    These countermeasures do not only mean that my original script doesn't work
+  anymore, it also disables the download feature of the CodeBreaker cheat device
+  itself. Very clever...
+    However, version 1.1 fixes the issues. I came up with another solution which
+  isn't as comfortable as the original one, but it works!
++ Added the possibility to download PSP Game Saves (*.pms).
++ Added this readme.
+
+v1.0 (Jan 23 2007)
+* Initial public release
+
+
+---=========---
+   About cb2get
+---============---
+
+Briefly, cb2get is a shell script. What this script does is to download *all*
+available Day1 Code Saves, Game Saves, and Firmware Updates for CodeBreaker PS2
+from the CMGSCCC website to your computer.
+
+
+---==---
+   Usage
+---=====---
+
+To execute the script, you'll need Linux or a Linux-like environment like
+Cygwin on Windows. If you don't know what I'm talking about, then you're
+probably used to Windows and should at least visit http://www.cygwin.com/ or
+install a better OS. ;)
+
+After starting the script, cb2get will create three folders, "day1", "saves",
+and "updates", and put the respective files and an index.txt file with all IDs
+and corresponding file names there.
+
+That's it!
+
+
+---=======---
+   Disclaimer
+---==========---
+
+THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
+ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
+ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
+
+cb2get comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
+Public License. Please see file COPYING for further information.
+
+
+---===========---
+   Special thanks
+---==============---
+
+Greets to Nachbrenner and all the _real_ code hackers out there!
+
+
+---====---
+   Contact
+---=======---
+
+misfire [AT] xploderfreax [DOT] de
+
+If you enjoy cb2get, please consider a PayPal donation to my e-mail address
+above. Thank you.
+
+
+---======================---
+   HACKING NEEDS TO BE FREE!
+---=========================---
+
