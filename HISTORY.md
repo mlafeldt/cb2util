@@ -2,6 +2,22 @@ History
 =======
 
 
+v1.7 (Jul 29 2012)
+------------------
+
+* Add **cb2get** (the script I used to download all code saves, game saves, and
+  firmware updates from CMGSCCC) and **CB2cheats** (a tool to extract all
+  pre-loaded cheat codes from CB2 RAM dumps) to cb2util. See `contrib` folder.
+
+* Include libbig_int as git submodule.
+
+* Move common code to extract and compile cheats to separate file.
+
+* Let Travis CI run tests against gcc and clang.
+
+* With `make release`, rebuild everything and run tests before packaging.
+
+
 v1.6 (Jul 18 2012)
 ------------------
 
