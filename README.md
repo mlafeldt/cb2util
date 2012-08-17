@@ -156,6 +156,10 @@ Extract all cheats from "cheats" file and print them to screen:
 
     $ cb2util cheats /path/to/cheats
 
+Same as previous example, but write extracted cheats to cheats.txt:
+
+    $ cb2util cheats /path/to/cheats > cheats.txt
+
 Extract all cheats, decrypt encrypted cheats, and print them to screen:
 
     $ cb2util cheats --decrypt /path/to/cheats
