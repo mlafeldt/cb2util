@@ -134,7 +134,8 @@ Note that the format of the text file to be compiled is described below.
 ### "cheats" files
 
 The "cheats" file is CodeBreaker's internal code database. It is usually saved
-to memory card (`mc0:/PCB/cheats`) and updated everytime the code list is changed.
+to memory card (`mc0:/PCB/cheats`) and updated every time the code list is
+changed.
 
     usage: cb2util cheats [-d[mode]] <file>...
        or: cb2util cheats -c <infile> <outfile>...
