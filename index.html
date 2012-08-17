@@ -168,7 +168,8 @@ with cb2util (search the Web for <em>CodeBreaker RSA fix</em>).</p>
 <h3>"cheats" files</h3>
 
 <p>The "cheats" file is CodeBreaker's internal code database. It is usually saved
-to memory card (<code>mc0:/PCB/cheats</code>) and updated everytime the code list is changed.</p>
+to memory card (<code>mc0:/PCB/cheats</code>) and updated every time the code list is
+changed.</p>
 
 <pre><code>usage: cb2util cheats [-d[mode]] &lt;file&gt;...
    or: cb2util cheats -c &lt;infile&gt; &lt;outfile&gt;...
@@ -189,6 +190,11 @@ to memory card (<code>mc0:/PCB/cheats</code>) and updated everytime the code lis
 <p>Extract all cheats from "cheats" file and print them to screen:</p>
 
 <pre><code>$ cb2util cheats /path/to/cheats
+</code></pre>
+
+<p>Same as previous example, but write extracted cheats to cheats.txt:</p>
+
+<pre><code>$ cb2util cheats /path/to/cheats &gt; cheats.txt
 </code></pre>
 
 <p>Extract all cheats, decrypt encrypted cheats, and print them to screen:</p>
