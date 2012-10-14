@@ -2,24 +2,48 @@
  * Implementation of the stream cipher ARCFOUR
  *
  * Copyright (C) 2006-2012 Mathias Lafeldt <mathias.lafeldt@gmail.com>
- * Copyright (C) 1996-2000 Whistle Communications, Inc.
- * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.
  *
- * cb2util is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * cb2util is licensed under the terms of the MIT License. See LICENSE file.
+ */
+
+/*
+ * Original copyright notice for this file:
  *
- * cb2util is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright (c) 1996-2000 Whistle Communications, Inc.
+ * All rights reserved.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Subject to the following obligations and disclaimer of warranty, use and
+ * redistribution of this software, in source or object code forms, with or
+ * without modifications are expressly permitted by Whistle Communications;
+ * provided, however, that:
+ * 1. Any and all reproductions of the source or object code must include the
+ *    copyright notice above and the following disclaimer of warranties; and
+ * 2. No rights are granted, in any manner or form, to use Whistle
+ *    Communications, Inc. trademarks, including the mark "WHISTLE
+ *    COMMUNICATIONS" on advertising, endorsements, or otherwise except as
+ *    such appears in the above copyright notice or in the software.
+ *
+ * THIS SOFTWARE IS BEING PROVIDED BY WHISTLE COMMUNICATIONS "AS IS", AND
+ * TO THE MAXIMUM EXTENT PERMITTED BY LAW, WHISTLE COMMUNICATIONS MAKES NO
+ * REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, REGARDING THIS SOFTWARE,
+ * INCLUDING WITHOUT LIMITATION, ANY AND ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
+ * WHISTLE COMMUNICATIONS DOES NOT WARRANT, GUARANTEE, OR MAKE ANY
+ * REPRESENTATIONS REGARDING THE USE OF, OR THE RESULTS OF THE USE OF THIS
+ * SOFTWARE IN TERMS OF ITS CORRECTNESS, ACCURACY, RELIABILITY OR OTHERWISE.
+ * IN NO EVENT SHALL WHISTLE COMMUNICATIONS BE LIABLE FOR ANY DAMAGES
+ * RESULTING FROM OR ARISING OUT OF ANY USE OF THIS SOFTWARE, INCLUDING
+ * WITHOUT LIMITATION, ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * PUNITIVE, OR CONSEQUENTIAL DAMAGES, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES, LOSS OF USE, DATA OR PROFITS, HOWEVER CAUSED AND UNDER ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF WHISTLE COMMUNICATIONS IS ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
+ *
+ * $FreeBSD: src/sys/crypto/rc4/rc4.c,v 1.2.2.1 2000/04/18 04:48:31 archie Exp $
  */
 
 /*
