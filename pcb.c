@@ -2,23 +2,10 @@
  * PCB file handling
  *
  * Copyright (C) 2006-2012 Mathias Lafeldt <mathias.lafeldt@gmail.com>
- * All rights reserved.
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.
  *
- * cb2util is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * cb2util is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * cb2util is licensed under the terms of the MIT License. See LICENSE file.
  */
 
 #include <stdint.h>
@@ -26,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include "ps2_elf.h"
+#include <elf.h>
 #include "cb2_crypto.h"
 #include "fileio.h"
 
@@ -44,6 +31,11 @@ typedef struct {
 
 /* address to which the PS2 first transfers control */
 #define PCB_ENTRY_ADDR	PCB_LOAD_ADDR
+
+/* PS2 processor-specific flags:
+   noreorder, MIPS R5900 CPU, eabi64, mips3
+   (value for e_flags field of Elf32_Ehdr) */
+#define _EF_PS2		0x20924001
 
 static void gen_elf_header(uint8_t *hdr, int hdrlen, int datalen)
 {

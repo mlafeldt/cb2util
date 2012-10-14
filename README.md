@@ -39,6 +39,10 @@ CMake is supported too:
     $ make
     $ make install
 
+In case your system lacks `elf.h`, you can install it this way:
+
+    $ curl https://raw.github.com/gist/3885346/elf.h | sudo tee /usr/local/include/elf.h
+
 
 Usage
 -----
@@ -269,20 +273,26 @@ THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
 ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
 ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 
-cb2util comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
-Public License. Please see file [COPYING] for further information.
+* cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
+* The code in `arcfour.c` is licensed under the terms of the FreeBSD license,
+  which is believed to be compatible with the MIT license.
+* The SHA-1 implementation is placed in the public domain.
+* [libcheats] is licensed under the terms of the MIT License. See [LICENSE] file.
+* The license of [libbig_int] says that it can be redistributed/modified freely.
+* [zlib] has its own permissive free software license.
+* [Sharness] and all tests are licensed under the terms of the GNU General
+  Public License version 2 or higher. See file [COPYING] for full license text.
 
 
 Special Thanks
 --------------
 
-- Thanks to the Free Software Foundation - Open Source is a blessing!
-- Alexander Valyalkin for his great BIG_INT library.
-- Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
-- Vector for making PS2 Save Builder and saving me some time. ;)
-- Gtlcpimp who has awakened my interest in cb2util again and provided valuable
+* Alexander Valyalkin for his great [libbig_int] library.
+* Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
+* Vector for making PS2 Save Builder and saving me some time.
+* Gtlcpimp who has awakened my interest in cb2util again and provided valuable
   information on the "cheats" compression.
-- Greets to all the people that contribute to our code hacking community!
+* Greets to all the people that contribute to our code hacking community!
 
 
 Contact
@@ -293,6 +303,10 @@ Contact
 * Twitter: [@mlafeldt](https://twitter.com/mlafeldt)
 
 
-[COPYING]: https://github.com/mlafeldt/cb2util/blob/master/COPYING
+[COPYING]: https://github.com/mlafeldt/cb2util/blob/master/test/COPYING
 [Downloads]: https://github.com/mlafeldt/cb2util/downloads
-[libcheats]: https://github.com/mlafeldt/libcheats
+[LICENSE]: https://github.com/mlafeldt/cb2util/blob/master/LICENSE
+[Sharness]: http://mlafeldt.github.com/sharness
+[libbig_int]: https://github.com/mlafeldt/libbig_int
+[libcheats]: http://mlafeldt.github.com/libcheats
+[zlib]: http://www.zlib.net
