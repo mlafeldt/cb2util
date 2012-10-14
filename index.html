@@ -68,6 +68,11 @@ $ make
 $ make install
 </code></pre>
 
+<p>In case your system lacks <code>elf.h</code>, you can install it this way:</p>
+
+<pre><code>$ curl https://raw.github.com/gist/3885346/elf.h | sudo tee /usr/local/include/elf.h
+</code></pre>
+
 <h2>Usage</h2>
 
 <p>As cb2util is a command-line application, you have to pass arguments to it.</p>
@@ -222,7 +227,7 @@ changed.</p>
 <li>start CodeBreaker to see your cheats ready to be used</li>
 </ol><h4>Text file format</h4>
 
-<p>To compile code saves and "cheats" files, cb2util uses <a href="https://github.com/mlafeldt/libcheats">libcheats</a> for parsing
+<p>To compile code saves and "cheats" files, cb2util uses <a href="http://mlafeldt.github.com/libcheats">libcheats</a> for parsing
 cheat codes in text format. The format of the text file is quite simple:</p>
 
 <pre><code>"Game title 1"
@@ -312,16 +317,25 @@ doesn't care if it's encrypting or decrypting.</p>
 ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
 ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.</p>
 
-<p>cb2util comes with ABSOLUTELY NO WARRANTY. It is covered by the GNU General
-Public License. Please see file <a href="https://github.com/mlafeldt/cb2util/blob/master/COPYING">COPYING</a> for further information.</p>
-
-<h2>Special Thanks</h2>
+<ul>
+<li>cb2util is licensed under the terms of the MIT License. See <a href="https://github.com/mlafeldt/cb2util/blob/master/LICENSE">LICENSE</a> file.</li>
+<li>The code in <code>arcfour.c</code> is licensed under the terms of the FreeBSD license,
+which is believed to be compatible with the MIT license.</li>
+<li>The SHA-1 implementation is placed in the public domain.</li>
+<li>
+<a href="http://mlafeldt.github.com/libcheats">libcheats</a> is licensed under the terms of the MIT License. See <a href="https://github.com/mlafeldt/cb2util/blob/master/LICENSE">LICENSE</a> file.</li>
+<li>The license of <a href="https://github.com/mlafeldt/libbig_int">libbig_int</a> says that it can be redistributed/modified freely.</li>
+<li>
+<a href="http://www.zlib.net">zlib</a> has its own permissive free software license.</li>
+<li>
+<a href="http://mlafeldt.github.com/sharness">Sharness</a> and all tests are licensed under the terms of the GNU General
+Public License version 2 or higher. See file <a href="https://github.com/mlafeldt/cb2util/blob/master/test/COPYING">COPYING</a> for full license text.</li>
+</ul><h2>Special Thanks</h2>
 
 <ul>
-<li>Thanks to the Free Software Foundation - Open Source is a blessing!</li>
-<li>Alexander Valyalkin for his great BIG_INT library.</li>
+<li>Alexander Valyalkin for his great <a href="https://github.com/mlafeldt/libbig_int">libbig_int</a> library.</li>
 <li>Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.</li>
-<li>Vector for making PS2 Save Builder and saving me some time. ;)</li>
+<li>Vector for making PS2 Save Builder and saving me some time.</li>
 <li>Gtlcpimp who has awakened my interest in cb2util again and provided valuable
 information on the "cheats" compression.</li>
 <li>Greets to all the people that contribute to our code hacking community!</li>
