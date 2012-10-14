@@ -276,6 +276,10 @@ ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 * cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
 * The code in `arcfour.c` is licensed under the terms of the FreeBSD license,
   which is believed to be compatible with the MIT license.
+* The SHA-1 implementation is placed in the public domain.
+* [libcheats] is licensed under the terms of the MIT License. See [LICENSE] file.
+* The license of [libbig_int] says that it can be redistributed/modified freely.
+* [zlib] has its own permissive free software license.
 * [Sharness] and all tests are licensed under the terms of the GNU General
   Public License version 2 or higher. See file [COPYING] for full license text.
 
@@ -304,4 +308,6 @@ Contact
 [Downloads]: https://github.com/mlafeldt/cb2util/downloads
 [LICENSE]: https://github.com/mlafeldt/cb2util/blob/master/LICENSE
 [Sharness]: http://mlafeldt.github.com/sharness
-[libcheats]: https://github.com/mlafeldt/libcheats
+[libbig_int]: https://github.com/mlafeldt/libbig_int
+[libcheats]: http://mlafeldt.github.com/libcheats
+[zlib]: http://www.zlib.net
