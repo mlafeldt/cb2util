@@ -287,13 +287,12 @@ ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 Special Thanks
 --------------
 
-- Thanks to the Free Software Foundation - Open Source is a blessing!
-- Alexander Valyalkin for his great BIG_INT library.
-- Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
-- Vector for making PS2 Save Builder and saving me some time. ;)
-- Gtlcpimp who has awakened my interest in cb2util again and provided valuable
+* Alexander Valyalkin for his great [libbig_int] library.
+* Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
+* Vector for making PS2 Save Builder and saving me some time.
+* Gtlcpimp who has awakened my interest in cb2util again and provided valuable
   information on the "cheats" compression.
-- Greets to all the people that contribute to our code hacking community!
+* Greets to all the people that contribute to our code hacking community!
 
 
 Contact
