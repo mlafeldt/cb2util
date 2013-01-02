@@ -1,7 +1,7 @@
 /*
  * Cryptographic functions for CodeBreaker PS2
  *
- * Copyright (C) 2006-2012 Mathias Lafeldt <mathias.lafeldt@gmail.com>
+ * Copyright (C) 2006-2013 Mathias Lafeldt <mathias.lafeldt@gmail.com>
  *
  * This file is part of cb2util, the CodeBreaker PS2 File Utility.
  *
