@@ -2,6 +2,20 @@ History
 =======
 
 
+v1.8 (Jan 2 2013)
+-----------------
+
+* Switch to MIT license and get rid of the GPL virus.
+
+* Remove unused code to generate version from CMake.
+
+* Add another "cheats" command example to README.
+
+* Let Travis only test master branch (and pull requests).
+
+* Update copyright year to 2013.
+
+
 v1.7 (Jul 29 2012)
 ------------------
 
