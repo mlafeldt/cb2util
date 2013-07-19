@@ -1,0 +1,183 @@
+
+
+---============================---
+   CodeBreaker PS2 File Server
+   Copyright (C) 2007-2008 misfire
+---===============================---
+
+
+Welcome to the CodeBreaker PS2 File Server! This server allows you to host your
+own Day1 Code Saves and Game Saves that can be downloaded with CB V9+.
+
+
+---============---
+   Version history
+---===============---
+
+v1.2 (Oct 24 2008)
+* Fixed (Linux) file permissions.
++ Added SHOW_WEBSERVER_INFO define (default: FALSE).
+* Fix: "?info" didn't work if there were no downloadable files.
+* New license: GNU Affero General Public License v3
+
+v1.1 (Jul 17 2007)
++ Added support for Game Saves (requested by Skiller).
+* Changed project's name from "Day1Server Script for CodeBreaker PS2" to
+  "CodeBreaker PS2 File Server".
++ With Day1 files, you can now see the real game title, not only the file name.
++ Opening the scripts in a browser with "?info" shows some information about the
+  file server.
++ Updated this readme.
+
+v1.0 (Jul 10 2007)
+* Initial public release
+
+
+---==================---
+   About the File Server
+---=====================---
+
+Since the developers of CodeBreaker PS2 seem to be incapable of creating an
+updated USB driver that supports newer PS2 models (SCPH-75001 and higher) and
+no USB device at all can be used with these models to load Day1 Code Saves or
+Game Saves, I've decided to find an alternative way. I managed to set up my own
+server which hosts Day1 files and Game Saves that can be viewed and downloaded
+with CB V9+.
+
+(After all I know that the admins over at CMGSCCC won't be thankful, but hey,
+it's for the community, that's all that matters.)
+
+First, some background information: When the CB V9+ connects to the Internet to
+download new Day1 Code Saves, it actually calls this PHP script:
+http://www.cmgsccc.com/ps2/day1/cb.php
+
+The tricky part is to spoof the DNS record for cmgsccc.com and mimic the PHP
+script's functionality. The former changes the destination URL to, for example,
+http://192.168.0.2/ps2/day1/cb.php. The latter is done by a self-written script.
+With Game Saves, another script is called (.../ps2/saves/cb.php) but the
+principle is the same.
+This way, you can redirect all requests to your own server and provide arbitrary
+Day1 files and Game Saves. Webmasters are able to set up File Servers hosting
+tons of files for the community.
+
+
+---==---
+   Setup
+---=====---
+
+With the following instructions, I assume that your host computer's IP address
+is set to 192.168.0.2. You can adapt the instructions to your own configuration,
+of course.
+
+These steps are required to run your own CodeBreaker PS2 File Server:
+
+   1) Set up a HTTP server
+
+I recommend installing either Apache or IIS.
+Apache is free and can be downloaded from http://httpd.apache.org/
+You will also need PHP, get it from http://www.php.net/
+RTFM if you encounter any problems.
+
+
+   2) Install the server scripts
+
+Copy the directory "ps2" that comes with this README to the root folder of your
+HTTP server. Do whatever is necessary to make both scripts ps2/day1/cb.php and
+ps2/saves/cb.php accessible by your PS2.
+
+Now, copy all Day1 files (*.cbc) you want to host on your server to ps2/day1/.
+Game Saves (*.cbs) must be placed in ps2/saves/.
+
+Test the server by opening these URLs in a browser:
+http://192.168.0.2/ps2/day1/cb.php
+http://192.168.0.2/ps2/saves/cb.php
+You should see a list of all hosted Day1 files or Game Saves, respectively.
+
+The file ps2/common.php holds some global defines that determine the File
+Server's behavior. Check the source code for more information.
+
+WARNING: Before setting up a CodeBreaker PS2 File Server that is connected to
+the Internet, I recommend checking the PHP scripts and to add security
+improvements where appropriate. I'm new to PHP and the code might be not that
+perfect. ;)
+
+
+   3) Set up a DNS server
+
+In order to spoof the DNS record for cmgsccc.com, you have to run your own DNS
+server. I recommend using Simple DNS Plus for Windows: http://www.simpledns.com/
+(On Linux, you can use ettercap.)
+
+In Simple DNS Plus (v4.00) go to "Records" -> "Quick Domain Wizard" and enter
+the following:
+
+Domain Name: cmgsccc.com
+Web server IP: 192.168.0.2
+
+Leave the remaining fields empty.
+Press OK and you are done.
+
+NOTE: Verify that the DNS server isn't blocked by a firewall.
+
+
+   4) Change CodeBreaker's network settings
+
+Go to "Options" -> "Internet Settings" to assign an IP address to the
+PS2 and to specify your DNS server. For example:
+
+Config: MANUAL
+  IP Address: 192.168.000.010 ; PS2's IP address
+ Subnet Mask: 255.255.255.000
+     GateWay: 000.000.000.000
+DNS Server 1: 192.168.000.002 ; IP address of your DNS server
+DNS Server 2: 000.000.000.000
+
+
+   5) Download files
+
+Use your CodeBreaker V9+ to view all available Day1 Code Saves (go to "Day 1" ->
+Source: Internet) and Game Saves (go to "Device Manager" -> Source: Internet),
+and select the ones you want to download. That's it.
+
+NOTE: The CB checks the digital signature of Day1 files after downloading them.
+There's an upgrade.bin file that allows the use of (unsigned) Day1 files for CB
+V7 with CB V8+. The tool cbcMakerPS2 can create Day1 V7 files for you.
+Moreover, use PS2SaveBuilder to read/write CB Game Saves.
+
+
+---=======---
+   Disclaimer
+---==========---
+
+THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
+ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
+ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
+
+CodeBreaker PS2 File Server comes with ABSOLUTELY NO WARRANTY. It is covered by
+the GNU Affero General Public License. Please see file COPYING for further
+information.
+
+
+---===========---
+   Special thanks
+---==============---
+
+Thanks to CMP forum member Dawnveil for inspiring me. To quote him:
+"I mean, my dream would be to redirect the day1 net to my pc and somehow run a
+day1 server off of that, but that's a fantasy, I'm sure."
+Well, sometimes a dream comes true. ;)
+
+Greets to all the people that contribute to our code hacking community!
+
+
+---====---
+   Contact
+---=======---
+
+misfire [AT] xploderfreax [DOT] de
+
+
+---======================---
+   HACKING NEEDS TO BE FREE!
+---=========================---
+
