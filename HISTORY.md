@@ -2,6 +2,12 @@ History
 =======
 
 
+v1.9 (Jul 20 2013)
+-----------------
+
+* Add **cb2serve**, the CodeBreaker PS2 File Server, to the `contrib` folder.
+
+
 v1.8 (Jan 2 2013)
 -----------------
 
