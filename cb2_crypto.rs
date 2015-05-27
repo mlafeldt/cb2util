@@ -23,9 +23,9 @@ fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     let tmp: u32 = addr & 0xff000000;
     addr = ((addr & 0xff) << 16) | ((addr >> 8) & 0xffff);
-    addr = (tmp | ((addr + SEEDTABLE[1][cmd]) & 0x00ffffff)) ^ SEEDTABLE[0][cmd];
+    addr = (tmp | (addr.wrapping_add(SEEDTABLE[1][cmd]) & 0x00ffffff)) ^ SEEDTABLE[0][cmd];
     if cmd > 2 {
-        val = addr ^ (val + SEEDTABLE[2][cmd]);
+        val = addr ^ val.wrapping_add(SEEDTABLE[2][cmd]);
     }
     (addr, val)
 }
@@ -57,10 +57,10 @@ mod tests {
                 decrypted: (0x902db32c, 0x0c0baff1),
                 encrypted: (0x9ad420d3, 0x180ddeda),
             },
-            // Test {
-            //     decrypted: (0xa008060c, 0x08028007),
-            //     encrypted: (0xaae071c0, 0xaca684dd),
-            // },
+            Test {
+                decrypted: (0xa008060c, 0x08028007),
+                encrypted: (0xaae071c0, 0xaca684dd),
+            },
         ]
     }
 
