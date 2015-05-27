@@ -21,7 +21,7 @@ const SEEDTABLE: [[u32; 16]; 3] = [
 
 fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
-    let tmp: u32 = addr & 0xff000000;
+    let tmp = addr & 0xff000000;
     addr = ((addr & 0xff) << 16) | ((addr >> 8) & 0xffff);
     addr = (tmp | (addr.wrapping_add(SEEDTABLE[1][cmd]) & 0x00ffffff)) ^ SEEDTABLE[0][cmd];
     if cmd > 2 {
@@ -30,9 +30,20 @@ fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     (addr, val)
 }
 
+fn cb1_decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
+    let cmd = (addr >> 28) as usize;
+    if cmd > 2 {
+        val = (addr ^ val).wrapping_sub(SEEDTABLE[2][cmd]);
+    }
+    let tmp = addr ^ SEEDTABLE[0][cmd];
+    addr = tmp.wrapping_sub(SEEDTABLE[1][cmd]);
+    addr = (tmp & 0xFF000000) | ((addr & 0xFFFF) << 8) | ((addr >> 16) & 0xFF);
+    (addr, val)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::cb1_encrypt_code;
+    use super::{cb1_encrypt_code,cb1_decrypt_code};
 
     struct Test {
         decrypted: (u32, u32),
@@ -70,6 +81,15 @@ mod tests {
             let result = cb1_encrypt_code(t.decrypted.0, t.decrypted.1);
             assert_eq!(t.encrypted.0, result.0);
             assert_eq!(t.encrypted.1, result.1);
+        }
+    }
+
+    #[test]
+    fn test_cb1_decrypt_code() {
+        for t in tests().iter() {
+            let result = cb1_decrypt_code(t.encrypted.0, t.encrypted.1);
+            assert_eq!(t.decrypted.0, result.0);
+            assert_eq!(t.decrypted.1, result.1);
         }
     }
 }
