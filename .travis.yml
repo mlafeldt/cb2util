@@ -1,19 +1,18 @@
-language: c
+# TODO: run integration tests against Rust rewrite
+
+language: rust
 
 sudo: false
 
-compiler:
-  - gcc
-  - clang
-
-install: make CC=$CC install
-
-env:
-  - TEST_OPTS=-v
-  - DEFAULT_TEST_TARGET=prove
-
-script: make test
+rust:
+  - stable
+  - beta
+  - nightly
 
 branches:
   only:
     - master
+
+matrix:
+  allow_failures:
+    - rust: nightly
