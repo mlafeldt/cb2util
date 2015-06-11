@@ -4,3 +4,6 @@
 /build/
 /cb2util
 /release/
+# Rust
+target
+Cargo.lock

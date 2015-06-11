@@ -1,0 +1,4 @@
+[package]
+name = "cb2util"
+version = "0.1.0"
+authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
