@@ -19,7 +19,7 @@ const SEEDTABLE: [[u32; 16]; 3] = [
     ],
 ];
 
-fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
+pub fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     let tmp = addr & 0xff000000;
     addr = ((addr & 0xff) << 16) | ((addr >> 8) & 0xffff);
@@ -30,7 +30,7 @@ fn cb1_encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     (addr, val)
 }
 
-fn cb1_decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
+pub fn cb1_decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     if cmd > 2 {
         val = (addr ^ val).wrapping_sub(SEEDTABLE[2][cmd]);
