@@ -117,6 +117,16 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     (addr, val)
 }
 
+// Multiplication, modulo (2^32)
+fn mul_encrypt(a: u32, b: u32) -> u32 {
+    a.wrapping_mul(b | 1)
+}
+
+// Multiplication with multiplicative inverse, modulo (2^32)
+fn mul_decrypt(a: u32, b: u32) -> u32 {
+    a.wrapping_mul(mul_inverse(b | 1))
+}
+
 // Computes the multiplicative inverse of @word, modulo (2^32).
 // Original MIPS R5900 coding converted to C, and now to Rust.
 fn mul_inverse(word: u32) -> u32 {
@@ -142,7 +152,42 @@ fn mul_inverse(word: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{mul_inverse,encrypt_code,decrypt_code};
+    use super::{mul_encrypt,mul_decrypt,mul_inverse};
+    use super::{encrypt_code,decrypt_code};
+
+    #[test]
+    fn test_mul_encrypt() {
+        let tests = vec![
+            (0x00000000, 0xa686d3b6, 0x00000000),
+            (0x000e0000, 0xa686d3b6, 0xac620000),
+            (0x0067bd20, 0x4fd931ff, 0x200802e0),
+            (0x2ba0a76e, 0xa686d3b6, 0x24050002),
+            (0x4adfd954, 0x4fd931ff, 0x9029beac),
+            (0x7c016806, 0x2912dedd, 0x000000be),
+            (0xa9422f21, 0xa686d3b6, 0x03d203e7),
+            (0xfff576e0, 0xa686d3b6, 0x27bd0020),
+        ];
+        for t in tests.iter() {
+            assert_eq!(t.0, mul_encrypt(t.2, t.1));
+        }
+    }
+
+    #[test]
+    fn test_mul_decrypt() {
+        let tests = vec![
+            (0x00000000, 0xa686d3b6, 0x00000000),
+            (0x000e0000, 0xa686d3b6, 0xac620000),
+            (0x0067bd20, 0x4fd931ff, 0x200802e0),
+            (0x2ba0a76e, 0xa686d3b6, 0x24050002),
+            (0x4adfd954, 0x4fd931ff, 0x9029beac),
+            (0x7c016806, 0x2912dedd, 0x000000be),
+            (0xa9422f21, 0xa686d3b6, 0x03d203e7),
+            (0xfff576e0, 0xa686d3b6, 0x27bd0020),
+        ];
+        for t in tests.iter() {
+            assert_eq!(t.2, mul_decrypt(t.0, t.1));
+        }
+    }
 
     #[test]
     fn test_mul_inverse() {
@@ -156,7 +201,6 @@ mod tests {
             (0xa686d3b7, 0x57ed7a07),
             (0xec35a92f, 0xd2743dcf),
         ];
-
         for t in tests.iter() {
             assert_eq!(t.1, mul_inverse(t.0));
         }
@@ -173,7 +217,7 @@ mod tests {
                 decrypted: (0, 0),
                 encrypted: (0, 0),
             },
-       ]
+        ]
     }
 
     #[test]
