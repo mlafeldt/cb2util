@@ -117,9 +117,50 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     (addr, val)
 }
 
+// Computes the multiplicative inverse of @word, modulo (2^32).
+// Original MIPS R5900 coding converted to C, and now to Rust.
+fn mul_inverse(word: u32) -> u32 {
+    if word == 1 { return 1; }
+    let mut a2 = 0u32.wrapping_sub(word) % word;
+    if a2 == 0 { return 1; }
+    let mut t1 = 1u32;
+    let mut a3 = word;
+    let mut a0 = 0u32.wrapping_sub(0xffffffff / word);
+    while a2 != 0 {
+        let mut v0 = a3 / a2;
+        let v1 = a3 % a2;
+        let a1 = a2;
+        a3 = a1;
+        let a1 = a0;
+        a2 = v1;
+        v0 = v0.wrapping_mul(a1);
+        a0 = t1.wrapping_sub(v0);
+        t1 = a1;
+    }
+    t1
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{encrypt_code,decrypt_code};
+    use super::{mul_inverse,encrypt_code,decrypt_code};
+
+    #[test]
+    fn test_mul_inverse() {
+        let tests = vec![
+            (0x0d313243, 0x6c7b2a6b),
+            (0x0efd8231, 0xd4c096d1),
+            (0x2912dedd, 0xe09de975),
+            (0x4fd931ff, 0x9a62cdff),
+            (0x5a53abb5, 0x58f42a9d),
+            (0x9ab2af6d, 0x1043b265),
+            (0xa686d3b7, 0x57ed7a07),
+            (0xec35a92f, 0xd2743dcf),
+        ];
+
+        for t in tests.iter() {
+            assert_eq!(t.1, mul_inverse(t.0));
+        }
+    }
 
     struct Test {
         decrypted: (u32, u32),
