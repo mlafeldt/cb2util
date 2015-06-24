@@ -1,5 +1,7 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
+#![allow(dead_code)]
+
 // Default seed tables (1280 bytes total)
 const DEFSEEDS: [[u8; 256]; 5] = [
     [
@@ -102,12 +104,12 @@ const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
 const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
 
-pub fn encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
+pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
     // TODO
     (addr, val)
 }
 
-pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
+pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
     // TODO
     (addr, val)
 }
