@@ -150,9 +150,8 @@ mod tests {
     use super::{mul_encrypt,mul_decrypt,mul_inverse};
     use super::{encrypt_code,decrypt_code};
 
-    #[test]
-    fn test_mul_encrypt() {
-        let tests = vec![
+    fn mul_tests() -> Vec<(u32, u32, u32)> {
+        vec![
             (0x00000000, 0xa686d3b6, 0x00000000),
             (0x000e0000, 0xa686d3b6, 0xac620000),
             (0x0067bd20, 0x4fd931ff, 0x200802e0),
@@ -161,25 +160,19 @@ mod tests {
             (0x7c016806, 0x2912dedd, 0x000000be),
             (0xa9422f21, 0xa686d3b6, 0x03d203e7),
             (0xfff576e0, 0xa686d3b6, 0x27bd0020),
-        ];
-        for t in tests.iter() {
+        ]
+    }
+
+    #[test]
+    fn test_mul_encrypt() {
+        for t in mul_tests().iter() {
             assert_eq!(t.0, mul_encrypt(t.2, t.1));
         }
     }
 
     #[test]
     fn test_mul_decrypt() {
-        let tests = vec![
-            (0x00000000, 0xa686d3b6, 0x00000000),
-            (0x000e0000, 0xa686d3b6, 0xac620000),
-            (0x0067bd20, 0x4fd931ff, 0x200802e0),
-            (0x2ba0a76e, 0xa686d3b6, 0x24050002),
-            (0x4adfd954, 0x4fd931ff, 0x9029beac),
-            (0x7c016806, 0x2912dedd, 0x000000be),
-            (0xa9422f21, 0xa686d3b6, 0x03d203e7),
-            (0xfff576e0, 0xa686d3b6, 0x27bd0020),
-        ];
-        for t in tests.iter() {
+        for t in mul_tests().iter() {
             assert_eq!(t.2, mul_decrypt(t.0, t.1));
         }
     }
