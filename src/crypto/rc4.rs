@@ -11,13 +11,19 @@ impl Rc4 {
     pub fn new(key: &[u8]) -> Rc4 {
         assert!(key.len() >= 1 && key.len() <= 256);
         let mut state = [0; 256];
-        for i in 0..256 { state[i] = i as u8 }
+        for i in 0..256 {
+            state[i] = i as u8
+        }
         let mut j: u8 = 0;
         for i in 0..256 {
             j = j.wrapping_add(state[i]).wrapping_add(key[i % key.len()]);
             state.swap(i, j as usize);
         }
-        Rc4 { i: 0, j: 0, state: state }
+        Rc4 {
+            i: 0,
+            j: 0,
+            state: state,
+        }
     }
 
     pub fn crypt(&mut self, input: &[u8], output: &mut [u8]) {

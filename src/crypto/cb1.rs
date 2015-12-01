@@ -1,5 +1,6 @@
 // Encrypt and decrypt codes using CB v1 scheme
 
+#[cfg_attr(rustfmt, rustfmt_skip)]
 const SEEDTABLE: [[u32; 16]; 3] = [
     [
         0x0a0b8d9b, 0x0a0133f8, 0x0af733ec, 0x0a15c574,
@@ -45,7 +46,7 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
 
 #[cfg(test)]
 mod tests {
-    use super::{encrypt_code,decrypt_code};
+    use super::{encrypt_code, decrypt_code};
 
     struct Test {
         decrypted: (u32, u32),

@@ -2,6 +2,7 @@
 
 #![allow(dead_code)]
 
+#[cfg_attr(rustfmt, rustfmt_skip)]
 // Default seed tables (1280 bytes total)
 const DEFSEEDS: [[u8; 256]; 5] = [
     [
@@ -127,9 +128,13 @@ fn mul_decrypt(a: u32, b: u32) -> u32 {
 // Computes the multiplicative inverse of @word, modulo (2^32).
 // Original MIPS R5900 coding converted to C, and now to Rust.
 fn mul_inverse(word: u32) -> u32 {
-    if word == 1 { return 1; }
+    if word == 1 {
+        return 1;
+    }
     let mut a2 = 0u32.wrapping_sub(word) % word;
-    if a2 == 0 { return 1; }
+    if a2 == 0 {
+        return 1;
+    }
     let mut t1 = 1u32;
     let mut a3 = word;
     let mut a0 = 0u32.wrapping_sub(0xffffffff / word);
@@ -149,8 +154,8 @@ fn mul_inverse(word: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{mul_encrypt,mul_decrypt,mul_inverse};
-    use super::{encrypt_code,decrypt_code};
+    use super::{mul_encrypt, mul_decrypt, mul_inverse};
+    use super::{encrypt_code, decrypt_code};
 
     fn mul_tests() -> Vec<(u32, u32, u32)> {
         vec![

@@ -1,6 +1,6 @@
 mod crypto;
 
-use crypto::{cb1,cb7};
+use crypto::{cb1, cb7};
 
 fn main() {
     let code = cb1::encrypt_code(0x902db32c, 0x0c0baff1);
