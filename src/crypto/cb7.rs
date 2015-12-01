@@ -111,7 +111,12 @@ pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
 }
 
 pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
-    // TODO
+    // TODO: Decryption loop of 64 cycles, using the generated seeds
+    // TODO: RSA
+    // TODO: RC4
+    // TODO: Multiplication with multiplicative inverse, modulo (2^32)
+    // TODO: BEEFC0DF
+    // TODO: BEEFC0DE
     (addr, val)
 }
 
