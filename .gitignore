@@ -6,4 +6,3 @@
 /release/
 # Rust
 target
-Cargo.lock
