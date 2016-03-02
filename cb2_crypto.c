@@ -223,37 +223,41 @@ static int code_lines;
 
 /*
  * Computes the multiplicative inverse of @word, modulo (2^32).
- * I think this is borrowed from IDEA. ;)
+ *
+ * IDEA does something similar with 16-bit numbers (modulo 2^16+1, which is prime)
+ * http://www.oryx-embedded.com/doc/idea_8c_source.html
+ * http://crypto.stackexchange.com/questions/11003/how-is-multiplication-inverted-in-ideas-decryption-round
+ *
+ * I honestly don't know how this function works for 32-bit numbers with no prime in sight...
  */
 static uint32_t mul_inverse(uint32_t word)
 {
-	// Original MIPS R5900 coding converted to C
-	uint32_t a0, a1, a2, a3;
-	uint32_t v0, v1;
-	uint32_t t1;
+	uint32_t v, t, a, b;
+	uint32_t q, r;
+	uint32_t u;
 
 	if (word == 1) return 1;
 
-	a2 = (0 - word) % word;
-	if (!a2) return 1;
+	a = (0 - word) % word;
+	if (a == 0) return 1;
 
-	t1 = 1;
-	a3 = word;
-	a0 = 0 - (0xFFFFFFFF / word);
+	b = word;
+	u = 1;
+	v = 0 - (0xffffffff / word);
 
-	do {
-		v0 = a3 / a2;
-		v1 = a3 % a2;
-		a1 = a2;
-		a3 = a1;
-		a1 = a0;
-		a2 = v1;
-		v0 = v0 * a1;
-		a0 = t1 - v0;
-		t1 = a1;
-	} while (a2);
+	while (a > 0) {
+		q = b / a;
+		r = b % a;
 
-	return t1;
+		b = a;
+		a = r;
+
+		t = v;
+		v = u - q * v;
+		u = t;
+	}
+
+	return u;
 }
 
 #ifdef CODE_ENCRYPTION
