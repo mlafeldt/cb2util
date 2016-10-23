@@ -1,8 +1,80 @@
-mod crypto;
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 
-use crypto::{cb1, cb7};
+extern crate flate2;
+
+use flate2::read::ZlibDecoder;
 
 fn main() {
-    let code = cb1::encrypt_code(0x902db32c, 0x0c0baff1);
-    println!("{:08x} {:08x}", code.0, code.1);
+    let args: Vec<_> = std::env::args().skip(1).collect();
+    if args.len() != 1 {
+        println!("usage: cb2util <cheats file>");
+        std::process::exit(1);
+    }
+    let path = Path::new(&args[0]);
+
+    let mut file = File::open(path).unwrap();
+    let mut buf: Vec<u8> = Vec::new();
+    file.read_to_end(&mut buf).unwrap();
+
+    assert!(buf.len() > CHEATS_HEADER_SIZE);
+    assert!(&buf[0..4] == CHEATS_FILE_ID);
+
+    let mut decoder = ZlibDecoder::new(&buf[CHEATS_HEADER_SIZE..]);
+    let mut unpack: Vec<u8> = Vec::new();
+    decoder.read_to_end(&mut unpack).unwrap();
+
+    extract_cheats(&unpack[..])
 }
+
+fn extract_cheats(buf: &[u8]) {
+    let mut i = 0;
+    while i < buf.len() && read16(&buf[i..i + 2]) != 0xffff {
+        if i > 0 {
+            println!("");
+        }
+        let title = cstring(&buf[i..]);
+        println!("\"{}\"", title);
+        i += title.len() + 1;
+        let numdesc = read16(&buf[i..i + 2]);
+        i += 2;
+        for _ in 0..numdesc {
+            let desc = cstring(&buf[i..]);
+            println!("{}", desc);
+            i += desc.len() + 2;
+            let numlines = read16(&buf[i..i + 2]);
+            i += 2;
+            for _ in 0..numlines {
+                let addr = read32(&buf[i..i + 4]);
+                let val = read32(&buf[i + 4..i + 8]);
+                println!("{:08X} {:08X}", addr, val);
+                i += 8;
+            }
+        }
+    }
+}
+
+fn cstring(b: &[u8]) -> String {
+    let eos = b.iter().position(|&x| x == 0).unwrap();
+    String::from_utf8_lossy(&b[..eos]).into_owned()
+}
+
+fn read32(b: &[u8]) -> u32 {
+    let b0 = b[0] as u32;
+    let b1 = b[1] as u32;
+    let b2 = b[2] as u32;
+    let b3 = b[3] as u32;
+
+    b0 | (b1 << 8) | (b2 << 16) | (b3 << 24)
+}
+
+fn read16(b: &[u8]) -> u16 {
+    let b0 = b[0] as u16;
+    let b1 = b[1] as u16;
+
+    b0 | (b1 << 8)
+}
+
+const CHEATS_HEADER_SIZE: usize = 8;
+const CHEATS_FILE_ID: &'static [u8; 4] = b"CFU\0";
