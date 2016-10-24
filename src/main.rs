@@ -5,19 +5,44 @@ use std::path::Path;
 extern crate flate2;
 use flate2::read::ZlibDecoder;
 
+extern crate getopts;
+use getopts::Options;
+
 #[allow(dead_code)]
 mod crypto;
 use crypto::cb1;
 
+// Based on http://is.gd/8TYNHp
+macro_rules! abort {
+    ($($arg:tt)*) => (
+        {
+            use std::io::prelude::*;
+            write!(&mut ::std::io::stderr(), "error: {}\n", format_args!($($arg)*)).unwrap();
+            std::process::exit(1);
+        }
+    )
+}
+
 fn main() {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    if args.len() != 1 {
-        println!("usage: cb2util <cheats file>");
-        std::process::exit(1);
-    }
-    let path = Path::new(&args[0]);
+    let mut opts = Options::new();
+    opts.optflag("d", "decrypt", "decrypt extracted cheats");
+    let matches = match opts.parse(&args) {
+        Err(e) => abort!("{}", e),
+        Ok(m) => m,
+    };
+    let path = if !matches.free.is_empty() {
+        Path::new(&matches.free[0])
+    } else {
+        abort!("missing input file")
+    };
+    let decrypt = matches.opt_present("decrypt");
 
-    let mut file = File::open(path).unwrap();
+    let mut file = match File::open(path) {
+        Err(why) => abort!("couldn't open {}: {}", path.display(), why),
+        Ok(file) => file,
+    };
+
     let mut buf: Vec<u8> = Vec::new();
     file.read_to_end(&mut buf).unwrap();
 
@@ -28,7 +53,7 @@ fn main() {
     let mut unpack: Vec<u8> = Vec::new();
     decoder.read_to_end(&mut unpack).unwrap();
 
-    extract_cheats(&unpack[..], false)
+    extract_cheats(&unpack[..], decrypt)
 }
 
 fn extract_cheats(buf: &[u8], decrypt: bool) {
