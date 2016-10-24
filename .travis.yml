@@ -1,18 +1,14 @@
-# TODO: run integration tests against Rust rewrite
-
 language: rust
 
 sudo: false
 
-rust:
-  - stable
-  - beta
-  - nightly
+rust: stable
+
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T=cheats-extract.t
 
 branches:
   only:
     - master
-
-matrix:
-  allow_failures:
-    - rust: nightly

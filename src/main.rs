@@ -25,9 +25,12 @@ macro_rules! abort {
 
 fn main() {
     let args: Vec<_> = std::env::args().skip(1).collect();
+    assert!(!args.is_empty());
+    assert!(args[0] == "cheats");
+
     let mut opts = Options::new();
     opts.optflag("d", "decrypt", "decrypt extracted cheats");
-    let matches = match opts.parse(&args) {
+    let matches = match opts.parse(&args[1..]) {
         Err(e) => abort!("{}", e),
         Ok(m) => m,
     };
