@@ -3,8 +3,11 @@ use std::io::Read;
 use std::path::Path;
 
 extern crate flate2;
-
 use flate2::read::ZlibDecoder;
+
+#[allow(dead_code)]
+mod crypto;
+use crypto::cb1;
 
 fn main() {
     let args: Vec<_> = std::env::args().skip(1).collect();
@@ -25,10 +28,10 @@ fn main() {
     let mut unpack: Vec<u8> = Vec::new();
     decoder.read_to_end(&mut unpack).unwrap();
 
-    extract_cheats(&unpack[..])
+    extract_cheats(&unpack[..], false)
 }
 
-fn extract_cheats(buf: &[u8]) {
+fn extract_cheats(buf: &[u8], decrypt: bool) {
     let mut i = 0;
     while i < buf.len() && read16(&buf[i..i + 2]) != 0xffff {
         if i > 0 {
@@ -48,7 +51,12 @@ fn extract_cheats(buf: &[u8]) {
             for _ in 0..numlines {
                 let addr = read32(&buf[i..i + 4]);
                 let val = read32(&buf[i + 4..i + 8]);
-                println!("{:08X} {:08X}", addr, val);
+                if decrypt {
+                    let decrypted = cb1::decrypt_code(addr, val);
+                    println!("{:08X} {:08X}", decrypted.0, decrypted.1);
+                } else {
+                    println!("{:08X} {:08X}", addr, val);
+                }
                 i += 8;
             }
         }
