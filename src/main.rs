@@ -106,13 +106,9 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
                     beefcodf = false;
                     continue;
                 }
-                if fix_beef != 0 {
-                    if addr == 0x000ffffe || addr == 0x000fffff {
-                        fix_beef -= 1;
-                        continue;
-                    } else {
-                        fix_beef = 0;
-                    }
+                if fix_beef != 0 && (addr == 0x000ffffe || addr == 0x000fffff) {
+                    fix_beef -= 1;
+                    continue;
                 }
                 if (addr & 0xfffffffe) == 0xbeefc0de {
                     beefcodf = (addr & 1) != 0;
