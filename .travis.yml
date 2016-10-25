@@ -7,7 +7,7 @@ rust: stable
 script:
   - cargo build --verbose
   - cargo test --verbose
-  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T=cheats-extract.t
+  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T="cheats-extract*"
 
 branches:
   only:

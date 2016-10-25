@@ -61,29 +61,69 @@ fn main() {
 fn extract_cheats(buf: &[u8], decrypt: bool) {
     let mut i = 0;
     while i < buf.len() && read16(&buf[i..i + 2]) != 0xffff {
+        // Reset code encryption
         codebreaker::reset();
+        let mut beefcodf = false;
+        let mut fix_beef = 0;
+
         if i > 0 {
             println!("");
         }
+
+        // Process game title
+        // Example: "007 Agent Under Fire\0"
         let title = cstring(&buf[i..]);
         println!("\"{}\"", title);
         i += title.len() + 1;
+
         let numdesc = read16(&buf[i..i + 2]);
         i += 2;
+
+        // Process code description(s)
+        // Example: "Infinite Ammo\0"
         for _ in 0..numdesc {
             let desc = cstring(&buf[i..]);
             println!("{}", desc);
             i += desc.len() + 2;
+
             let numlines = read16(&buf[i..i + 2]);
             i += 2;
+
+            // Process code line(s)
+            // Example: 1A3EDED4 000003E7
             for _ in 0..numlines {
                 let mut addr = read32(&buf[i..i + 4]);
                 let mut val = read32(&buf[i + 4..i + 8]);
-                if decrypt {
-                    codebreaker::decrypt_code(&mut addr, &mut val);
-                }
-                println!("{:08X} {:08X}", addr, val);
                 i += 8;
+
+                // Decrypt code
+                if decrypt {
+                    codebreaker::decrypt_code2(&mut addr, &mut val);
+                }
+
+                // Discard beefcode and other junk
+                if beefcodf {
+                    beefcodf = false;
+                    continue;
+                }
+                if fix_beef != 0 {
+                    if addr == 0x000ffffe || addr == 0x000fffff {
+                        fix_beef -= 1;
+                        continue;
+                    } else {
+                        fix_beef = 0;
+                    }
+                }
+                if (addr & 0xfffffffe) == 0xbeefc0de {
+                    beefcodf = (addr & 1) != 0;
+                    fix_beef = 2;
+                    continue;
+                } else {
+                    beefcodf = false;
+                    fix_beef = 0;
+                }
+
+                println!("{:08X} {:08X}", addr, val);
             }
         }
     }
