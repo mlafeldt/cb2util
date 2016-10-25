@@ -2,8 +2,17 @@
 name = "cb2util"
 version = "0.1.0"
 dependencies = [
+ "codebreaker 0.1.0",
  "flate2 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "getopts 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "codebreaker"
+version = "0.1.0"
+dependencies = [
+ "gcc 0.3.37 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

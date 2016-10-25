@@ -6,3 +6,4 @@
 /release/
 # Rust
 target
+codebreaker/Cargo.lock

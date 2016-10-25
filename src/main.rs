@@ -8,9 +8,8 @@ use flate2::read::ZlibDecoder;
 extern crate getopts;
 use getopts::Options;
 
-#[allow(dead_code)]
-mod crypto;
-use crypto::cb1;
+extern crate codebreaker;
+pub use self::codebreaker::*;
 
 // Based on http://is.gd/8TYNHp
 macro_rules! abort {
@@ -62,6 +61,7 @@ fn main() {
 fn extract_cheats(buf: &[u8], decrypt: bool) {
     let mut i = 0;
     while i < buf.len() && read16(&buf[i..i + 2]) != 0xffff {
+        codebreaker::reset();
         if i > 0 {
             println!("");
         }
@@ -77,14 +77,12 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
             let numlines = read16(&buf[i..i + 2]);
             i += 2;
             for _ in 0..numlines {
-                let addr = read32(&buf[i..i + 4]);
-                let val = read32(&buf[i + 4..i + 8]);
+                let mut addr = read32(&buf[i..i + 4]);
+                let mut val = read32(&buf[i + 4..i + 8]);
                 if decrypt {
-                    let decrypted = cb1::decrypt_code(addr, val);
-                    println!("{:08X} {:08X}", decrypted.0, decrypted.1);
-                } else {
-                    println!("{:08X} {:08X}", addr, val);
+                    codebreaker::decrypt_code(&mut addr, &mut val);
                 }
+                println!("{:08X} {:08X}", addr, val);
                 i += 8;
             }
         }

@@ -6,3 +6,4 @@ authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
 [dependencies]
 flate2 = "0.2"
 getopts = "0.2"
+codebreaker = { path = "codebreaker", version = "0.1.0" }
