@@ -56,7 +56,12 @@ fn main() {
 
 fn extract_cheats(buf: &[u8], decrypt: bool) {
     let mut i = 0;
-    while i < buf.len() && read16(&buf[i..i + 2]) != 0xffff {
+    while i < buf.len() - 2 {
+        // Check for end marker
+        if read16(&buf[i..i + 2]) == 0xffff {
+            break;
+        }
+
         // Reset code encryption
         codebreaker::reset();
         let mut beefcodf = false;
