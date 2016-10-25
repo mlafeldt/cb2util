@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
 
 [dependencies]
+clap = "2"
 flate2 = "0.2"
-getopts = "0.2"
 codebreaker = { path = "codebreaker", version = "0.1.0" }

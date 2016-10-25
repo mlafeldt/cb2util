@@ -2,14 +2,14 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
+#[macro_use]
+extern crate clap;
+use clap::{App, AppSettings, Arg, SubCommand};
+
 extern crate flate2;
 use flate2::read::ZlibDecoder;
 
-extern crate getopts;
-use getopts::Options;
-
 extern crate codebreaker;
-pub use self::codebreaker::*;
 
 // Based on http://is.gd/8TYNHp
 macro_rules! abort {
@@ -23,22 +23,18 @@ macro_rules! abort {
 }
 
 fn main() {
-    let args: Vec<_> = std::env::args().skip(1).collect();
-    assert!(!args.is_empty());
-    assert!(args[0] == "cheats");
+    let matches = App::new("cb2util")
+        .version(crate_version!())
+        .setting(AppSettings::SubcommandRequired)
+        .subcommand(SubCommand::with_name("cheats")
+            .about("Read or write CodeBreaker \"cheats\" files")
+            .args(&[Arg::from_usage("-d, --decrypt 'Decrypt extracted cheats'"),
+                    Arg::from_usage("<INPUT> 'Path to \"cheats\" file to read'")]))
+        .get_matches();
 
-    let mut opts = Options::new();
-    opts.optflag("d", "decrypt", "decrypt extracted cheats");
-    let matches = match opts.parse(&args[1..]) {
-        Err(e) => abort!("{}", e),
-        Ok(m) => m,
-    };
-    let path = if !matches.free.is_empty() {
-        Path::new(&matches.free[0])
-    } else {
-        abort!("missing input file")
-    };
-    let decrypt = matches.opt_present("decrypt");
+    let m = matches.subcommand_matches("cheats").unwrap();
+    let path = Path::new(m.value_of("INPUT").unwrap());
+    let decrypt = m.is_present("decrypt");
 
     let mut file = match File::open(path) {
         Err(why) => abort!("couldn't open {}: {}", path.display(), why),
