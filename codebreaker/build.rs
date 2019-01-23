@@ -1,7 +1,7 @@
-extern crate gcc;
+extern crate cc;
 
 fn main() {
-    gcc::Config::new()
+    cc::Build::new()
         .file("../cb2_crypto.c")
         .file("../arcfour.c")
         .file("../shs.c")
