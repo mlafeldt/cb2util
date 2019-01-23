@@ -15,12 +15,10 @@ fn main() {
         .subcommand(
             SubCommand::with_name("cheats")
                 .about("Read or write CodeBreaker \"cheats\" files")
-                .args(
-                    &[
-                        Arg::from_usage("-d, --decrypt 'Decrypt extracted cheats'"),
-                        Arg::from_usage("<INPUT> 'Path to \"cheats\" file to read'"),
-                    ],
-                ),
+                .args(&[
+                    Arg::from_usage("-d, --decrypt 'Decrypt extracted cheats'"),
+                    Arg::from_usage("<INPUT> 'Path to \"cheats\" file to read'"),
+                ]),
         )
         .get_matches();
 
