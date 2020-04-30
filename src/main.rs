@@ -8,6 +8,10 @@ use clap::{App, AppSettings, Arg, SubCommand};
 mod cli;
 use cli::cheats;
 
+#[allow(unused_imports)]
+#[allow(dead_code)]
+mod crypto;
+
 fn main() {
     let m = App::new("cb2util")
         .version(crate_version!())
