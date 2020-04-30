@@ -1,10 +1,9 @@
 extern crate libc;
-use libc::*;
 
 extern "C" {
     pub fn cb_reset();
-    pub fn cb_decrypt_code(addr: *mut uint32_t, val: *mut uint32_t);
-    pub fn cb_decrypt_code2(addr: *mut uint32_t, val: *mut uint32_t);
+    pub fn cb_decrypt_code(addr: *mut u32, val: *mut u32);
+    pub fn cb_decrypt_code2(addr: *mut u32, val: *mut u32);
 }
 
 pub fn reset() {
