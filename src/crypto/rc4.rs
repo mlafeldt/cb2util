@@ -40,7 +40,7 @@ impl Rc4 {
 
 #[cfg(test)]
 mod tests {
-    use super::Rc4;
+    use super::*;
     use std::iter::repeat;
 
     struct Test {

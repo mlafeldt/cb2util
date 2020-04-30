@@ -159,8 +159,7 @@ fn mul_inverse(word: u32) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{decrypt_code, encrypt_code};
-    use super::{mul_decrypt, mul_encrypt, mul_inverse};
+    use super::*;
 
     fn mul_tests() -> Vec<(u32, u32, u32)> {
         vec![

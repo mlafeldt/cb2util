@@ -46,7 +46,7 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
 
 #[cfg(test)]
 mod tests {
-    use super::{decrypt_code, encrypt_code};
+    use super::*;
 
     struct Test {
         decrypted: (u32, u32),
