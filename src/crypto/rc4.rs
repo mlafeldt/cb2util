@@ -40,8 +40,8 @@ impl Rc4 {
 
 #[cfg(test)]
 mod tests {
-    use std::iter::repeat;
     use super::Rc4;
+    use std::iter::repeat;
 
     struct Test {
         key: &'static str,
@@ -49,6 +49,7 @@ mod tests {
         output: Vec<u8>,
     }
 
+    #[cfg_attr(rustfmt, rustfmt_skip)]
     fn tests() -> Vec<Test> {
         vec![
             Test {
