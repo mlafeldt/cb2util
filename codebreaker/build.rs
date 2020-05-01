@@ -23,5 +23,6 @@ fn main() {
         .file("../libbig_int/src/service_funcs.c")
         .file("../libbig_int/src/str_funcs.c")
         .include("../libbig_int/include")
+        .define("CODE_ENCRYPTION", "1")
         .compile("libcodebreaker.a");
 }
