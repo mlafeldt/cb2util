@@ -19,10 +19,6 @@ extern "C" {
     static mut beefcodf: libc::c_int;
     static mut code_lines: libc::c_int;
 
-    // CB V1 code encryption
-    pub fn cb1_encrypt_code(addr: *mut u32, val: *mut u32);
-    pub fn cb1_decrypt_code(addr: *mut u32, val: *mut u32);
-
     // CB V7 code encryption
     pub fn cb7_beefcode(init: c_int, val: u32);
     pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
@@ -63,7 +59,9 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
         if enc_mode == EncMode::V7 {
             cb7_encrypt_code(addr, val);
         } else {
-            cb1_encrypt_code(addr, val);
+            let code = cb1::encrypt_code(*addr, *val);
+            *addr = code.0;
+            *val = code.1;
         }
 
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
@@ -85,7 +83,9 @@ pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
         if enc_mode == EncMode::V7 {
             cb7_decrypt_code(addr, val);
         } else {
-            cb1_decrypt_code(addr, val);
+            let code = cb1::decrypt_code(*addr, *val);
+            *addr = code.0;
+            *val = code.1;
         }
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
@@ -115,7 +115,9 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
                     } else {
                         enc_mode = EncMode::V1;
                         code_lines -= 1;
-                        cb1_decrypt_code(addr, val);
+                        let code = cb1::decrypt_code(*addr, *val);
+                        *addr = code.0;
+                        *val = code.1;
                     }
                 } else {
                     enc_mode = EncMode::RAW;
@@ -126,7 +128,9 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
                 if enc_mode == EncMode::RAW {
                     return;
                 }
-                cb1_decrypt_code(addr, val);
+                let code = cb1::decrypt_code(*addr, *val);
+                *addr = code.0;
+                *val = code.1;
             }
         } else {
             cb7_decrypt_code(addr, val);
