@@ -40,7 +40,7 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     }
     let tmp = addr ^ SEEDTABLE[0][cmd];
     addr = tmp.wrapping_sub(SEEDTABLE[1][cmd]);
-    addr = (tmp & 0xFF000000) | ((addr & 0xFFFF) << 8) | ((addr >> 16) & 0xFF);
+    addr = (tmp & 0xff000000) | ((addr & 0xffff) << 8) | ((addr >> 16) & 0xff);
     (addr, val)
 }
 
