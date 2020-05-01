@@ -8,6 +8,7 @@ build = "build.rs"
 [lib]
 name = "codebreaker"
 path = "lib.rs"
+doctest = false
 
 [dependencies]
 libc = "0.2"
