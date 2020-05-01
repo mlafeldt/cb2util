@@ -6,6 +6,11 @@ use libc::{c_int, size_t};
 
 // TODO: port all these functions to pure Rust
 extern "C" {
+    // CB V7 code encryption
+    pub fn cb7_beefcode(init: c_int, val: u32);
+    pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
+    pub fn cb7_decrypt_code(addr: *mut u32, val: *mut u32);
+
     // All versions
     pub fn cb_reset();
     pub fn cb_set_common_v7();
