@@ -1,5 +1,6 @@
 pub mod cb1;
 pub mod cb7;
+mod rc4;
 
 extern crate libc;
 use libc::{c_int, size_t};
@@ -14,13 +15,16 @@ enum EncMode {
 
 // TODO: port all these functions to pure Rust
 extern "C" {
+    pub static mut seeds: [[u8; 256]; 5];
+    pub static mut key: [u32; 5];
+    pub static mut oldkey: [u32; 5];
     static mut enc_mode: EncMode;
     static mut v7_init: libc::c_int;
     static mut beefcodf: libc::c_int;
     static mut code_lines: libc::c_int;
 
     // CB V7 code encryption
-    pub fn cb7_beefcode(init: c_int, val: u32);
+    pub fn rsa_crypt(addr: *mut u32, val: *mut u32, rsakey: u64);
     pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
     pub fn cb7_decrypt_code(addr: *mut u32, val: *mut u32);
 
@@ -44,7 +48,7 @@ pub fn reset() {
 pub fn set_common_v7() {
     unsafe {
         enc_mode = EncMode::V7;
-        cb7_beefcode(1, 0);
+        cb7::beefcode(1, 0);
         v7_init = 1;
         beefcodf = 0;
         code_lines = 0;
@@ -66,10 +70,10 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
 
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
             if v7_init == 0 {
-                cb7_beefcode(1, oldval);
+                cb7::beefcode(1, oldval);
                 v7_init = 1;
             } else {
-                cb7_beefcode(0, oldval);
+                cb7::beefcode(0, oldval);
             }
             enc_mode = EncMode::V7;
             beefcodf = (oldaddr & 1) as i32;
@@ -90,10 +94,10 @@ pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
             if v7_init == 0 {
-                cb7_beefcode(1, *val);
+                cb7::beefcode(1, *val);
                 v7_init = 1;
             } else {
-                cb7_beefcode(0, *val);
+                cb7::beefcode(0, *val);
             }
             enc_mode = EncMode::V7;
             beefcodf = (*addr & 1) as i32;
@@ -147,10 +151,10 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
             if v7_init == 0 {
-                cb7_beefcode(1, *val);
+                cb7::beefcode(1, *val);
                 v7_init = 1;
             } else {
-                cb7_beefcode(0, *val);
+                cb7::beefcode(0, *val);
             }
             enc_mode = EncMode::V7;
             beefcodf = (*addr & 1) as i32;

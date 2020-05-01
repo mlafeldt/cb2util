@@ -2,6 +2,10 @@
 
 #![allow(dead_code)]
 
+use super::*;
+use rc4::*;
+use std::mem;
+
 #[cfg_attr(rustfmt, rustfmt_skip)]
 // Default seed tables (1280 bytes total)
 const DEFSEEDS: [[u8; 256]; 5] = [
@@ -105,11 +109,90 @@ const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
 const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
 
+// Used to generate/change the encryption key and seeds.
+// "Beefcode" is the new V7+ seed code:
+// BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
+pub fn beefcode(init: i32, val: u32) {
+    unsafe {
+        // Easy access to all bytes of val
+        let p: [u8; 4] = val.to_le_bytes();
+
+        // Setup key and seeds
+        if init != 0 {
+            super::beefcodf = 0;
+            super::key.copy_from_slice(&DEFKEY);
+
+            if val != 0 {
+                super::seeds.copy_from_slice(&DEFSEEDS);
+                key[0] = u32::from(super::seeds[3][p[3] as usize]) << 24
+                    | u32::from(super::seeds[2][p[2] as usize]) << 16
+                    | u32::from(super::seeds[1][p[1] as usize]) << 8
+                    | u32::from(super::seeds[0][p[0] as usize]);
+                key[1] = u32::from(super::seeds[0][p[3] as usize]) << 24
+                    | u32::from(super::seeds[3][p[2] as usize]) << 16
+                    | u32::from(super::seeds[2][p[1] as usize]) << 8
+                    | u32::from(super::seeds[1][p[0] as usize]);
+                key[2] = u32::from(super::seeds[1][p[3] as usize]) << 24
+                    | u32::from(super::seeds[0][p[2] as usize]) << 16
+                    | u32::from(super::seeds[3][p[1] as usize]) << 8
+                    | u32::from(super::seeds[2][p[0] as usize]);
+                key[3] = u32::from(super::seeds[2][p[3] as usize]) << 24
+                    | u32::from(super::seeds[1][p[2] as usize]) << 16
+                    | u32::from(super::seeds[0][p[1] as usize]) << 8
+                    | u32::from(super::seeds[3][p[0] as usize]);
+            } else {
+                super::seeds.copy_from_slice(&[[0; 256]; 5]);
+            }
+        } else {
+            if val != 0 {
+                key[0] = u32::from(super::seeds[3][p[3] as usize]) << 24
+                    | u32::from(super::seeds[2][p[2] as usize]) << 16
+                    | u32::from(super::seeds[1][p[1] as usize]) << 8
+                    | u32::from(super::seeds[0][p[0] as usize]);
+                key[1] = u32::from(super::seeds[0][p[3] as usize]) << 24
+                    | u32::from(super::seeds[3][p[2] as usize]) << 16
+                    | u32::from(super::seeds[2][p[1] as usize]) << 8
+                    | u32::from(super::seeds[1][p[0] as usize]);
+                key[2] = u32::from(super::seeds[1][p[3] as usize]) << 24
+                    | u32::from(super::seeds[0][p[2] as usize]) << 16
+                    | u32::from(super::seeds[3][p[1] as usize]) << 8
+                    | u32::from(super::seeds[2][p[0] as usize]);
+                key[3] = u32::from(super::seeds[2][p[3] as usize]) << 24
+                    | u32::from(super::seeds[1][p[2] as usize]) << 16
+                    | u32::from(super::seeds[0][p[1] as usize]) << 8
+                    | u32::from(super::seeds[3][p[0] as usize]);
+            } else {
+                super::seeds.copy_from_slice(&[[0; 256]; 5]);
+                super::key[0] = 0;
+                super::key[1] = 0;
+                super::key[2] = 0;
+                super::key[3] = 0;
+            }
+        }
+
+        // Use key to encrypt seeds with ARCFOUR algorithm
+        for i in 0..5 {
+            let mut k = mem::transmute::<[u32; 5], [u8; 20]>(super::key);
+            let mut rc4 = Rc4::new(&k);
+            rc4.crypt(&mut super::seeds[i]);
+            rc4.crypt(&mut k);
+
+            let k2 = mem::transmute::<[u8; 20], [u32; 5]>(k);
+            super::key.copy_from_slice(&k2)
+        }
+
+        // Back up key
+        super::oldkey.copy_from_slice(&super::key);
+    }
+}
+
+// Encrypts a V7+ code.
 pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
     // TODO
     (addr, val)
 }
 
+// Decrypts a V7+ code.
 pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
     // TODO: Decryption loop of 64 cycles, using the generated seeds
     // TODO: RSA
