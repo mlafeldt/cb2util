@@ -8,7 +8,7 @@ script:
   - cargo build --verbose
   - cargo test --verbose
   - cargo test --verbose --manifest-path codebreaker/Cargo.toml
-  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T="cheats-extract*"
+  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T="cheats-extract*" TEST_OPTS=-v
 
 branches:
   only:
