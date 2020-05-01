@@ -1,7 +1,7 @@
 // Implementation of the stream cipher RC4
 // Based on https://github.com/DaGenix/rust-crypto/blob/master/src/rc4.rs
 
-struct Rc4 {
+pub struct Rc4 {
     i: u8,
     j: u8,
     state: [u8; 256],
@@ -26,14 +26,13 @@ impl Rc4 {
         }
     }
 
-    pub fn crypt(&mut self, input: &[u8], output: &mut [u8]) {
-        assert_eq!(input.len(), output.len());
-        for (i, x) in input.iter().enumerate() {
+    pub fn crypt(&mut self, buf: &mut [u8]) {
+        for i in buf.iter_mut() {
             self.i = self.i.wrapping_add(1);
             self.j = self.j.wrapping_add(self.state[self.i as usize]);
             self.state.swap(self.i as usize, self.j as usize);
             let j = self.state[self.i as usize].wrapping_add(self.state[self.j as usize]);
-            output[i] = x ^ self.state[j as usize];
+            *i ^= self.state[j as usize];
         }
     }
 }
@@ -41,7 +40,6 @@ impl Rc4 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::iter::repeat;
 
     struct Test {
         key: &'static str,
@@ -76,9 +74,9 @@ mod tests {
     fn wikipedia_tests() {
         for t in tests().iter() {
             let mut rc4 = Rc4::new(t.key.as_bytes());
-            let mut result: Vec<u8> = repeat(0).take(t.output.len()).collect();
-            rc4.crypt(t.input.as_bytes(), &mut result);
-            assert_eq!(t.output, result);
+            let mut buf = t.input.as_bytes().to_vec();
+            rc4.crypt(&mut buf);
+            assert_eq!(t.output, buf);
         }
     }
 }
