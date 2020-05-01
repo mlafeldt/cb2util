@@ -4,49 +4,179 @@ pub mod cb7;
 extern crate libc;
 use libc::{c_int, size_t};
 
+#[repr(C)]
+#[derive(PartialEq)]
+enum EncMode {
+    RAW,
+    V1,
+    V7,
+}
+
 // TODO: port all these functions to pure Rust
 extern "C" {
+    static mut enc_mode: EncMode;
+    static mut v7_init: libc::c_int;
+    static mut beefcodf: libc::c_int;
+    static mut code_lines: libc::c_int;
+
+    // CB V1 code encryption
+    pub fn cb1_encrypt_code(addr: *mut u32, val: *mut u32);
+    pub fn cb1_decrypt_code(addr: *mut u32, val: *mut u32);
+
     // CB V7 code encryption
     pub fn cb7_beefcode(init: c_int, val: u32);
     pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
     pub fn cb7_decrypt_code(addr: *mut u32, val: *mut u32);
-
-    // All versions
-    pub fn cb_reset();
-    pub fn cb_set_common_v7();
-    pub fn cb_encrypt_code(addr: *mut u32, val: *mut u32);
-    pub fn cb_decrypt_code(addr: *mut u32, val: *mut u32);
-    pub fn cb_decrypt_code2(addr: *mut u32, val: *mut u32);
 
     // CB file functions
     pub fn cb_verify_signature(sig: *const u8, buf: *const u8, buflen: size_t) -> c_int;
     pub fn cb_crypt_data(buf: *mut u8, buflen: size_t);
 }
 
+// Resets the CB encryption. Must be called before processing a code list using
+// encrypt_code() or decrypt_code()!
 pub fn reset() {
-    unsafe { cb_reset() }
+    unsafe {
+        enc_mode = EncMode::RAW;
+        v7_init = 0;
+        beefcodf = 0;
+        code_lines = 0;
+    }
 }
 
+// Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
 pub fn set_common_v7() {
-    unsafe { cb_set_common_v7() }
+    unsafe {
+        enc_mode = EncMode::V7;
+        cb7_beefcode(1, 0);
+        v7_init = 1;
+        beefcodf = 0;
+        code_lines = 0;
+    }
 }
 
+// Used to encrypt a list of CB codes (V1 + V7)
 pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
-    unsafe { cb_encrypt_code(addr, val) }
+    unsafe {
+        let (oldaddr, oldval) = (*addr, *val);
+
+        if enc_mode == EncMode::V7 {
+            cb7_encrypt_code(addr, val);
+        } else {
+            cb1_encrypt_code(addr, val);
+        }
+
+        if (oldaddr & 0xfffffffe) == 0xbeefc0de {
+            if v7_init == 0 {
+                cb7_beefcode(1, oldval);
+                v7_init = 1;
+            } else {
+                cb7_beefcode(0, oldval);
+            }
+            enc_mode = EncMode::V7;
+            beefcodf = (oldaddr & 1) as i32;
+        }
+    }
 }
 
+// Used to decrypt a list of CB codes (V1 + V7)
 pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
-    unsafe { cb_decrypt_code(addr, val) }
+    unsafe {
+        if enc_mode == EncMode::V7 {
+            cb7_decrypt_code(addr, val);
+        } else {
+            cb1_decrypt_code(addr, val);
+        }
+
+        if (*addr & 0xfffffffe) == 0xbeefc0de {
+            if v7_init == 0 {
+                cb7_beefcode(1, *val);
+                v7_init = 1;
+            } else {
+                cb7_beefcode(0, *val);
+            }
+            enc_mode = EncMode::V7;
+            beefcodf = (*addr & 1) as i32;
+        }
+    }
 }
 
+// Smart version of decrypt_code() that detects if a code needs to be decrypted and how
 pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
-    unsafe { cb_decrypt_code2(addr, val) }
+    unsafe {
+        if enc_mode != EncMode::V7 {
+            if code_lines == 0 {
+                code_lines = num_code_lines(*addr);
+                if (*addr >> 24) & 0x0e != 0 {
+                    if (*addr & 0xfffffffe) == 0xbeefc0de {
+                        // ignore raw beefcode
+                        code_lines -= 1;
+                        return;
+                    } else {
+                        enc_mode = EncMode::V1;
+                        code_lines -= 1;
+                        cb1_decrypt_code(addr, val);
+                    }
+                } else {
+                    enc_mode = EncMode::RAW;
+                    code_lines -= 1;
+                }
+            } else {
+                code_lines -= 1;
+                if enc_mode == EncMode::RAW {
+                    return;
+                }
+                cb1_decrypt_code(addr, val);
+            }
+        } else {
+            cb7_decrypt_code(addr, val);
+            if code_lines == 0 {
+                code_lines = num_code_lines(*addr);
+                if code_lines == 1 && *addr == 0xffffffff {
+                    // TODO: change encryption options
+                    code_lines = 0;
+                    return;
+                }
+            }
+            code_lines -= 1;
+        }
+
+        if (*addr & 0xfffffffe) == 0xbeefc0de {
+            if v7_init == 0 {
+                cb7_beefcode(1, *val);
+                v7_init = 1;
+            } else {
+                cb7_beefcode(0, *val);
+            }
+            enc_mode = EncMode::V7;
+            beefcodf = (*addr & 1) as i32;
+            code_lines = 1;
+        }
+    }
 }
 
+fn num_code_lines(addr: u32) -> i32 {
+    let cmd = addr >> 28;
+
+    if cmd < 3 || cmd > 6 {
+        1
+    } else if cmd == 3 {
+        if addr & 0x00400000 != 0 {
+            2
+        } else {
+            1
+        }
+    } else {
+        2
+    }
+}
+
+// Verify digital signature on CB files
 pub fn verify_signature(sig: &[u8], buf: &[u8]) -> bool {
     unsafe { cb_verify_signature(sig.as_ptr(), buf.as_ptr(), buf.len() as size_t) == 0 }
 }
 
+// Encrypt or decrypt CB file data
 pub fn crypt_data(buf: &mut [u8]) {
     unsafe { cb_crypt_data(buf.as_mut_ptr(), buf.len() as size_t) }
 }
