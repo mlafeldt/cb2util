@@ -1,3 +1,6 @@
+pub mod cb1;
+pub mod cb7;
+
 extern crate libc;
 
 extern "C" {
