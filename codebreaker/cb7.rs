@@ -305,8 +305,7 @@ mod tests {
     fn test_encrypt_code() {
         for t in tests().iter() {
             let result = encrypt_code(t.decrypted.0, t.decrypted.1);
-            assert_eq!(t.encrypted.0, result.0);
-            assert_eq!(t.encrypted.1, result.1);
+            assert_eq!(t.encrypted, result);
         }
     }
 
@@ -314,8 +313,7 @@ mod tests {
     fn test_decrypt_code() {
         for t in tests().iter() {
             let result = decrypt_code(t.encrypted.0, t.encrypted.1);
-            assert_eq!(t.decrypted.0, result.0);
-            assert_eq!(t.decrypted.1, result.1);
+            assert_eq!(t.decrypted, result);
         }
     }
 }
