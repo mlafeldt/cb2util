@@ -1,6 +1,7 @@
 // Implementation of the stream cipher RC4
 // Based on https://github.com/DaGenix/rust-crypto/blob/master/src/rc4.rs
 
+#[derive(Copy, Clone)]
 pub struct Rc4 {
     i: u8,
     j: u8,
@@ -48,7 +49,7 @@ mod tests {
     }
 
     #[cfg_attr(rustfmt, rustfmt_skip)]
-    fn tests() -> Vec<Test> {
+    fn wikipedia_tests() -> Vec<Test> {
         vec![
             Test {
                 key: "Key",
@@ -71,8 +72,8 @@ mod tests {
     }
 
     #[test]
-    fn wikipedia_tests() {
-        for t in tests().iter() {
+    fn test_crypt() {
+        for t in wikipedia_tests().iter() {
             let mut rc4 = Rc4::new(t.key.as_bytes());
             let mut buf = t.input.as_bytes().to_vec();
             rc4.crypt(&mut buf);
