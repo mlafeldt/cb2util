@@ -5,9 +5,9 @@
 use super::*;
 use rc4::*;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
 // Default seed tables (1280 bytes total)
-const DEFSEEDS: [[u8; 256]; 5] = [
+#[cfg_attr(rustfmt, rustfmt_skip)]
+const SEEDS: [[u8; 256]; 5] = [
     [
         0x84, 0x01, 0x21, 0xa4, 0xfa, 0x4d, 0x50, 0x8d, 0x75, 0x33, 0xc5, 0xf7, 0x4a, 0x6d, 0x7c, 0xa6,
         0x1c, 0xf8, 0x40, 0x18, 0xa1, 0xb3, 0xa2, 0xf9, 0x6a, 0x19, 0x63, 0x66, 0x29, 0xae, 0x10, 0x75,
@@ -100,8 +100,8 @@ const DEFSEEDS: [[u8; 256]; 5] = [
     ],
 ];
 
-// Default ARCFOUR key (20 bytes)
-const DEFKEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
+// Default RC4 key (20 bytes)
+const RC4_KEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
 
 // RSA parameters
 const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
@@ -119,10 +119,10 @@ pub fn beefcode(init: i32, val: u32) {
         // Set up key and seeds
         if init != 0 {
             beefcodf = 0;
-            key.copy_from_slice(&DEFKEY);
+            key.copy_from_slice(&RC4_KEY);
 
             if val != 0 {
-                seeds.copy_from_slice(&DEFSEEDS);
+                seeds.copy_from_slice(&SEEDS);
                 key[0] = u32::from(seeds[3][v[3]]) << 24
                     | u32::from(seeds[2][v[2]]) << 16
                     | u32::from(seeds[1][v[1]]) << 8

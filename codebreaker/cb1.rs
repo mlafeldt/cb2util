@@ -1,7 +1,7 @@
 // Encrypt and decrypt codes using CB v1 scheme
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
-const SEEDTABLE: [[u32; 16]; 3] = [
+const SEEDS: [[u32; 16]; 3] = [
     [
         0x0a0b8d9b, 0x0a0133f8, 0x0af733ec, 0x0a15c574,
         0x0a50ac20, 0x0a920fb9, 0x0a599f0b, 0x0a4aa0e3,
@@ -26,9 +26,9 @@ pub fn encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     let tmp = addr & 0xff000000;
     addr = ((addr & 0xff) << 16) | ((addr >> 8) & 0xffff);
-    addr = (tmp | (addr.wrapping_add(SEEDTABLE[1][cmd]) & 0x00ffffff)) ^ SEEDTABLE[0][cmd];
+    addr = (tmp | (addr.wrapping_add(SEEDS[1][cmd]) & 0x00ffffff)) ^ SEEDS[0][cmd];
     if cmd > 2 {
-        val = addr ^ val.wrapping_add(SEEDTABLE[2][cmd]);
+        val = addr ^ val.wrapping_add(SEEDS[2][cmd]);
     }
     (addr, val)
 }
@@ -42,10 +42,10 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     if cmd > 2 {
-        val = (addr ^ val).wrapping_sub(SEEDTABLE[2][cmd]);
+        val = (addr ^ val).wrapping_sub(SEEDS[2][cmd]);
     }
-    let tmp = addr ^ SEEDTABLE[0][cmd];
-    addr = tmp.wrapping_sub(SEEDTABLE[1][cmd]);
+    let tmp = addr ^ SEEDS[0][cmd];
+    addr = tmp.wrapping_sub(SEEDS[1][cmd]);
     addr = (tmp & 0xff000000) | ((addr & 0xffff) << 8) | ((addr >> 16) & 0xff);
     (addr, val)
 }
