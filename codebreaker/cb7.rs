@@ -118,69 +118,69 @@ pub fn beefcode(init: i32, val: u32) {
     unsafe {
         // Set up key and seeds
         if init != 0 {
-            super::beefcodf = 0;
-            super::key.copy_from_slice(&DEFKEY);
+            beefcodf = 0;
+            key.copy_from_slice(&DEFKEY);
 
             if val != 0 {
-                super::seeds.copy_from_slice(&DEFSEEDS);
-                key[0] = u32::from(super::seeds[3][v[3]]) << 24
-                    | u32::from(super::seeds[2][v[2]]) << 16
-                    | u32::from(super::seeds[1][v[1]]) << 8
-                    | u32::from(super::seeds[0][v[0]]);
-                key[1] = u32::from(super::seeds[0][v[3]]) << 24
-                    | u32::from(super::seeds[3][v[2]]) << 16
-                    | u32::from(super::seeds[2][v[1]]) << 8
-                    | u32::from(super::seeds[1][v[0]]);
-                key[2] = u32::from(super::seeds[1][v[3]]) << 24
-                    | u32::from(super::seeds[0][v[2]]) << 16
-                    | u32::from(super::seeds[3][v[1]]) << 8
-                    | u32::from(super::seeds[2][v[0]]);
-                key[3] = u32::from(super::seeds[2][v[3]]) << 24
-                    | u32::from(super::seeds[1][v[2]]) << 16
-                    | u32::from(super::seeds[0][v[1]]) << 8
-                    | u32::from(super::seeds[3][v[0]]);
+                seeds.copy_from_slice(&DEFSEEDS);
+                key[0] = u32::from(seeds[3][v[3]]) << 24
+                    | u32::from(seeds[2][v[2]]) << 16
+                    | u32::from(seeds[1][v[1]]) << 8
+                    | u32::from(seeds[0][v[0]]);
+                key[1] = u32::from(seeds[0][v[3]]) << 24
+                    | u32::from(seeds[3][v[2]]) << 16
+                    | u32::from(seeds[2][v[1]]) << 8
+                    | u32::from(seeds[1][v[0]]);
+                key[2] = u32::from(seeds[1][v[3]]) << 24
+                    | u32::from(seeds[0][v[2]]) << 16
+                    | u32::from(seeds[3][v[1]]) << 8
+                    | u32::from(seeds[2][v[0]]);
+                key[3] = u32::from(seeds[2][v[3]]) << 24
+                    | u32::from(seeds[1][v[2]]) << 16
+                    | u32::from(seeds[0][v[1]]) << 8
+                    | u32::from(seeds[3][v[0]]);
             } else {
-                super::seeds.copy_from_slice(&[[0; 256]; 5]);
+                seeds.copy_from_slice(&[[0; 256]; 5]);
             }
         } else {
             if val != 0 {
-                key[0] = u32::from(super::seeds[3][v[3]]) << 24
-                    | u32::from(super::seeds[2][v[2]]) << 16
-                    | u32::from(super::seeds[1][v[1]]) << 8
-                    | u32::from(super::seeds[0][v[0]]);
-                key[1] = u32::from(super::seeds[0][v[3]]) << 24
-                    | u32::from(super::seeds[3][v[2]]) << 16
-                    | u32::from(super::seeds[2][v[1]]) << 8
-                    | u32::from(super::seeds[1][v[0]]);
-                key[2] = u32::from(super::seeds[1][v[3]]) << 24
-                    | u32::from(super::seeds[0][v[2]]) << 16
-                    | u32::from(super::seeds[3][v[1]]) << 8
-                    | u32::from(super::seeds[2][v[0]]);
-                key[3] = u32::from(super::seeds[2][v[3]]) << 24
-                    | u32::from(super::seeds[1][v[2]]) << 16
-                    | u32::from(super::seeds[0][v[1]]) << 8
-                    | u32::from(super::seeds[3][v[0]]);
+                key[0] = u32::from(seeds[3][v[3]]) << 24
+                    | u32::from(seeds[2][v[2]]) << 16
+                    | u32::from(seeds[1][v[1]]) << 8
+                    | u32::from(seeds[0][v[0]]);
+                key[1] = u32::from(seeds[0][v[3]]) << 24
+                    | u32::from(seeds[3][v[2]]) << 16
+                    | u32::from(seeds[2][v[1]]) << 8
+                    | u32::from(seeds[1][v[0]]);
+                key[2] = u32::from(seeds[1][v[3]]) << 24
+                    | u32::from(seeds[0][v[2]]) << 16
+                    | u32::from(seeds[3][v[1]]) << 8
+                    | u32::from(seeds[2][v[0]]);
+                key[3] = u32::from(seeds[2][v[3]]) << 24
+                    | u32::from(seeds[1][v[2]]) << 16
+                    | u32::from(seeds[0][v[1]]) << 8
+                    | u32::from(seeds[3][v[0]]);
             } else {
-                super::seeds.copy_from_slice(&[[0; 256]; 5]);
-                super::key[0] = 0;
-                super::key[1] = 0;
-                super::key[2] = 0;
-                super::key[3] = 0;
+                seeds.copy_from_slice(&[[0; 256]; 5]);
+                key[0] = 0;
+                key[1] = 0;
+                key[2] = 0;
+                key[3] = 0;
             }
         }
 
         // Use key to encrypt seeds with RC4
-        let k = slice_to_u8_mut(&mut super::key);
+        let k = slice_to_u8_mut(&mut key);
         for i in 0..5 {
             let mut rc4 = Rc4::new(k);
             // Encrypt seeds
-            rc4.crypt(&mut super::seeds[i]);
+            rc4.crypt(&mut seeds[i]);
             // Encrypt original key for next round
             rc4.crypt(k);
         }
 
         // Back up key
-        super::oldkey.copy_from_slice(&super::key);
+        oldkey.copy_from_slice(&key);
     }
 }
 
@@ -188,26 +188,26 @@ pub fn beefcode(init: i32, val: u32) {
 pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
     let mut code = (addr, val);
     unsafe {
-        super::cb7_encrypt_code(&mut code.0, &mut code.1);
+        cb7_encrypt_code(&mut code.0, &mut code.1);
     }
     code
 }
 
 pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    unsafe { super::cb7_encrypt_code(addr, val) }
+    unsafe { cb7_encrypt_code(addr, val) }
 }
 
 // Decrypts a V7+ code.
 pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
     let mut code = (addr, val);
     unsafe {
-        super::cb7_decrypt_code(&mut code.0, &mut code.1);
+        cb7_decrypt_code(&mut code.0, &mut code.1);
     }
     code
 }
 
 pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    unsafe { super::cb7_decrypt_code(addr, val) }
+    unsafe { cb7_decrypt_code(addr, val) }
 }
 
 // Multiplication, modulo (2^32)
