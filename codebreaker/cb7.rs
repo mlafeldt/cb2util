@@ -113,54 +113,54 @@ const RSA_ENC_KEY: u64 = 2682110966135737091;
 // "Beefcode" is the new V7+ seed code:
 // BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
 pub fn beefcode(init: i32, val: u32) {
-    unsafe {
-        // Easy access to all bytes of val
-        let p: [u8; 4] = val.to_le_bytes();
+    // Easy access to all bytes of val
+    let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
 
-        // Setup key and seeds
+    unsafe {
+        // Set up key and seeds
         if init != 0 {
             super::beefcodf = 0;
             super::key.copy_from_slice(&DEFKEY);
 
             if val != 0 {
                 super::seeds.copy_from_slice(&DEFSEEDS);
-                key[0] = u32::from(super::seeds[3][p[3] as usize]) << 24
-                    | u32::from(super::seeds[2][p[2] as usize]) << 16
-                    | u32::from(super::seeds[1][p[1] as usize]) << 8
-                    | u32::from(super::seeds[0][p[0] as usize]);
-                key[1] = u32::from(super::seeds[0][p[3] as usize]) << 24
-                    | u32::from(super::seeds[3][p[2] as usize]) << 16
-                    | u32::from(super::seeds[2][p[1] as usize]) << 8
-                    | u32::from(super::seeds[1][p[0] as usize]);
-                key[2] = u32::from(super::seeds[1][p[3] as usize]) << 24
-                    | u32::from(super::seeds[0][p[2] as usize]) << 16
-                    | u32::from(super::seeds[3][p[1] as usize]) << 8
-                    | u32::from(super::seeds[2][p[0] as usize]);
-                key[3] = u32::from(super::seeds[2][p[3] as usize]) << 24
-                    | u32::from(super::seeds[1][p[2] as usize]) << 16
-                    | u32::from(super::seeds[0][p[1] as usize]) << 8
-                    | u32::from(super::seeds[3][p[0] as usize]);
+                key[0] = u32::from(super::seeds[3][v[3]]) << 24
+                    | u32::from(super::seeds[2][v[2]]) << 16
+                    | u32::from(super::seeds[1][v[1]]) << 8
+                    | u32::from(super::seeds[0][v[0]]);
+                key[1] = u32::from(super::seeds[0][v[3]]) << 24
+                    | u32::from(super::seeds[3][v[2]]) << 16
+                    | u32::from(super::seeds[2][v[1]]) << 8
+                    | u32::from(super::seeds[1][v[0]]);
+                key[2] = u32::from(super::seeds[1][v[3]]) << 24
+                    | u32::from(super::seeds[0][v[2]]) << 16
+                    | u32::from(super::seeds[3][v[1]]) << 8
+                    | u32::from(super::seeds[2][v[0]]);
+                key[3] = u32::from(super::seeds[2][v[3]]) << 24
+                    | u32::from(super::seeds[1][v[2]]) << 16
+                    | u32::from(super::seeds[0][v[1]]) << 8
+                    | u32::from(super::seeds[3][v[0]]);
             } else {
                 super::seeds.copy_from_slice(&[[0; 256]; 5]);
             }
         } else {
             if val != 0 {
-                key[0] = u32::from(super::seeds[3][p[3] as usize]) << 24
-                    | u32::from(super::seeds[2][p[2] as usize]) << 16
-                    | u32::from(super::seeds[1][p[1] as usize]) << 8
-                    | u32::from(super::seeds[0][p[0] as usize]);
-                key[1] = u32::from(super::seeds[0][p[3] as usize]) << 24
-                    | u32::from(super::seeds[3][p[2] as usize]) << 16
-                    | u32::from(super::seeds[2][p[1] as usize]) << 8
-                    | u32::from(super::seeds[1][p[0] as usize]);
-                key[2] = u32::from(super::seeds[1][p[3] as usize]) << 24
-                    | u32::from(super::seeds[0][p[2] as usize]) << 16
-                    | u32::from(super::seeds[3][p[1] as usize]) << 8
-                    | u32::from(super::seeds[2][p[0] as usize]);
-                key[3] = u32::from(super::seeds[2][p[3] as usize]) << 24
-                    | u32::from(super::seeds[1][p[2] as usize]) << 16
-                    | u32::from(super::seeds[0][p[1] as usize]) << 8
-                    | u32::from(super::seeds[3][p[0] as usize]);
+                key[0] = u32::from(super::seeds[3][v[3]]) << 24
+                    | u32::from(super::seeds[2][v[2]]) << 16
+                    | u32::from(super::seeds[1][v[1]]) << 8
+                    | u32::from(super::seeds[0][v[0]]);
+                key[1] = u32::from(super::seeds[0][v[3]]) << 24
+                    | u32::from(super::seeds[3][v[2]]) << 16
+                    | u32::from(super::seeds[2][v[1]]) << 8
+                    | u32::from(super::seeds[1][v[0]]);
+                key[2] = u32::from(super::seeds[1][v[3]]) << 24
+                    | u32::from(super::seeds[0][v[2]]) << 16
+                    | u32::from(super::seeds[3][v[1]]) << 8
+                    | u32::from(super::seeds[2][v[0]]);
+                key[3] = u32::from(super::seeds[2][v[3]]) << 24
+                    | u32::from(super::seeds[1][v[2]]) << 16
+                    | u32::from(super::seeds[0][v[1]]) << 8
+                    | u32::from(super::seeds[3][v[0]]);
             } else {
                 super::seeds.copy_from_slice(&[[0; 256]; 5]);
                 super::key[0] = 0;
