@@ -4,7 +4,6 @@
 
 use super::*;
 use rc4::*;
-use std::mem;
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
 // Default seed tables (1280 bytes total)
@@ -170,14 +169,14 @@ pub fn beefcode(init: i32, val: u32) {
             }
         }
 
-        // Use key to encrypt seeds with ARCFOUR algorithm
+        // Use key to encrypt seeds with RC4
+        let k = slice_to_u8_mut(&mut super::key);
         for i in 0..5 {
-            let mut k = mem::transmute::<[u32; 5], [u8; 20]>(super::key);
-            let mut rc4 = Rc4::new(&k);
+            let mut rc4 = Rc4::new(k);
+            // Encrypt seeds
             rc4.crypt(&mut super::seeds[i]);
-            rc4.crypt(&mut k);
-
-            super::key = mem::transmute::<[u8; 20], [u32; 5]>(k);
+            // Encrypt original key for next round
+            rc4.crypt(k);
         }
 
         // Back up key

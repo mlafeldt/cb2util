@@ -188,3 +188,18 @@ pub fn verify_signature(sig: &[u8], buf: &[u8]) -> bool {
 pub fn crypt_data(buf: &mut [u8]) {
     unsafe { cb_crypt_data(buf.as_mut_ptr(), buf.len() as size_t) }
 }
+
+/// Convert a slice of T (where T is plain old data) to its mutable binary
+/// representation.
+///
+/// This function is wildly unsafe because it permits arbitrary modification of
+/// the binary representation of any `Copy` type. Use with care.
+///
+/// Source: https://github.com/BurntSushi/byteorder/blob/master/src/io.rs
+unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
+    use std::mem::size_of;
+    use std::slice;
+
+    let len = size_of::<T>() * slice.len();
+    slice::from_raw_parts_mut(slice.as_mut_ptr() as *mut u8, len)
+}
