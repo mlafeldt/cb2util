@@ -61,7 +61,7 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
         let (oldaddr, oldval) = (*addr, *val);
 
         if enc_mode == EncMode::V7 {
-            cb7_encrypt_code(addr, val);
+            cb7::encrypt_code_mut(addr, val);
         } else {
             cb1::encrypt_code_mut(addr, val);
         }
@@ -83,7 +83,7 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
 pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
     unsafe {
         if enc_mode == EncMode::V7 {
-            cb7_decrypt_code(addr, val);
+            cb7::decrypt_code_mut(addr, val);
         } else {
             cb1::decrypt_code_mut(addr, val);
         }
@@ -129,7 +129,7 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
                 cb1::decrypt_code_mut(addr, val);
             }
         } else {
-            cb7_decrypt_code(addr, val);
+            cb7::decrypt_code_mut(addr, val);
             if code_lines == 0 {
                 code_lines = num_code_lines(*addr);
                 if code_lines == 1 && *addr == 0xffffffff {

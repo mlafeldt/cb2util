@@ -186,19 +186,28 @@ pub fn beefcode(init: i32, val: u32) {
 
 // Encrypts a V7+ code.
 pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
-    // TODO
-    (addr, val)
+    let mut code = (addr, val);
+    unsafe {
+        super::cb7_encrypt_code(&mut code.0, &mut code.1);
+    }
+    code
+}
+
+pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
+    unsafe { super::cb7_encrypt_code(addr, val) }
 }
 
 // Decrypts a V7+ code.
 pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
-    // TODO: Decryption loop of 64 cycles, using the generated seeds
-    // TODO: RSA
-    // TODO: RC4
-    // TODO: Multiplication with multiplicative inverse, modulo (2^32)
-    // TODO: BEEFC0DF
-    // TODO: BEEFC0DE
-    (addr, val)
+    let mut code = (addr, val);
+    unsafe {
+        super::cb7_decrypt_code(&mut code.0, &mut code.1);
+    }
+    code
+}
+
+pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
+    unsafe { super::cb7_decrypt_code(addr, val) }
 }
 
 // Multiplication, modulo (2^32)
@@ -294,10 +303,10 @@ mod tests {
     #[cfg_attr(rustfmt, rustfmt_skip)]
     fn tests() -> Vec<Test> {
         vec![
-            Test {
-                decrypted: (0, 0),
-                encrypted: (0, 0),
-            },
+            // Test {
+            //     decrypted: (0, 0),
+            //     encrypted: (0, 0),
+            // },
         ]
     }
 
