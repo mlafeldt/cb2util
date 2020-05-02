@@ -33,6 +33,12 @@ pub fn encrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     (addr, val)
 }
 
+pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
+    let code = encrypt_code(*addr, *val);
+    *addr = code.0;
+    *val = code.1;
+}
+
 pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     let cmd = (addr >> 28) as usize;
     if cmd > 2 {
@@ -42,6 +48,12 @@ pub fn decrypt_code(mut addr: u32, mut val: u32) -> (u32, u32) {
     addr = tmp.wrapping_sub(SEEDTABLE[1][cmd]);
     addr = (tmp & 0xff000000) | ((addr & 0xffff) << 8) | ((addr >> 16) & 0xff);
     (addr, val)
+}
+
+pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
+    let code = decrypt_code(*addr, *val);
+    *addr = code.0;
+    *val = code.1;
 }
 
 #[cfg(test)]
@@ -88,11 +100,31 @@ mod tests {
     }
 
     #[test]
+    fn test_encrypt_code_mut() {
+        for t in tests().iter() {
+            let mut code = t.decrypted;
+            encrypt_code_mut(&mut code.0, &mut code.1);
+            assert_eq!(t.encrypted.0, code.0);
+            assert_eq!(t.encrypted.1, code.1);
+        }
+    }
+
+    #[test]
     fn test_decrypt_code() {
         for t in tests().iter() {
             let result = decrypt_code(t.encrypted.0, t.encrypted.1);
             assert_eq!(t.decrypted.0, result.0);
             assert_eq!(t.decrypted.1, result.1);
+        }
+    }
+
+    #[test]
+    fn test_decrypt_code_mut() {
+        for t in tests().iter() {
+            let mut code = t.encrypted;
+            decrypt_code_mut(&mut code.0, &mut code.1);
+            assert_eq!(t.decrypted.0, code.0);
+            assert_eq!(t.decrypted.1, code.1);
         }
     }
 }

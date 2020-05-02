@@ -63,9 +63,7 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
         if enc_mode == EncMode::V7 {
             cb7_encrypt_code(addr, val);
         } else {
-            let code = cb1::encrypt_code(*addr, *val);
-            *addr = code.0;
-            *val = code.1;
+            cb1::encrypt_code_mut(addr, val);
         }
 
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
@@ -87,9 +85,7 @@ pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
         if enc_mode == EncMode::V7 {
             cb7_decrypt_code(addr, val);
         } else {
-            let code = cb1::decrypt_code(*addr, *val);
-            *addr = code.0;
-            *val = code.1;
+            cb1::decrypt_code_mut(addr, val);
         }
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
@@ -119,9 +115,7 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
                     } else {
                         enc_mode = EncMode::V1;
                         code_lines -= 1;
-                        let code = cb1::decrypt_code(*addr, *val);
-                        *addr = code.0;
-                        *val = code.1;
+                        cb1::decrypt_code_mut(addr, val);
                     }
                 } else {
                     enc_mode = EncMode::RAW;
@@ -132,9 +126,7 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
                 if enc_mode == EncMode::RAW {
                     return;
                 }
-                let code = cb1::decrypt_code(*addr, *val);
-                *addr = code.0;
-                *val = code.1;
+                cb1::decrypt_code_mut(addr, val);
             }
         } else {
             cb7_decrypt_code(addr, val);
