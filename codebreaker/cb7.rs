@@ -120,10 +120,10 @@ pub fn beefcode(init: i32, val: u32) {
         // Set up key and seeds
         if init != 0 {
             super::beefcodf = 0;
-            super::key.copy_from_slice(&DEFKEY);
+            super::key = DEFKEY;
 
             if val != 0 {
-                super::seeds.copy_from_slice(&DEFSEEDS);
+                super::seeds = DEFSEEDS;
                 key[0] = u32::from(super::seeds[3][v[3]]) << 24
                     | u32::from(super::seeds[2][v[2]]) << 16
                     | u32::from(super::seeds[1][v[1]]) << 8
@@ -141,7 +141,7 @@ pub fn beefcode(init: i32, val: u32) {
                     | u32::from(super::seeds[0][v[1]]) << 8
                     | u32::from(super::seeds[3][v[0]]);
             } else {
-                super::seeds.copy_from_slice(&[[0; 256]; 5]);
+                super::seeds = [[0; 256]; 5];
             }
         } else {
             if val != 0 {
@@ -162,7 +162,7 @@ pub fn beefcode(init: i32, val: u32) {
                     | u32::from(super::seeds[0][v[1]]) << 8
                     | u32::from(super::seeds[3][v[0]]);
             } else {
-                super::seeds.copy_from_slice(&[[0; 256]; 5]);
+                super::seeds = [[0; 256]; 5];
                 super::key[0] = 0;
                 super::key[1] = 0;
                 super::key[2] = 0;
@@ -177,12 +177,11 @@ pub fn beefcode(init: i32, val: u32) {
             rc4.crypt(&mut super::seeds[i]);
             rc4.crypt(&mut k);
 
-            let k2 = mem::transmute::<[u8; 20], [u32; 5]>(k);
-            super::key.copy_from_slice(&k2)
+            super::key = mem::transmute::<[u8; 20], [u32; 5]>(k);
         }
 
         // Back up key
-        super::oldkey.copy_from_slice(&super::key);
+        super::oldkey = super::key;
     }
 }
 
