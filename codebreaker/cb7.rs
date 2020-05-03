@@ -215,7 +215,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // Step 2: RSA
-        rsa_crypt(addr, val, RSA_DEC_KEY);
+        rsa::crypt(addr, val, RSA_DEC_KEY);
 
         // Step 3: RC4
         let mut code = [*addr, *val];

@@ -1,6 +1,7 @@
 pub mod cb1;
 pub mod cb7;
 mod rc4;
+mod rsa;
 
 use std::mem::size_of;
 use std::slice;
@@ -27,9 +28,7 @@ extern "C" {
     static mut code_lines: libc::c_int;
 
     // CB V7 code encryption
-    pub fn rsa_crypt(addr: *mut u32, val: *mut u32, rsakey: u64);
     pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
-    pub fn cb7_decrypt_code(addr: *mut u32, val: *mut u32);
 
     // CB file functions
     pub fn cb_verify_signature(sig: *const u8, buf: *const u8, buflen: size_t) -> c_int;
