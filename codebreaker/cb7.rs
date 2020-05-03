@@ -4,6 +4,7 @@
 
 use super::*;
 use rc4::*;
+use std::slice;
 
 // Default seed tables (1280 bytes total)
 #[cfg_attr(rustfmt, rustfmt_skip)]
@@ -200,14 +201,51 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 // Decrypts a V7+ code.
 pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
     let mut code = (addr, val);
-    unsafe {
-        cb7_decrypt_code(&mut code.0, &mut code.1);
-    }
+    decrypt_code_mut(&mut code.0, &mut code.1);
     code
 }
 
 pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    unsafe { cb7_decrypt_code(addr, val) }
+    unsafe {
+        // Step 1: Decryption loop of 64 cycles, using the generated seeds
+        let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
+        for i in (0..64).rev() {
+            *val = (val.wrapping_sub(*addr ^ s[4 * 64 + i]) ^ s[1 * 64 + i])
+                .wrapping_add(s[3 * 64 + i]);
+            *addr = (addr.wrapping_add(*val ^ s[4 * 64 + i]) ^ s[0 * 64 + i])
+                .wrapping_sub(s[2 * 64 + i]);
+        }
+
+        // Step 2: RSA
+        rsa_crypt(addr, val, RSA_DEC_KEY);
+
+        // Step 3: RC4
+        let mut code = [*addr, *val];
+        let mut rc4 = Rc4::new(slice_to_u8_mut(&mut key));
+        rc4.crypt(slice_to_u8_mut(&mut code));
+        *addr = code[0];
+        *val = code[1];
+
+        // Step 4: Multiplication with multiplicative inverse, modulo (2^32)
+        *addr = mul_decrypt(*addr, oldkey[0].wrapping_sub(oldkey[1]));
+        *val = mul_decrypt(*val, oldkey[2].wrapping_add(oldkey[3]));
+
+        // BEEFC0DF
+        if beefcodf != 0 {
+            let mut code = [*addr, *val];
+            let mut rc4 = Rc4::new(slice_to_u8_mut(&mut code));
+            rc4.crypt(slice_to_u8_mut(&mut seeds));
+            beefcodf = 0;
+            return;
+        }
+
+        // BEEFC0DE
+        if (*addr & 0xfffffffe) == 0xbeefc0de {
+            cb7::beefcode(0, *val);
+            //beefcodf = 1;
+            return;
+        }
+    }
 }
 
 // Multiplication, modulo (2^32)
