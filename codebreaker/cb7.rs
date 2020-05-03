@@ -1,6 +1,6 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-use super::{beefcodf, key, oldkey, seeds};
+use super::{beefcodf, key, seeds};
 use super::{slice_to_u8, slice_to_u8_mut};
 
 use crate::rc4::Rc4;
@@ -181,9 +181,6 @@ pub fn beefcode(init: i32, val: u32) {
             // Encrypt original key for next round
             rc4.crypt(k);
         }
-
-        // Back up key
-        oldkey.copy_from_slice(&key);
     }
 }
 
@@ -200,8 +197,8 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
     unsafe {
         // Step 1: Multiplication, modulo (2^32)
-        *addr = mul_encrypt(*addr, oldkey[0].wrapping_sub(oldkey[1]));
-        *val = mul_encrypt(*val, oldkey[2].wrapping_add(oldkey[3]));
+        *addr = mul_encrypt(*addr, key[0].wrapping_sub(key[1]));
+        *val = mul_encrypt(*val, key[2].wrapping_add(key[3]));
 
         // Step 2: RC4
         let mut code = [*addr, *val];
@@ -264,8 +261,8 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         *val = code[1];
 
         // Step 4: Multiplication with multiplicative inverse, modulo (2^32)
-        *addr = mul_decrypt(*addr, oldkey[0].wrapping_sub(oldkey[1]));
-        *val = mul_decrypt(*val, oldkey[2].wrapping_add(oldkey[3]));
+        *addr = mul_decrypt(*addr, key[0].wrapping_sub(key[1]));
+        *val = mul_decrypt(*val, key[2].wrapping_add(key[3]));
 
         // BEEFC0DF
         if beefcodf != 0 {

@@ -18,7 +18,6 @@ enum EncMode {
 // TODO: turn this into a struct
 static mut seeds: [[u8; 256]; 5] = [[0; 256]; 5];
 static mut key: [u32; 5] = [0; 5];
-static mut oldkey: [u32; 5] = [0; 5];
 static mut enc_mode: EncMode = EncMode::RAW;
 static mut v7_init: i32 = 0;
 static mut beefcodf: i32 = 0;
