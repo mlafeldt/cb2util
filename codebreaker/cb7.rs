@@ -221,7 +221,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // Step 3: RC4
         let mut code = [*addr, *val];
-        let mut rc4 = Rc4::new(slice_to_u8_mut(&mut key));
+        let mut rc4 = Rc4::new(slice_to_u8(&key));
         rc4.crypt(slice_to_u8_mut(&mut code));
         *addr = code[0];
         *val = code[1];
@@ -232,8 +232,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // BEEFC0DF
         if beefcodf != 0 {
-            let mut code = [*addr, *val];
-            let mut rc4 = Rc4::new(slice_to_u8_mut(&mut code));
+            let mut rc4 = Rc4::new(slice_to_u8(&[*addr, *val]));
             rc4.crypt(slice_to_u8_mut(&mut seeds));
             beefcodf = 0;
             return;
