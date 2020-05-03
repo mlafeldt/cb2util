@@ -27,9 +27,6 @@ extern "C" {
     static mut beefcodf: libc::c_int;
     static mut code_lines: libc::c_int;
 
-    // CB V7 code encryption
-    pub fn cb7_encrypt_code(addr: *mut u32, val: *mut u32);
-
     // CB file functions
     pub fn cb_verify_signature(sig: *const u8, buf: *const u8, buflen: size_t) -> c_int;
     pub fn cb_crypt_data(buf: *mut u8, buflen: size_t);

@@ -188,14 +188,51 @@ pub fn beefcode(init: i32, val: u32) {
 // Encrypts a V7+ code.
 pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
     let mut code = (addr, val);
-    unsafe {
-        cb7_encrypt_code(&mut code.0, &mut code.1);
-    }
+    encrypt_code_mut(&mut code.0, &mut code.1);
     code
 }
 
 pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    unsafe { cb7_encrypt_code(addr, val) }
+    let oldaddr = *addr;
+    let oldval = *val;
+
+    unsafe {
+        // Step 1: Multiplication, modulo (2^32)
+        *addr = mul_encrypt(*addr, oldkey[0].wrapping_sub(oldkey[1]));
+        *val = mul_encrypt(*val, oldkey[2].wrapping_add(oldkey[3]));
+
+        // Step 2: RC4
+        let mut code = [*addr, *val];
+        let mut rc4 = Rc4::new(slice_to_u8(&key));
+        rc4.crypt(slice_to_u8_mut(&mut code));
+        *addr = code[0];
+        *val = code[1];
+
+        // Step 3: RSA
+        rsa::crypt(addr, val, RSA_ENC_KEY);
+
+        // Step 4: Encryption loop of 64 cycles, using the generated seeds
+        let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
+        for i in 0..64 {
+            *addr = (addr.wrapping_add(s[2 * 64 + i]) ^ s[0 * 64 + i]).wrapping_sub(*val ^ s[4 * 64 + i]);
+            *val = (val.wrapping_sub(s[3 * 64 + i]) ^ s[1 * 64 + i]).wrapping_add(*addr ^ s[4 * 64 + i]);
+        }
+
+        // BEEFC0DE
+        if (oldaddr & 0xfffffffe) == 0xbeefc0de {
+            cb7::beefcode(0, oldval);
+            //beefcodf = 1;
+            return;
+        }
+
+        // BEEFC0DF
+        if beefcodf != 0 {
+            let mut rc4 = Rc4::new(slice_to_u8(&[oldaddr, oldval]));
+            rc4.crypt(slice_to_u8_mut(&mut seeds));
+            beefcodf = 0;
+            return;
+        }
+    }
 }
 
 // Decrypts a V7+ code.
