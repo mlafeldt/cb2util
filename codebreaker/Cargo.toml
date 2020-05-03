@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
 links = "codebreaker"
 build = "build.rs"
+edition = "2018"
 
 [lib]
 name = "codebreaker"

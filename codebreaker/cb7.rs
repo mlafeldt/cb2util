@@ -2,8 +2,10 @@
 
 use super::{beefcodf, key, oldkey, seeds};
 use super::{slice_to_u8, slice_to_u8_mut};
-use rc4::Rc4;
-use rsa;
+
+use crate::rc4::Rc4;
+use crate::rsa;
+
 use std::slice;
 
 // Default seed tables (1280 bytes total)

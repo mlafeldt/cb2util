@@ -2,6 +2,7 @@
 name = "cb2util"
 version = "0.1.0"
 authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
+edition = "2018"
 
 [dependencies]
 clap = "2"
