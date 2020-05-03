@@ -126,43 +126,23 @@ pub fn beefcode(init: i32, val: u32) {
 
             if val != 0 {
                 seeds.copy_from_slice(&SEEDS);
-                key[0] = u32::from(seeds[3][v[3]]) << 24
-                    | u32::from(seeds[2][v[2]]) << 16
-                    | u32::from(seeds[1][v[1]]) << 8
-                    | u32::from(seeds[0][v[0]]);
-                key[1] = u32::from(seeds[0][v[3]]) << 24
-                    | u32::from(seeds[3][v[2]]) << 16
-                    | u32::from(seeds[2][v[1]]) << 8
-                    | u32::from(seeds[1][v[0]]);
-                key[2] = u32::from(seeds[1][v[3]]) << 24
-                    | u32::from(seeds[0][v[2]]) << 16
-                    | u32::from(seeds[3][v[1]]) << 8
-                    | u32::from(seeds[2][v[0]]);
-                key[3] = u32::from(seeds[2][v[3]]) << 24
-                    | u32::from(seeds[1][v[2]]) << 16
-                    | u32::from(seeds[0][v[1]]) << 8
-                    | u32::from(seeds[3][v[0]]);
+                for i in 0..4 {
+                    key[i] = u32::from(seeds[(i + 3) % 4][v[3]]) << 24
+                        | u32::from(seeds[(i + 2) % 4][v[2]]) << 16
+                        | u32::from(seeds[(i + 1) % 4][v[1]]) << 8
+                        | u32::from(seeds[i % 4][v[0]]);
+                }
             } else {
                 seeds.copy_from_slice(&[[0; 256]; 5]);
             }
         } else {
             if val != 0 {
-                key[0] = u32::from(seeds[3][v[3]]) << 24
-                    | u32::from(seeds[2][v[2]]) << 16
-                    | u32::from(seeds[1][v[1]]) << 8
-                    | u32::from(seeds[0][v[0]]);
-                key[1] = u32::from(seeds[0][v[3]]) << 24
-                    | u32::from(seeds[3][v[2]]) << 16
-                    | u32::from(seeds[2][v[1]]) << 8
-                    | u32::from(seeds[1][v[0]]);
-                key[2] = u32::from(seeds[1][v[3]]) << 24
-                    | u32::from(seeds[0][v[2]]) << 16
-                    | u32::from(seeds[3][v[1]]) << 8
-                    | u32::from(seeds[2][v[0]]);
-                key[3] = u32::from(seeds[2][v[3]]) << 24
-                    | u32::from(seeds[1][v[2]]) << 16
-                    | u32::from(seeds[0][v[1]]) << 8
-                    | u32::from(seeds[3][v[0]]);
+                for i in 0..4 {
+                    key[i] = u32::from(seeds[(i + 3) % 4][v[3]]) << 24
+                        | u32::from(seeds[(i + 2) % 4][v[2]]) << 16
+                        | u32::from(seeds[(i + 1) % 4][v[1]]) << 8
+                        | u32::from(seeds[i % 4][v[0]]);
+                }
             } else {
                 seeds.copy_from_slice(&[[0; 256]; 5]);
                 key[0] = 0;
