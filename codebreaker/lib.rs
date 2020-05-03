@@ -1,3 +1,5 @@
+#![allow(non_upper_case_globals)]
+
 pub mod cb1;
 pub mod cb7;
 mod rc4;
@@ -6,10 +8,6 @@ mod rsa;
 use std::mem::size_of;
 use std::slice;
 
-extern crate libc;
-use libc::{c_int, size_t};
-
-#[repr(C)]
 #[derive(PartialEq)]
 enum EncMode {
     RAW,
@@ -17,20 +15,14 @@ enum EncMode {
     V7,
 }
 
-// TODO: port all these functions to pure Rust
-extern "C" {
-    pub static mut seeds: [[u8; 256]; 5];
-    pub static mut key: [u32; 5];
-    pub static mut oldkey: [u32; 5];
-    static mut enc_mode: EncMode;
-    static mut v7_init: libc::c_int;
-    static mut beefcodf: libc::c_int;
-    static mut code_lines: libc::c_int;
-
-    // CB file functions
-    pub fn cb_verify_signature(sig: *const u8, buf: *const u8, buflen: size_t) -> c_int;
-    pub fn cb_crypt_data(buf: *mut u8, buflen: size_t);
-}
+// TODO: turn this into a struct
+static mut seeds: [[u8; 256]; 5] = [[0; 256]; 5];
+static mut key: [u32; 5] = [0; 5];
+static mut oldkey: [u32; 5] = [0; 5];
+static mut enc_mode: EncMode = EncMode::RAW;
+static mut v7_init: i32 = 0;
+static mut beefcodf: i32 = 0;
+static mut code_lines: i32 = 0;
 
 // Resets the CB encryption. Must be called before processing a code list using
 // encrypt_code() or decrypt_code()!
@@ -168,16 +160,6 @@ fn num_code_lines(addr: u32) -> i32 {
     } else {
         2
     }
-}
-
-// Verify digital signature on CB files
-pub fn verify_signature(sig: &[u8], buf: &[u8]) -> bool {
-    unsafe { cb_verify_signature(sig.as_ptr(), buf.as_ptr(), buf.len() as size_t) == 0 }
-}
-
-// Encrypt or decrypt CB file data
-pub fn crypt_data(buf: &mut [u8]) {
-    unsafe { cb_crypt_data(buf.as_mut_ptr(), buf.len() as size_t) }
 }
 
 // Source: https://github.com/BurntSushi/byteorder/blob/master/src/io.rs

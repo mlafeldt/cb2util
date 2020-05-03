@@ -1,7 +1,5 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-#![allow(dead_code)]
-
 use super::{beefcodf, key, oldkey, seeds};
 use super::{slice_to_u8, slice_to_u8_mut};
 use rc4::Rc4;
@@ -107,7 +105,7 @@ const SEEDS: [[u8; 256]; 5] = [
 const RC4_KEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
 
 // RSA parameters
-const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
+// const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
 const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
 
