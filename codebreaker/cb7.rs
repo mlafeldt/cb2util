@@ -2,8 +2,10 @@
 
 #![allow(dead_code)]
 
-use super::*;
-use rc4::*;
+use super::{beefcodf, key, oldkey, seeds};
+use super::{slice_to_u8, slice_to_u8_mut};
+use rc4::Rc4;
+use rsa;
 use std::slice;
 
 // Default seed tables (1280 bytes total)
@@ -220,7 +222,7 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // BEEFC0DE
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
-            cb7::beefcode(0, oldval);
+            beefcode(0, oldval);
             //beefcodf = 1;
             return;
         }
@@ -275,7 +277,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // BEEFC0DE
         if (*addr & 0xfffffffe) == 0xbeefc0de {
-            cb7::beefcode(0, *val);
+            beefcode(0, *val);
             //beefcodf = 1;
             return;
         }
