@@ -210,10 +210,8 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         // Step 1: Decryption loop of 64 cycles, using the generated seeds
         let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
         for i in (0..64).rev() {
-            *val = (val.wrapping_sub(*addr ^ s[4 * 64 + i]) ^ s[1 * 64 + i])
-                .wrapping_add(s[3 * 64 + i]);
-            *addr = (addr.wrapping_add(*val ^ s[4 * 64 + i]) ^ s[0 * 64 + i])
-                .wrapping_sub(s[2 * 64 + i]);
+            *val = (val.wrapping_sub(*addr ^ s[4 * 64 + i]) ^ s[1 * 64 + i]).wrapping_add(s[3 * 64 + i]);
+            *addr = (addr.wrapping_add(*val ^ s[4 * 64 + i]) ^ s[0 * 64 + i]).wrapping_sub(s[2 * 64 + i]);
         }
 
         // Step 2: RSA
