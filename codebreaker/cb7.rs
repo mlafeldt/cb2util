@@ -1,6 +1,6 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-use super::{beefcodf, key, seeds};
+use super::{beefcodf, is_beefcode, key, seeds};
 use super::{slice_to_u8, slice_to_u8_mut};
 
 use crate::rc4::Rc4;
@@ -198,7 +198,7 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // BEEFC0DE
-        if oldaddr & 0xfffffffe == 0xbeefc0de {
+        if is_beefcode(oldaddr) {
             beefcode(false, oldval);
             //beefcodf = true;
             return;
@@ -253,7 +253,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // BEEFC0DE
-        if *addr & 0xfffffffe == 0xbeefc0de {
+        if is_beefcode(*addr) {
             beefcode(false, *val);
             //beefcodf = true;
             return;

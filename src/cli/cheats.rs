@@ -85,7 +85,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
                     fix_beef -= 1;
                     continue;
                 }
-                if addr & 0xfffffffe == 0xbeefc0de {
+                if codebreaker::is_beefcode(addr) {
                     beefcodf = addr & 1 != 0;
                     fix_beef = 2;
                     continue;

@@ -56,7 +56,7 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
             cb1::encrypt_code_mut(addr, val);
         }
 
-        if oldaddr & 0xfffffffe == 0xbeefc0de {
+        if is_beefcode(oldaddr) {
             cb7::beefcode(!v7_init, oldval);
             v7_init = true;
             enc_mode = EncMode::V7;
@@ -74,7 +74,7 @@ pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
             cb1::decrypt_code_mut(addr, val);
         }
 
-        if *addr & 0xfffffffe == 0xbeefc0de {
+        if is_beefcode(*addr) {
             cb7::beefcode(!v7_init, *val);
             v7_init = true;
             enc_mode = EncMode::V7;
@@ -90,7 +90,7 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
             if code_lines == 0 {
                 code_lines = num_code_lines(*addr);
                 if (*addr >> 24) & 0x0e != 0 {
-                    if *addr & 0xfffffffe == 0xbeefc0de {
+                    if is_beefcode(*addr) {
                         // ignore raw beefcode
                         code_lines -= 1;
                         return;
@@ -123,7 +123,7 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
             code_lines -= 1;
         }
 
-        if *addr & 0xfffffffe == 0xbeefc0de {
+        if is_beefcode(*addr) {
             cb7::beefcode(!v7_init, *val);
             v7_init = true;
             enc_mode = EncMode::V7;
@@ -131,6 +131,11 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
             code_lines = 1;
         }
     }
+}
+
+#[inline(always)]
+pub fn is_beefcode(val: u32) -> bool {
+    val & 0xfffffffe == 0xbeefc0de
 }
 
 fn num_code_lines(addr: u32) -> usize {
