@@ -19,17 +19,17 @@ enum EncMode {
 static mut seeds: [[u8; 256]; 5] = [[0; 256]; 5];
 static mut key: [u32; 5] = [0; 5];
 static mut enc_mode: EncMode = EncMode::RAW;
-static mut v7_init: i32 = 0;
-static mut beefcodf: i32 = 0;
-static mut code_lines: i32 = 0;
+static mut v7_init: bool = false;
+static mut beefcodf: bool = false;
+static mut code_lines: usize = 0;
 
 // Resets the CB encryption. Must be called before processing a code list using
 // encrypt_code() or decrypt_code()!
 pub fn reset() {
     unsafe {
         enc_mode = EncMode::RAW;
-        v7_init = 0;
-        beefcodf = 0;
+        v7_init = false;
+        beefcodf = false;
         code_lines = 0;
     }
 }
@@ -38,9 +38,9 @@ pub fn reset() {
 pub fn set_common_v7() {
     unsafe {
         enc_mode = EncMode::V7;
-        cb7::beefcode(1, 0);
-        v7_init = 1;
-        beefcodf = 0;
+        cb7::beefcode(true, 0);
+        v7_init = true;
+        beefcodf = false;
         code_lines = 0;
     }
 }
@@ -57,14 +57,14 @@ pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
         }
 
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
-            if v7_init == 0 {
-                cb7::beefcode(1, oldval);
-                v7_init = 1;
+            if !v7_init {
+                cb7::beefcode(true, oldval);
+                v7_init = true;
             } else {
-                cb7::beefcode(0, oldval);
+                cb7::beefcode(false, oldval);
             }
             enc_mode = EncMode::V7;
-            beefcodf = (oldaddr & 1) as i32;
+            beefcodf = oldaddr & 1 != 0;
         }
     }
 }
@@ -79,14 +79,14 @@ pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
         }
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
-            if v7_init == 0 {
-                cb7::beefcode(1, *val);
-                v7_init = 1;
+            if !v7_init {
+                cb7::beefcode(true, *val);
+                v7_init = true;
             } else {
-                cb7::beefcode(0, *val);
+                cb7::beefcode(false, *val);
             }
             enc_mode = EncMode::V7;
-            beefcodf = (*addr & 1) as i32;
+            beefcodf = *addr & 1 != 0;
         }
     }
 }
@@ -132,20 +132,20 @@ pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
         }
 
         if (*addr & 0xfffffffe) == 0xbeefc0de {
-            if v7_init == 0 {
-                cb7::beefcode(1, *val);
-                v7_init = 1;
+            if !v7_init {
+                cb7::beefcode(true, *val);
+                v7_init = true;
             } else {
-                cb7::beefcode(0, *val);
+                cb7::beefcode(false, *val);
             }
             enc_mode = EncMode::V7;
-            beefcodf = (*addr & 1) as i32;
+            beefcodf = *addr & 1 != 0;
             code_lines = 1;
         }
     }
 }
 
-fn num_code_lines(addr: u32) -> i32 {
+fn num_code_lines(addr: u32) -> usize {
     let cmd = addr >> 28;
 
     if cmd < 3 || cmd > 6 {

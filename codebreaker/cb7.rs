@@ -114,14 +114,14 @@ const RSA_ENC_KEY: u64 = 2682110966135737091;
 // Used to generate/change the encryption key and seeds.
 // "Beefcode" is the new V7+ seed code:
 // BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
-pub fn beefcode(init: i32, val: u32) {
+pub fn beefcode(init: bool, val: u32) {
     // Easy access to all bytes of val
     let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
 
     unsafe {
         // Set up key and seeds
-        if init != 0 {
-            beefcodf = 0;
+        if init {
+            beefcodf = false;
             key.copy_from_slice(&RC4_KEY);
 
             if val != 0 {
@@ -199,16 +199,16 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // BEEFC0DE
         if (oldaddr & 0xfffffffe) == 0xbeefc0de {
-            beefcode(0, oldval);
-            //beefcodf = 1;
+            beefcode(false, oldval);
+            //beefcodf = true;
             return;
         }
 
         // BEEFC0DF
-        if beefcodf != 0 {
+        if beefcodf {
             let mut rc4 = Rc4::new(slice_to_u8(&[oldaddr, oldval]));
             rc4.crypt(slice_to_u8_mut(&mut seeds));
-            beefcodf = 0;
+            beefcodf = false;
             return;
         }
     }
@@ -245,17 +245,17 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         *val = mul_decrypt(*val, key[2].wrapping_add(key[3]));
 
         // BEEFC0DF
-        if beefcodf != 0 {
+        if beefcodf {
             let mut rc4 = Rc4::new(slice_to_u8(&[*addr, *val]));
             rc4.crypt(slice_to_u8_mut(&mut seeds));
-            beefcodf = 0;
+            beefcodf = false;
             return;
         }
 
         // BEEFC0DE
         if (*addr & 0xfffffffe) == 0xbeefc0de {
-            beefcode(0, *val);
-            //beefcodf = 1;
+            beefcode(false, *val);
+            //beefcodf = true;
             return;
         }
     }
