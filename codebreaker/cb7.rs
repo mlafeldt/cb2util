@@ -4,7 +4,8 @@ use super::{beefcodf, is_beefcode, key, seeds};
 use super::{slice_to_u8, slice_to_u8_mut};
 
 use crate::rc4::Rc4;
-use crate::rsa;
+
+use num_bigint::BigUint;
 
 use std::slice;
 
@@ -107,9 +108,9 @@ const SEEDS: [[u8; 256]; 5] = [
 const RC4_KEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
 
 // RSA parameters
-// const RSA_MODULUS: u64 = 18446744073709551605; // 0xfffffffffffffff5
 const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
+const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
 
 // Used to generate/change the encryption key and seeds.
 // "Beefcode" is the new V7+ seed code:
@@ -188,7 +189,7 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
         *val = code[1];
 
         // Step 3: RSA
-        rsa::crypt(addr, val, RSA_ENC_KEY);
+        rsa_crypt(addr, val, RSA_ENC_KEY, RSA_MODULUS);
 
         // Step 4: Encryption loop of 64 cycles, using the generated seeds
         let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
@@ -231,7 +232,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // Step 2: RSA
-        rsa::crypt(addr, val, RSA_DEC_KEY);
+        rsa_crypt(addr, val, RSA_DEC_KEY, RSA_MODULUS);
 
         // Step 3: RC4
         let mut code = [*addr, *val];
@@ -296,6 +297,19 @@ fn mul_inverse(word: u32) -> u32 {
         t1 = a1;
     }
     t1
+}
+
+// RSA encryption/decryption
+pub fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
+    let code = BigUint::from_slice(&[*val, *addr]);
+    let m = BigUint::from(modulus);
+
+    // Exponentiation is only invertible if code < modulus
+    if code < m {
+        let result = code.modpow(&BigUint::from(rsakey), &m);
+        *addr = result.get_limb(1);
+        *val = result.get_limb(0);
+    }
 }
 
 #[cfg(test)]

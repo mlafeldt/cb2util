@@ -3,7 +3,8 @@
 pub mod cb1;
 pub mod cb7;
 mod rc4;
-mod rsa;
+
+extern crate num_bigint_dig as num_bigint;
 
 use std::mem::size_of;
 use std::slice;
