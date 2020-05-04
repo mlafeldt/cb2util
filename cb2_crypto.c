@@ -515,12 +515,8 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val)
 		cb1_encrypt_code(addr, val);
 
 	if ((oldaddr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, oldval);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, oldval);
-		}
+		cb7_beefcode(!v7_init, oldval);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = oldaddr & 1;
 	}
@@ -538,12 +534,8 @@ void cb_decrypt_code(uint32_t *addr, uint32_t *val)
 		cb1_decrypt_code(addr, val);
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, *val);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, *val);
-		}
+		cb7_beefcode(!v7_init, *val);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = *addr & 1;
 	}
@@ -607,12 +599,8 @@ void cb_decrypt_code2(uint32_t *addr, uint32_t *val)
 	}
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, *val);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, *val);
-		}
+		cb7_beefcode(!v7_init, *val);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = *addr & 1;
 		code_lines = 1;
