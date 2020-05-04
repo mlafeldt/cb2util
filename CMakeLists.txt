@@ -25,6 +25,7 @@ INCLUDE_DIRECTORIES(
 	${BIGINT}/include
 	${LIBCHEATS}/include
 	${ZLIB_INCLUDE_DIR}
+	/usr/local/include
 )
 
 FILE(GLOB BIGINT_SRC ${BIGINT}/src/*.c ${BIGINT}/src/low_level_funcs/*.c)
