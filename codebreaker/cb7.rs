@@ -306,9 +306,9 @@ pub fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
 
     // Exponentiation is only invertible if code < modulus
     if code < m {
-        let result = code.modpow(&BigUint::from(rsakey), &m);
-        *addr = result.get_limb(1);
-        *val = result.get_limb(0);
+        let digits = code.modpow(&BigUint::from(rsakey), &m).to_u32_digits();
+        *addr = digits[1];
+        *val = digits[0];
     }
 }
 

@@ -14,7 +14,7 @@ doctest = false
 
 [dependencies]
 libc = "0.2"
-num-bigint-dig = { version = "0.6", default-features = false }
+num-bigint = "0.2"
 
 [build-dependencies]
 cc = "1.0"
