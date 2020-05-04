@@ -208,7 +208,6 @@ static const uint64_t rsa_enc_key = 2682110966135737091ULL;
 
 static uint8_t seeds[5][256];	// Current set of seeds
 static uint32_t key[5];		// Current ARCFOUR key
-static uint32_t oldkey[5];	// Backup of ARCFOUR key
 static arc4_ctx_t ctx;		// ARCFOUR context
 
 enum {
@@ -368,9 +367,6 @@ void cb7_beefcode(int init, uint32_t val)
 		// Encrypt original key for next round
 		arc4_crypt(&ctx, (uint8_t*)key, 20);
 	}
-
-	// Backup key
-	memcpy(oldkey, key, sizeof(key));
 }
 
 #ifdef CODE_ENCRYPTION
@@ -387,8 +383,8 @@ void cb7_encrypt_code(uint32_t *addr, uint32_t *val)
 	oldval  = *val;
 
 	// Step 1: Multiplication, modulo (2^32)
-	*addr = mul_encrypt(*addr, oldkey[0] - oldkey[1]);
-	*val  = mul_encrypt(*val,  oldkey[2] + oldkey[3]);
+	*addr = mul_encrypt(*addr, key[0] - key[1]);
+	*val  = mul_encrypt(*val,  key[2] + key[3]);
 
 	// Step 2: ARCFOUR
 	code[0] = *addr;
@@ -452,8 +448,8 @@ void cb7_decrypt_code(uint32_t *addr, uint32_t *val)
 	*val  = code[1];
 
 	// Step 4: Multiplication with multiplicative inverse, modulo (2^32)
-	*addr = mul_decrypt(*addr, oldkey[0] - oldkey[1]);
-	*val  = mul_decrypt(*val,  oldkey[2] + oldkey[3]);
+	*addr = mul_decrypt(*addr, key[0] - key[1]);
+	*val  = mul_decrypt(*val,  key[2] + key[3]);
 
 	// BEEFC0DF
 	if (beefcodf) {
@@ -519,12 +515,8 @@ void cb_encrypt_code(uint32_t *addr, uint32_t *val)
 		cb1_encrypt_code(addr, val);
 
 	if ((oldaddr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, oldval);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, oldval);
-		}
+		cb7_beefcode(!v7_init, oldval);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = oldaddr & 1;
 	}
@@ -542,12 +534,8 @@ void cb_decrypt_code(uint32_t *addr, uint32_t *val)
 		cb1_decrypt_code(addr, val);
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, *val);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, *val);
-		}
+		cb7_beefcode(!v7_init, *val);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = *addr & 1;
 	}
@@ -611,12 +599,8 @@ void cb_decrypt_code2(uint32_t *addr, uint32_t *val)
 	}
 
 	if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
-		if (!v7_init) {
-			cb7_beefcode(1, *val);
-			v7_init = 1;
-		} else {
-			cb7_beefcode(0, *val);
-		}
+		cb7_beefcode(!v7_init, *val);
+		v7_init = 1;
 		enc_mode = ENC_MODE_V7;
 		beefcodf = *addr & 1;
 		code_lines = 1;
