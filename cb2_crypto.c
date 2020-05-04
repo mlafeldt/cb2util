@@ -216,10 +216,10 @@ enum {
 	ENC_MODE_V1,
 	ENC_MODE_V7
 };
-int enc_mode = ENC_MODE_RAW;
-int v7_init;		// V7 encryption initialized?
-int beefcodf;		// BEEFC0DF?
-int code_lines;
+static int enc_mode = ENC_MODE_RAW;
+static int v7_init;		// V7 encryption initialized?
+static int beefcodf;		// BEEFC0DF?
+static int code_lines;
 
 /*
  * Computes the multiplicative inverse of @word, modulo (2^32).
