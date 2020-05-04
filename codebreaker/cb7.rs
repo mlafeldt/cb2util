@@ -198,7 +198,7 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // BEEFC0DE
-        if (oldaddr & 0xfffffffe) == 0xbeefc0de {
+        if oldaddr & 0xfffffffe == 0xbeefc0de {
             beefcode(false, oldval);
             //beefcodf = true;
             return;
@@ -253,7 +253,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
         }
 
         // BEEFC0DE
-        if (*addr & 0xfffffffe) == 0xbeefc0de {
+        if *addr & 0xfffffffe == 0xbeefc0de {
             beefcode(false, *val);
             //beefcodf = true;
             return;
