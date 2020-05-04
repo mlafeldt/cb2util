@@ -206,9 +206,9 @@ static const uint64_t rsa_dec_key = 11;
 static const uint64_t rsa_enc_key = 2682110966135737091ULL;
 #endif
 
-uint8_t seeds[5][256];	// Current set of seeds
-uint32_t key[5];		// Current ARCFOUR key
-uint32_t oldkey[5];	// Backup of ARCFOUR key
+static uint8_t seeds[5][256];	// Current set of seeds
+static uint32_t key[5];		// Current ARCFOUR key
+static uint32_t oldkey[5];	// Backup of ARCFOUR key
 static arc4_ctx_t ctx;		// ARCFOUR context
 
 enum {
@@ -280,7 +280,7 @@ static uint32_t mul_decrypt(uint32_t a, uint32_t b)
  * NOTE: Uses the excellent BIG_INT library by
  * Alexander Valyalkin (valyala@gmail.com)
  */
-void rsa_crypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
+static void rsa_crypt(uint32_t *addr, uint32_t *val, uint64_t rsakey)
 {
 	big_int *code, *exp, *mod;
 	int cmp_flag;
