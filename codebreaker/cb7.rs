@@ -1,12 +1,11 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-use super::is_beefcode;
-use super::{slice_to_u8, slice_to_u8_mut};
-
+use crate::is_beefcode;
 use crate::rc4::Rc4;
 
 use num_bigint::BigUint;
 
+use std::mem::size_of;
 use std::slice;
 
 // Default seed tables (1280 bytes total)
@@ -318,7 +317,7 @@ fn mul_inverse(word: u32) -> u32 {
 }
 
 // RSA encryption/decryption
-pub fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
+fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
     let code = BigUint::from_slice(&[*val, *addr]);
     let m = BigUint::from(modulus);
 
@@ -328,6 +327,17 @@ pub fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
         *addr = digits[1];
         *val = digits[0];
     }
+}
+
+// Source: https://github.com/BurntSushi/byteorder/blob/master/src/io.rs
+unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
+    let len = size_of::<T>() * slice.len();
+    slice::from_raw_parts_mut(slice.as_mut_ptr() as *mut u8, len)
+}
+
+unsafe fn slice_to_u8<T: Copy>(slice: &[T]) -> &[u8] {
+    let len = size_of::<T>() * slice.len();
+    slice::from_raw_parts(slice.as_ptr() as *const u8, len)
 }
 
 #[cfg(test)]

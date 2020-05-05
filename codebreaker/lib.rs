@@ -4,9 +4,6 @@ mod rc4;
 
 extern crate num_bigint;
 
-use std::mem::size_of;
-use std::slice;
-
 #[derive(PartialEq)]
 enum EncMode {
     RAW,
@@ -147,15 +144,4 @@ fn num_code_lines(addr: u32) -> usize {
     } else {
         2
     }
-}
-
-// Source: https://github.com/BurntSushi/byteorder/blob/master/src/io.rs
-unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
-    let len = size_of::<T>() * slice.len();
-    slice::from_raw_parts_mut(slice.as_mut_ptr() as *mut u8, len)
-}
-
-unsafe fn slice_to_u8<T: Copy>(slice: &[T]) -> &[u8] {
-    let len = size_of::<T>() * slice.len();
-    slice::from_raw_parts(slice.as_ptr() as *const u8, len)
 }
