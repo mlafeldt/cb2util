@@ -1,5 +1,3 @@
-#![allow(non_upper_case_globals)]
-
 pub mod cb1;
 pub mod cb7;
 mod rc4;
@@ -16,16 +14,16 @@ enum EncMode {
     V7,
 }
 
-pub struct Context {
+pub struct Codebreaker {
     enc_mode: EncMode,
     cb7: cb7::Context,
     v7_init: bool,
     code_lines: usize,
 }
 
-impl Context {
-    pub fn new() -> Context {
-        Context {
+impl Codebreaker {
+    pub fn new() -> Codebreaker {
+        Codebreaker {
             enc_mode: EncMode::RAW,
             cb7: cb7::Context::new(),
             v7_init: false,
@@ -35,7 +33,7 @@ impl Context {
 
     // Resets the CB encryption.
     pub fn reset(&mut self) {
-        *self = Context::new()
+        *self = Codebreaker::new()
     }
 
     // Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
