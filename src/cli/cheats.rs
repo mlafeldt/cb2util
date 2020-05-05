@@ -37,7 +37,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
         }
 
         // Reset code encryption
-        codebreaker::reset();
+        let mut ctx = codebreaker::Context::new();
         let mut beefcodf = false;
         let mut fix_beef = 0;
 
@@ -73,7 +73,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
 
                 // Decrypt code
                 if decrypt {
-                    codebreaker::decrypt_code2(&mut addr, &mut val);
+                    ctx.decrypt_code2(&mut addr, &mut val);
                 }
 
                 // Discard beefcode and other junk

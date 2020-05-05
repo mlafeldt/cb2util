@@ -1,6 +1,6 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-use super::{beefcodf, is_beefcode, key, seeds};
+use super::is_beefcode;
 use super::{slice_to_u8, slice_to_u8_mut};
 
 use crate::rc4::Rc4;
@@ -112,79 +112,93 @@ const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
 const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
 
-// Used to generate/change the encryption key and seeds.
-// "Beefcode" is the new V7+ seed code:
-// BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
-pub fn beefcode(init: bool, val: u32) {
-    // Easy access to all bytes of val
-    let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
+pub struct Context {
+    seeds: [[u8; 256]; 5],
+    key: [u32; 5],
+    pub beefcodf: bool,
+}
 
-    unsafe {
+impl Context {
+    pub fn new() -> Context {
+        Context {
+            seeds: [[0; 256]; 5],
+            key: [0; 5],
+            beefcodf: false,
+        }
+    }
+
+    // Used to generate/change the encryption key and seeds.
+    // "Beefcode" is the new V7+ seed code:
+    // BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
+    pub fn beefcode(&mut self, init: bool, val: u32) {
+        // Easy access to all bytes of val
+        let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
+
         // Set up key and seeds
         if init {
-            beefcodf = false;
-            key.copy_from_slice(&RC4_KEY);
+            self.beefcodf = false;
+            self.key.copy_from_slice(&RC4_KEY);
 
             if val != 0 {
-                seeds.copy_from_slice(&SEEDS);
+                self.seeds.copy_from_slice(&SEEDS);
                 for i in 0..4 {
-                    key[i] = u32::from(seeds[(i + 3) % 4][v[3]]) << 24
-                        | u32::from(seeds[(i + 2) % 4][v[2]]) << 16
-                        | u32::from(seeds[(i + 1) % 4][v[1]]) << 8
-                        | u32::from(seeds[i % 4][v[0]]);
+                    self.key[i] = u32::from(self.seeds[(i + 3) % 4][v[3]]) << 24
+                        | u32::from(self.seeds[(i + 2) % 4][v[2]]) << 16
+                        | u32::from(self.seeds[(i + 1) % 4][v[1]]) << 8
+                        | u32::from(self.seeds[i % 4][v[0]]);
                 }
             } else {
-                seeds.copy_from_slice(&[[0; 256]; 5]);
+                self.seeds.copy_from_slice(&[[0; 256]; 5]);
             }
         } else {
             if val != 0 {
                 for i in 0..4 {
-                    key[i] = u32::from(seeds[(i + 3) % 4][v[3]]) << 24
-                        | u32::from(seeds[(i + 2) % 4][v[2]]) << 16
-                        | u32::from(seeds[(i + 1) % 4][v[1]]) << 8
-                        | u32::from(seeds[i % 4][v[0]]);
+                    self.key[i] = u32::from(self.seeds[(i + 3) % 4][v[3]]) << 24
+                        | u32::from(self.seeds[(i + 2) % 4][v[2]]) << 16
+                        | u32::from(self.seeds[(i + 1) % 4][v[1]]) << 8
+                        | u32::from(self.seeds[i % 4][v[0]]);
                 }
             } else {
-                seeds.copy_from_slice(&[[0; 256]; 5]);
-                key[0] = 0;
-                key[1] = 0;
-                key[2] = 0;
-                key[3] = 0;
+                self.seeds.copy_from_slice(&[[0; 256]; 5]);
+                self.key[0] = 0;
+                self.key[1] = 0;
+                self.key[2] = 0;
+                self.key[3] = 0;
             }
         }
 
         // Use key to encrypt seeds with RC4
-        let k = slice_to_u8_mut(&mut key);
+        let k = unsafe { slice_to_u8_mut(&mut self.key) };
         for i in 0..5 {
             let mut rc4 = Rc4::new(k);
             // Encrypt seeds
-            rc4.crypt(&mut seeds[i]);
+            rc4.crypt(&mut self.seeds[i]);
             // Encrypt original key for next round
             rc4.crypt(k);
         }
     }
-}
 
-// Encrypts a V7+ code.
-pub fn encrypt_code(addr: u32, val: u32) -> (u32, u32) {
-    let mut code = (addr, val);
-    encrypt_code_mut(&mut code.0, &mut code.1);
-    code
-}
+    // Encrypts a V7+ code.
+    pub fn encrypt_code(&mut self, addr: u32, val: u32) -> (u32, u32) {
+        let mut code = (addr, val);
+        self.encrypt_code_mut(&mut code.0, &mut code.1);
+        code
+    }
 
-pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    let oldaddr = *addr;
-    let oldval = *val;
+    pub fn encrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
+        let oldaddr = *addr;
+        let oldval = *val;
 
-    unsafe {
         // Step 1: Multiplication, modulo (2^32)
-        *addr = mul_encrypt(*addr, key[0].wrapping_sub(key[1]));
-        *val = mul_encrypt(*val, key[2].wrapping_add(key[3]));
+        *addr = mul_encrypt(*addr, self.key[0].wrapping_sub(self.key[1]));
+        *val = mul_encrypt(*val, self.key[2].wrapping_add(self.key[3]));
 
         // Step 2: RC4
         let mut code = [*addr, *val];
-        let mut rc4 = Rc4::new(slice_to_u8(&key));
-        rc4.crypt(slice_to_u8_mut(&mut code));
+        unsafe {
+            let mut rc4 = Rc4::new(slice_to_u8(&self.key));
+            rc4.crypt(slice_to_u8_mut(&mut code));
+        }
         *addr = code[0];
         *val = code[1];
 
@@ -192,7 +206,7 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
         rsa_crypt(addr, val, RSA_ENC_KEY, RSA_MODULUS);
 
         // Step 4: Encryption loop of 64 cycles, using the generated seeds
-        let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
+        let s = unsafe { slice::from_raw_parts(self.seeds.as_ptr() as *const u32, 5 * 64) };
         for i in 0..64 {
             *addr = (addr.wrapping_add(s[2 * 64 + i]) ^ s[i]).wrapping_sub(*val ^ s[4 * 64 + i]);
             *val = (val.wrapping_sub(s[3 * 64 + i]) ^ s[64 + i]).wrapping_add(*addr ^ s[4 * 64 + i]);
@@ -200,32 +214,32 @@ pub fn encrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // BEEFC0DE
         if is_beefcode(oldaddr) {
-            beefcode(false, oldval);
+            self.beefcode(false, oldval);
             //beefcodf = true;
             return;
         }
 
         // BEEFC0DF
-        if beefcodf {
-            let mut rc4 = Rc4::new(slice_to_u8(&[oldaddr, oldval]));
-            rc4.crypt(slice_to_u8_mut(&mut seeds));
-            beefcodf = false;
+        if self.beefcodf {
+            unsafe {
+                let mut rc4 = Rc4::new(slice_to_u8(&[oldaddr, oldval]));
+                rc4.crypt(slice_to_u8_mut(&mut self.seeds));
+            }
+            self.beefcodf = false;
             return;
         }
     }
-}
 
-// Decrypts a V7+ code.
-pub fn decrypt_code(addr: u32, val: u32) -> (u32, u32) {
-    let mut code = (addr, val);
-    decrypt_code_mut(&mut code.0, &mut code.1);
-    code
-}
+    // Decrypts a V7+ code.
+    pub fn decrypt_code(&mut self, addr: u32, val: u32) -> (u32, u32) {
+        let mut code = (addr, val);
+        self.decrypt_code_mut(&mut code.0, &mut code.1);
+        code
+    }
 
-pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
-    unsafe {
+    pub fn decrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
         // Step 1: Decryption loop of 64 cycles, using the generated seeds
-        let s = slice::from_raw_parts(seeds.as_ptr() as *const u32, 5 * 64);
+        let s = unsafe { slice::from_raw_parts(self.seeds.as_ptr() as *const u32, 5 * 64) };
         for i in (0..64).rev() {
             *val = (val.wrapping_sub(*addr ^ s[4 * 64 + i]) ^ s[64 + i]).wrapping_add(s[3 * 64 + i]);
             *addr = (addr.wrapping_add(*val ^ s[4 * 64 + i]) ^ s[i]).wrapping_sub(s[2 * 64 + i]);
@@ -236,26 +250,30 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
 
         // Step 3: RC4
         let mut code = [*addr, *val];
-        let mut rc4 = Rc4::new(slice_to_u8(&key));
-        rc4.crypt(slice_to_u8_mut(&mut code));
+        unsafe {
+            let mut rc4 = Rc4::new(slice_to_u8(&self.key));
+            rc4.crypt(slice_to_u8_mut(&mut code));
+        }
         *addr = code[0];
         *val = code[1];
 
         // Step 4: Multiplication with multiplicative inverse, modulo (2^32)
-        *addr = mul_decrypt(*addr, key[0].wrapping_sub(key[1]));
-        *val = mul_decrypt(*val, key[2].wrapping_add(key[3]));
+        *addr = mul_decrypt(*addr, self.key[0].wrapping_sub(self.key[1]));
+        *val = mul_decrypt(*val, self.key[2].wrapping_add(self.key[3]));
 
         // BEEFC0DF
-        if beefcodf {
-            let mut rc4 = Rc4::new(slice_to_u8(&[*addr, *val]));
-            rc4.crypt(slice_to_u8_mut(&mut seeds));
-            beefcodf = false;
+        if self.beefcodf {
+            unsafe {
+                let mut rc4 = Rc4::new(slice_to_u8(&[*addr, *val]));
+                rc4.crypt(slice_to_u8_mut(&mut self.seeds));
+            }
+            self.beefcodf = false;
             return;
         }
 
         // BEEFC0DE
         if is_beefcode(*addr) {
-            beefcode(false, *val);
+            self.beefcode(false, *val);
             //beefcodf = true;
             return;
         }

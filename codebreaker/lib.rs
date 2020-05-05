@@ -16,120 +16,116 @@ enum EncMode {
     V7,
 }
 
-// TODO: turn this into a struct
-static mut seeds: [[u8; 256]; 5] = [[0; 256]; 5];
-static mut key: [u32; 5] = [0; 5];
-static mut enc_mode: EncMode = EncMode::RAW;
-static mut v7_init: bool = false;
-static mut beefcodf: bool = false;
-static mut code_lines: usize = 0;
-
-// Resets the CB encryption. Must be called before processing a code list using
-// encrypt_code() or decrypt_code()!
-pub fn reset() {
-    unsafe {
-        enc_mode = EncMode::RAW;
-        v7_init = false;
-        beefcodf = false;
-        code_lines = 0;
-    }
+pub struct Context {
+    enc_mode: EncMode,
+    cb7: cb7::Context,
+    v7_init: bool,
+    code_lines: usize,
 }
 
-// Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
-pub fn set_common_v7() {
-    unsafe {
-        enc_mode = EncMode::V7;
-        cb7::beefcode(true, 0);
-        v7_init = true;
-        beefcodf = false;
-        code_lines = 0;
+impl Context {
+    pub fn new() -> Context {
+        Context {
+            enc_mode: EncMode::RAW,
+            cb7: cb7::Context::new(),
+            v7_init: false,
+            code_lines: 0,
+        }
     }
-}
 
-// Used to encrypt a list of CB codes (V1 + V7)
-pub fn encrypt_code(addr: &mut u32, val: &mut u32) {
-    unsafe {
+    // Resets the CB encryption.
+    pub fn reset(&mut self) {
+        *self = Context::new()
+    }
+
+    // Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
+    pub fn set_common_v7(&mut self) {
+        self.enc_mode = EncMode::V7;
+        self.cb7.beefcode(true, 0);
+        self.v7_init = true;
+        self.cb7.beefcodf = false;
+        self.code_lines = 0;
+    }
+
+    // Used to encrypt a list of CB codes (V1 + V7)
+    pub fn encrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
         let (oldaddr, oldval) = (*addr, *val);
 
-        if enc_mode == EncMode::V7 {
-            cb7::encrypt_code_mut(addr, val);
+        if self.enc_mode == EncMode::V7 {
+            self.cb7.encrypt_code_mut(addr, val);
         } else {
             cb1::encrypt_code_mut(addr, val);
         }
 
         if is_beefcode(oldaddr) {
-            cb7::beefcode(!v7_init, oldval);
-            v7_init = true;
-            enc_mode = EncMode::V7;
-            beefcodf = oldaddr & 1 != 0;
+            self.cb7.beefcode(!self.v7_init, oldval);
+            self.v7_init = true;
+            self.enc_mode = EncMode::V7;
+            self.cb7.beefcodf = oldaddr & 1 != 0;
         }
     }
-}
 
-// Used to decrypt a list of CB codes (V1 + V7)
-pub fn decrypt_code(addr: &mut u32, val: &mut u32) {
-    unsafe {
-        if enc_mode == EncMode::V7 {
-            cb7::decrypt_code_mut(addr, val);
+    // Used to decrypt a list of CB codes (V1 + V7)
+    pub fn decrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
+        if self.enc_mode == EncMode::V7 {
+            self.cb7.decrypt_code_mut(addr, val);
         } else {
             cb1::decrypt_code_mut(addr, val);
         }
 
         if is_beefcode(*addr) {
-            cb7::beefcode(!v7_init, *val);
-            v7_init = true;
-            enc_mode = EncMode::V7;
-            beefcodf = *addr & 1 != 0;
+            self.cb7.beefcode(!self.v7_init, *val);
+            self.v7_init = true;
+            self.enc_mode = EncMode::V7;
+            self.cb7.beefcodf = *addr & 1 != 0;
         }
     }
-}
 
-// Smart version of decrypt_code() that detects if a code needs to be decrypted and how
-pub fn decrypt_code2(addr: &mut u32, val: &mut u32) {
-    unsafe {
-        if enc_mode != EncMode::V7 {
-            if code_lines == 0 {
-                code_lines = num_code_lines(*addr);
+    // Smart version of decrypt_code() that detects if a code needs to be decrypted and how
+    pub fn decrypt_code2(&mut self, addr: &mut u32, val: &mut u32) {
+        if self.enc_mode != EncMode::V7 {
+            if self.code_lines == 0 {
+                self.code_lines = num_code_lines(*addr);
                 if (*addr >> 24) & 0x0e != 0 {
                     if is_beefcode(*addr) {
                         // ignore raw beefcode
-                        code_lines -= 1;
+                        self.code_lines -= 1;
                         return;
                     } else {
-                        enc_mode = EncMode::V1;
-                        code_lines -= 1;
+                        self.enc_mode = EncMode::V1;
+                        self.code_lines -= 1;
                         cb1::decrypt_code_mut(addr, val);
                     }
                 } else {
-                    enc_mode = EncMode::RAW;
-                    code_lines -= 1;
+                    self.enc_mode = EncMode::RAW;
+                    self.code_lines -= 1;
                 }
             } else {
-                code_lines -= 1;
-                if enc_mode == EncMode::RAW {
+                self.code_lines -= 1;
+                if self.enc_mode == EncMode::RAW {
                     return;
                 }
                 cb1::decrypt_code_mut(addr, val);
             }
         } else {
-            cb7::decrypt_code_mut(addr, val);
-            if code_lines == 0 {
-                code_lines = num_code_lines(*addr);
-                if code_lines == 1 && *addr == 0xffffffff {
+            self.cb7.decrypt_code_mut(addr, val);
+            if self.code_lines == 0 {
+                self.code_lines = num_code_lines(*addr);
+                if self.code_lines == 1 && *addr == 0xffffffff {
                     // TODO: change encryption options
-                    code_lines = 0;
+                    self.code_lines = 0;
                     return;
                 }
             }
-            code_lines -= 1;
+            self.code_lines -= 1;
         }
 
         if is_beefcode(*addr) {
-            cb7::beefcode(!v7_init, *val);
-            v7_init = true;
-            enc_mode = EncMode::V7;
-            beefcodf = *addr & 1 != 0;
-            code_lines = 1;
+            self.cb7.beefcode(!self.v7_init, *val);
+            self.v7_init = true;
+            self.enc_mode = EncMode::V7;
+            self.cb7.beefcodf = *addr & 1 != 0;
+            self.code_lines = 1;
         }
     }
 }
