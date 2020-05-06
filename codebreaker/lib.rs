@@ -5,14 +5,14 @@ mod rc4;
 extern crate num_bigint;
 
 #[derive(PartialEq)]
-enum EncMode {
+enum Scheme {
     RAW,
     V1,
     V7,
 }
 
 pub struct Codebreaker {
-    enc_mode: EncMode,
+    scheme: Scheme,
     cb7: cb7::Context,
     code_lines: usize,
 }
@@ -20,7 +20,7 @@ pub struct Codebreaker {
 impl Codebreaker {
     pub fn new() -> Codebreaker {
         Codebreaker {
-            enc_mode: EncMode::RAW,
+            scheme: Scheme::RAW,
             cb7: cb7::Context::new(),
             code_lines: 0,
         }
@@ -34,7 +34,7 @@ impl Codebreaker {
     // Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
     pub fn set_common_v7(&mut self) {
         self.reset();
-        self.enc_mode = EncMode::V7;
+        self.scheme = Scheme::V7;
         self.cb7.beefcode(0);
     }
 
@@ -42,7 +42,7 @@ impl Codebreaker {
     pub fn encrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
         let (oldaddr, oldval) = (*addr, *val);
 
-        if self.enc_mode == EncMode::V7 {
+        if self.scheme == Scheme::V7 {
             self.cb7.encrypt_code_mut(addr, val);
         } else {
             cb1::encrypt_code_mut(addr, val);
@@ -50,14 +50,14 @@ impl Codebreaker {
 
         if is_beefcode(oldaddr) {
             self.cb7.beefcode(oldval);
-            self.enc_mode = EncMode::V7;
+            self.scheme = Scheme::V7;
             self.cb7.beefcodf = oldaddr & 1 != 0;
         }
     }
 
     // Used to decrypt a list of CB codes (V1 + V7)
     pub fn decrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
-        if self.enc_mode == EncMode::V7 {
+        if self.scheme == Scheme::V7 {
             self.cb7.decrypt_code_mut(addr, val);
         } else {
             cb1::decrypt_code_mut(addr, val);
@@ -65,14 +65,14 @@ impl Codebreaker {
 
         if is_beefcode(*addr) {
             self.cb7.beefcode(*val);
-            self.enc_mode = EncMode::V7;
+            self.scheme = Scheme::V7;
             self.cb7.beefcodf = *addr & 1 != 0;
         }
     }
 
     // Smart version of decrypt_code() that detects if a code needs to be decrypted and how
     pub fn decrypt_code2(&mut self, addr: &mut u32, val: &mut u32) {
-        if self.enc_mode != EncMode::V7 {
+        if self.scheme != Scheme::V7 {
             if self.code_lines == 0 {
                 self.code_lines = num_code_lines(*addr);
                 if (*addr >> 24) & 0x0e != 0 {
@@ -81,17 +81,17 @@ impl Codebreaker {
                         self.code_lines -= 1;
                         return;
                     } else {
-                        self.enc_mode = EncMode::V1;
+                        self.scheme = Scheme::V1;
                         self.code_lines -= 1;
                         cb1::decrypt_code_mut(addr, val);
                     }
                 } else {
-                    self.enc_mode = EncMode::RAW;
+                    self.scheme = Scheme::RAW;
                     self.code_lines -= 1;
                 }
             } else {
                 self.code_lines -= 1;
-                if self.enc_mode == EncMode::RAW {
+                if self.scheme == Scheme::RAW {
                     return;
                 }
                 cb1::decrypt_code_mut(addr, val);
@@ -111,7 +111,7 @@ impl Codebreaker {
 
         if is_beefcode(*addr) {
             self.cb7.beefcode(*val);
-            self.enc_mode = EncMode::V7;
+            self.scheme = Scheme::V7;
             self.cb7.beefcodf = *addr & 1 != 0;
             self.code_lines = 1;
         }
