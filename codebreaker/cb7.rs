@@ -389,33 +389,55 @@ mod tests {
     }
 
     struct Test {
-        decrypted: (u32, u32),
-        encrypted: (u32, u32),
+        decrypted: Vec<&'static str>,
+        encrypted: Vec<&'static str>,
     }
 
     #[cfg_attr(rustfmt, rustfmt_skip)]
     fn tests() -> Vec<Test> {
         vec![
-            // Test {
-            //     decrypted: (0, 0),
-            //     encrypted: (0, 0),
-            // },
+            Test {
+                decrypted: vec![],
+                encrypted: vec![],
+            },
+            Test {
+                decrypted: vec![
+                    "9029BEAC 0C0A9225",
+                    "201F6024 00000000",
+                    "2096F5B8 000000BE",
+                ],
+                encrypted: vec![
+                    "D08F3A49 00078A53",
+                    "3818DDE5 E72B2B16",
+                    "973E0B2A A7D4AF10",
+                ],
+            },
         ]
     }
 
     #[test]
     fn test_encrypt_code() {
         for t in tests().iter() {
-            let result = encrypt_code(t.decrypted.0, t.decrypted.1);
-            assert_eq!(t.encrypted, result);
+            let mut ctx = Context::new();
+            ctx.beefcode(true, 0);
+            for (i, line) in t.decrypted.iter().enumerate() {
+                let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
+                let result = ctx.encrypt_code(code[0], code[1]);
+                assert_eq!(t.encrypted[i], format!("{:08X} {:08X}", result.0, result.1));
+            }
         }
     }
 
     #[test]
     fn test_decrypt_code() {
         for t in tests().iter() {
-            let result = decrypt_code(t.encrypted.0, t.encrypted.1);
-            assert_eq!(t.decrypted, result);
+            let mut ctx = Context::new();
+            ctx.beefcode(true, 0);
+            for (i, line) in t.encrypted.iter().enumerate() {
+                let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
+                let result = ctx.decrypt_code(code[0], code[1]);
+                assert_eq!(t.decrypted[i], format!("{:08X} {:08X}", result.0, result.1));
+            }
         }
     }
 }
