@@ -106,19 +106,13 @@ fn cstring(b: &[u8]) -> String {
 }
 
 fn read32(b: &[u8]) -> u32 {
-    let b0 = b[0] as u32;
-    let b1 = b[1] as u32;
-    let b2 = b[2] as u32;
-    let b3 = b[3] as u32;
-
-    b0 | (b1 << 8) | (b2 << 16) | (b3 << 24)
+    assert!(b.len() == 4);
+    u32::from(b[0]) | (u32::from(b[1]) << 8) | (u32::from(b[2]) << 16) | (u32::from(b[3]) << 24)
 }
 
 fn read16(b: &[u8]) -> u16 {
-    let b0 = b[0] as u16;
-    let b1 = b[1] as u16;
-
-    b0 | (b1 << 8)
+    assert!(b.len() == 2);
+    u16::from(b[0]) | (u16::from(b[1]) << 8)
 }
 
 const CHEATS_HEADER_SIZE: usize = 8;
