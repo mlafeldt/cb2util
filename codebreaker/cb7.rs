@@ -114,7 +114,7 @@ const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
 pub struct Context {
     seeds: [[u8; 256]; 5],
     key: [u32; 5],
-    pub beefcodf: bool,
+    beefcodf: bool,
     initialized: bool,
 }
 
@@ -130,8 +130,10 @@ impl Context {
 
     // Used to generate/change the encryption key and seeds.
     // "Beefcode" is the new V7+ seed code:
-    // BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
-    pub fn beefcode(&mut self, val: u32) {
+    // BEEFC0DE vvvvvvvv, where vvvvvvvv = val.
+    pub fn beefcode(&mut self, addr: u32, val: u32) {
+        assert!(is_beefcode(addr));
+
         // Easy access to all bytes of val
         let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
 
@@ -178,6 +180,18 @@ impl Context {
             // Encrypt original key for next round
             rc4.crypt(k);
         }
+
+        // BEEFC0DF is an extension of BEEFC0DE that uses additional seed values:
+        //
+        // BEEFC0DF vvvvvvvv
+        // wwwwwwww wwwwwwww
+        //
+        // Since we don't know "wwwwwwww wwwwwwww" yet, all we can do is set a flag.
+        self.beefcodf = addr & 1 != 0;
+    }
+
+    pub fn beefcode_with_value(&mut self, val: u32) {
+        self.beefcode(0xbeefc0de, val)
     }
 
     // Encrypts a V7+ code.
@@ -216,19 +230,18 @@ impl Context {
 
         // BEEFC0DE
         if is_beefcode(oldaddr) {
-            self.beefcode(oldval);
-            //beefcodf = true;
+            self.beefcode(oldaddr, oldval);
             return;
         }
 
-        // BEEFC0DF
+        // BEEFC0DF uses two codes. If the previous code was the first of the
+        // two, use the current one to encrypt the seeds.
         if self.beefcodf {
             unsafe {
                 let mut rc4 = Rc4::new(slice_to_u8(&[oldaddr, oldval]));
                 rc4.crypt(slice_to_u8_mut(&mut self.seeds));
             }
             self.beefcodf = false;
-            return;
         }
     }
 
@@ -263,7 +276,8 @@ impl Context {
         *addr = mul_decrypt(*addr, self.key[0].wrapping_sub(self.key[1]));
         *val = mul_decrypt(*val, self.key[2].wrapping_add(self.key[3]));
 
-        // BEEFC0DF
+        // BEEFC0DF uses two codes. If the previous code was the first of the
+        // two, use the current one to decrypt the seeds.
         if self.beefcodf {
             unsafe {
                 let mut rc4 = Rc4::new(slice_to_u8(&[*addr, *val]));
@@ -275,9 +289,7 @@ impl Context {
 
         // BEEFC0DE
         if is_beefcode(*addr) {
-            self.beefcode(*val);
-            //beefcodf = true;
-            return;
+            self.beefcode(*addr, *val);
         }
     }
 }
@@ -422,7 +434,7 @@ mod tests {
     fn test_encrypt_code() {
         for t in tests().iter() {
             let mut ctx = Context::new();
-            ctx.beefcode(0);
+            ctx.beefcode_with_value(0);
             for (i, line) in t.decrypted.iter().enumerate() {
                 let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
                 let result = ctx.encrypt_code(code[0], code[1]);
@@ -435,7 +447,7 @@ mod tests {
     fn test_decrypt_code() {
         for t in tests().iter() {
             let mut ctx = Context::new();
-            ctx.beefcode(0);
+            ctx.beefcode_with_value(0);
             for (i, line) in t.encrypted.iter().enumerate() {
                 let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
                 let result = ctx.decrypt_code(code[0], code[1]);

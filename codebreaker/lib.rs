@@ -35,7 +35,7 @@ impl Codebreaker {
     pub fn set_common_v7(&mut self) {
         self.reset();
         self.scheme = Scheme::V7;
-        self.cb7.beefcode(0);
+        self.cb7.beefcode_with_value(0);
     }
 
     // Used to encrypt a list of CB codes (V1 + V7)
@@ -49,9 +49,8 @@ impl Codebreaker {
         }
 
         if is_beefcode(oldaddr) {
-            self.cb7.beefcode(oldval);
+            self.cb7.beefcode(oldaddr, oldval);
             self.scheme = Scheme::V7;
-            self.cb7.beefcodf = oldaddr & 1 != 0;
         }
     }
 
@@ -64,9 +63,8 @@ impl Codebreaker {
         }
 
         if is_beefcode(*addr) {
-            self.cb7.beefcode(*val);
+            self.cb7.beefcode(*addr, *val);
             self.scheme = Scheme::V7;
-            self.cb7.beefcodf = *addr & 1 != 0;
         }
     }
 
@@ -110,9 +108,8 @@ impl Codebreaker {
         }
 
         if is_beefcode(*addr) {
-            self.cb7.beefcode(*val);
+            self.cb7.beefcode(*addr, *val);
             self.scheme = Scheme::V7;
-            self.cb7.beefcodf = *addr & 1 != 0;
             self.code_lines = 1;
         }
     }
