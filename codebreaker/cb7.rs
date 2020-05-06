@@ -115,6 +115,7 @@ pub struct Context {
     seeds: [[u8; 256]; 5],
     key: [u32; 5],
     pub beefcodf: bool,
+    initialized: bool,
 }
 
 impl Context {
@@ -123,19 +124,19 @@ impl Context {
             seeds: [[0; 256]; 5],
             key: [0; 5],
             beefcodf: false,
+            initialized: false,
         }
     }
 
     // Used to generate/change the encryption key and seeds.
     // "Beefcode" is the new V7+ seed code:
     // BEEFC0DE VVVVVVVV, where VVVVVVVV = val.
-    pub fn beefcode(&mut self, init: bool, val: u32) {
+    pub fn beefcode(&mut self, val: u32) {
         // Easy access to all bytes of val
         let v: Vec<usize> = val.to_le_bytes().iter().map(|&i| i as usize).collect();
 
         // Set up key and seeds
-        if init {
-            self.beefcodf = false;
+        if !self.initialized {
             self.key.copy_from_slice(&RC4_KEY);
 
             if val != 0 {
@@ -149,6 +150,8 @@ impl Context {
             } else {
                 self.seeds.copy_from_slice(&[[0; 256]; 5]);
             }
+
+            self.initialized = true;
         } else {
             if val != 0 {
                 for i in 0..4 {
@@ -213,7 +216,7 @@ impl Context {
 
         // BEEFC0DE
         if is_beefcode(oldaddr) {
-            self.beefcode(false, oldval);
+            self.beefcode(oldval);
             //beefcodf = true;
             return;
         }
@@ -272,7 +275,7 @@ impl Context {
 
         // BEEFC0DE
         if is_beefcode(*addr) {
-            self.beefcode(false, *val);
+            self.beefcode(*val);
             //beefcodf = true;
             return;
         }
@@ -419,7 +422,7 @@ mod tests {
     fn test_encrypt_code() {
         for t in tests().iter() {
             let mut ctx = Context::new();
-            ctx.beefcode(true, 0);
+            ctx.beefcode(0);
             for (i, line) in t.decrypted.iter().enumerate() {
                 let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
                 let result = ctx.encrypt_code(code[0], code[1]);
@@ -432,7 +435,7 @@ mod tests {
     fn test_decrypt_code() {
         for t in tests().iter() {
             let mut ctx = Context::new();
-            ctx.beefcode(true, 0);
+            ctx.beefcode(0);
             for (i, line) in t.encrypted.iter().enumerate() {
                 let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
                 let result = ctx.decrypt_code(code[0], code[1]);

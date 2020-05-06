@@ -14,7 +14,6 @@ enum EncMode {
 pub struct Codebreaker {
     enc_mode: EncMode,
     cb7: cb7::Context,
-    v7_init: bool,
     code_lines: usize,
 }
 
@@ -23,7 +22,6 @@ impl Codebreaker {
         Codebreaker {
             enc_mode: EncMode::RAW,
             cb7: cb7::Context::new(),
-            v7_init: false,
             code_lines: 0,
         }
     }
@@ -35,11 +33,9 @@ impl Codebreaker {
 
     // Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
     pub fn set_common_v7(&mut self) {
+        self.reset();
         self.enc_mode = EncMode::V7;
-        self.cb7.beefcode(true, 0);
-        self.v7_init = true;
-        self.cb7.beefcodf = false;
-        self.code_lines = 0;
+        self.cb7.beefcode(0);
     }
 
     // Used to encrypt a list of CB codes (V1 + V7)
@@ -53,8 +49,7 @@ impl Codebreaker {
         }
 
         if is_beefcode(oldaddr) {
-            self.cb7.beefcode(!self.v7_init, oldval);
-            self.v7_init = true;
+            self.cb7.beefcode(oldval);
             self.enc_mode = EncMode::V7;
             self.cb7.beefcodf = oldaddr & 1 != 0;
         }
@@ -69,8 +64,7 @@ impl Codebreaker {
         }
 
         if is_beefcode(*addr) {
-            self.cb7.beefcode(!self.v7_init, *val);
-            self.v7_init = true;
+            self.cb7.beefcode(*val);
             self.enc_mode = EncMode::V7;
             self.cb7.beefcodf = *addr & 1 != 0;
         }
@@ -116,8 +110,7 @@ impl Codebreaker {
         }
 
         if is_beefcode(*addr) {
-            self.cb7.beefcode(!self.v7_init, *val);
-            self.v7_init = true;
+            self.cb7.beefcode(*val);
             self.enc_mode = EncMode::V7;
             self.cb7.beefcodf = *addr & 1 != 0;
             self.code_lines = 1;
