@@ -99,7 +99,7 @@ impl Codebreaker {
             if self.code_lines == 0 {
                 self.code_lines = num_code_lines(*addr);
                 if self.code_lines == 1 && *addr == 0xffffffff {
-                    // TODO: change encryption options
+                    // XXX: changing encryption via "FFFFFFFF 000xnnnn" is not supported
                     self.code_lines = 0;
                     return;
                 }
