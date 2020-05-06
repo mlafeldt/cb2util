@@ -3,8 +3,6 @@ name = "codebreaker"
 version = "0.1.0"
 description = "Cryptographic functions for CodeBreaker PS2"
 authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
-links = "codebreaker"
-build = "build.rs"
 edition = "2018"
 
 [lib]
@@ -13,8 +11,4 @@ path = "lib.rs"
 doctest = false
 
 [dependencies]
-libc = "0.2"
 num-bigint = "^0.2.4"
-
-[build-dependencies]
-cc = "1.0"
