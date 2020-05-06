@@ -436,9 +436,9 @@ mod tests {
             let mut ctx = Context::new();
             ctx.beefcode_with_value(0);
             for (i, line) in t.decrypted.iter().enumerate() {
-                let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
-                let result = ctx.encrypt_code(code[0], code[1]);
-                assert_eq!(t.encrypted[i], format!("{:08X} {:08X}", result.0, result.1));
+                let code = parse_code(line);
+                let result = ctx.encrypt_code(code.0, code.1);
+                assert_eq!(t.encrypted[i], format_code(result.0, result.1));
             }
         }
     }
@@ -449,10 +449,19 @@ mod tests {
             let mut ctx = Context::new();
             ctx.beefcode_with_value(0);
             for (i, line) in t.encrypted.iter().enumerate() {
-                let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
-                let result = ctx.decrypt_code(code[0], code[1]);
-                assert_eq!(t.decrypted[i], format!("{:08X} {:08X}", result.0, result.1));
+                let code = parse_code(line);
+                let result = ctx.decrypt_code(code.0, code.1);
+                assert_eq!(t.decrypted[i], format_code(result.0, result.1));
             }
         }
+    }
+
+    fn parse_code(line: &str) -> (u32, u32) {
+        let code: Vec<u32> = line.split(' ').map(|v| u32::from_str_radix(v, 16).unwrap()).collect();
+        (code[0], code[1])
+    }
+
+    fn format_code(addr: u32, val: u32) -> String {
+        format!("{:08X} {:08X}", addr, val)
     }
 }
