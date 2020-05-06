@@ -73,7 +73,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
 
                 // Decrypt code
                 if decrypt {
-                    cb.decrypt_code2(&mut addr, &mut val);
+                    cb.auto_decrypt_code(&mut addr, &mut val);
                 }
 
                 // Discard beefcode and other junk

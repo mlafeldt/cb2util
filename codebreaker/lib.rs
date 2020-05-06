@@ -71,7 +71,7 @@ impl Codebreaker {
     }
 
     // Smart version of decrypt_code() that detects if a code needs to be decrypted and how
-    pub fn decrypt_code2(&mut self, addr: &mut u32, val: &mut u32) {
+    pub fn auto_decrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
         if self.scheme != Scheme::V7 {
             if self.code_lines == 0 {
                 self.code_lines = num_code_lines(*addr);
