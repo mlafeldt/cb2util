@@ -87,6 +87,10 @@ mod tests {
                 decrypted: (0xa008060c, 0x08028007),
                 encrypted: (0xaae071c0, 0xaca684dd),
             },
+            Test {
+                decrypted: (0xbeefc0de, 0x00000000),
+                encrypted: (0xb4336fa9, 0x4dfefb79),
+            },
         ]
     }
 
