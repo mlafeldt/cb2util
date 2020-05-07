@@ -1,8 +1,10 @@
+extern crate num_bigint;
+
 pub mod cb1;
 pub mod cb7;
 mod rc4;
 
-extern crate num_bigint;
+use cb7::Cb7;
 
 #[derive(PartialEq)]
 enum Scheme {
@@ -13,7 +15,7 @@ enum Scheme {
 
 pub struct Codebreaker {
     scheme: Scheme,
-    cb7: cb7::Context,
+    cb7: Cb7,
     code_lines: usize,
 }
 
@@ -21,7 +23,7 @@ impl Codebreaker {
     pub fn new() -> Codebreaker {
         Codebreaker {
             scheme: Scheme::RAW,
-            cb7: cb7::Context::new(),
+            cb7: Cb7::new(),
             code_lines: 0,
         }
     }

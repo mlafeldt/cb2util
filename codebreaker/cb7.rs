@@ -111,16 +111,16 @@ const RSA_DEC_KEY: u64 = 11;
 const RSA_ENC_KEY: u64 = 2682110966135737091;
 const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
 
-pub struct Context {
+pub struct Cb7 {
     seeds: [[u8; 256]; 5],
     key: [u32; 5],
     beefcodf: bool,
     initialized: bool,
 }
 
-impl Context {
-    pub fn new() -> Context {
-        Context {
+impl Cb7 {
+    pub fn new() -> Cb7 {
+        Cb7 {
             seeds: [[0; 256]; 5],
             key: [0; 5],
             beefcodf: false,
@@ -433,11 +433,11 @@ mod tests {
     #[test]
     fn test_encrypt_code() {
         for t in tests().iter() {
-            let mut ctx = Context::new();
-            ctx.beefcode_with_value(0);
+            let mut cb7 = Cb7::new();
+            cb7.beefcode_with_value(0);
             for (i, line) in t.decrypted.iter().enumerate() {
                 let code = parse_code(line);
-                let result = ctx.encrypt_code(code.0, code.1);
+                let result = cb7.encrypt_code(code.0, code.1);
                 assert_eq!(t.encrypted[i], format_code(result.0, result.1));
             }
         }
@@ -446,11 +446,11 @@ mod tests {
     #[test]
     fn test_decrypt_code() {
         for t in tests().iter() {
-            let mut ctx = Context::new();
-            ctx.beefcode_with_value(0);
+            let mut cb7 = Cb7::new();
+            cb7.beefcode_with_value(0);
             for (i, line) in t.encrypted.iter().enumerate() {
                 let code = parse_code(line);
-                let result = ctx.decrypt_code(code.0, code.1);
+                let result = cb7.decrypt_code(code.0, code.1);
                 assert_eq!(t.decrypted[i], format_code(result.0, result.1));
             }
         }
