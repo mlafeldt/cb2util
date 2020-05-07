@@ -41,7 +41,13 @@ impl Codebreaker {
     }
 
     // Used to encrypt a list of CB codes (V1 + V7)
-    pub fn encrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
+    pub fn encrypt_code(&mut self, addr: u32, val: u32) -> (u32, u32) {
+        let mut code = (addr, val);
+        self.encrypt_code_mut(&mut code.0, &mut code.1);
+        code
+    }
+
+    pub fn encrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
         let (oldaddr, oldval) = (*addr, *val);
 
         if self.scheme == Scheme::V7 {
@@ -57,7 +63,13 @@ impl Codebreaker {
     }
 
     // Used to decrypt a list of CB codes (V1 + V7)
-    pub fn decrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
+    pub fn decrypt_code(&mut self, addr: u32, val: u32) -> (u32, u32) {
+        let mut code = (addr, val);
+        self.decrypt_code_mut(&mut code.0, &mut code.1);
+        code
+    }
+
+    pub fn decrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
         if self.scheme == Scheme::V7 {
             self.cb7.decrypt_code_mut(addr, val);
         } else {
@@ -71,7 +83,13 @@ impl Codebreaker {
     }
 
     // Smart version of decrypt_code() that detects if a code needs to be decrypted and how
-    pub fn auto_decrypt_code(&mut self, addr: &mut u32, val: &mut u32) {
+    pub fn auto_decrypt_code(&mut self, addr: u32, val: u32) -> (u32, u32) {
+        let mut code = (addr, val);
+        self.auto_decrypt_code_mut(&mut code.0, &mut code.1);
+        code
+    }
+
+    pub fn auto_decrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
         if self.scheme != Scheme::V7 {
             if self.code_lines == 0 {
                 self.code_lines = num_code_lines(*addr);
