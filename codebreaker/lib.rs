@@ -1,4 +1,4 @@
-extern crate num_bigint;
+#![allow(clippy::unreadable_literal)]
 
 pub mod cb1;
 pub mod cb7;

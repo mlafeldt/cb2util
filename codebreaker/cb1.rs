@@ -34,7 +34,7 @@ pub fn decrypt_code_mut(addr: &mut u32, val: &mut u32) {
     *val = code.1;
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 const SEEDS: [[u32; 16]; 3] = [
     [
         0x0a0b8d9b, 0x0a0133f8, 0x0af733ec, 0x0a15c574,

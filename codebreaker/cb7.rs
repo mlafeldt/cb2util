@@ -252,7 +252,7 @@ unsafe fn slice_to_u8<T: Copy>(slice: &[T]) -> &[u8] {
     slice::from_raw_parts(slice.as_ptr() as *const u8, len)
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 const SEEDS: [[u8; 256]; 5] = [
     [
         0x84, 0x01, 0x21, 0xa4, 0xfa, 0x4d, 0x50, 0x8d, 0x75, 0x33, 0xc5, 0xf7, 0x4a, 0x6d, 0x7c, 0xa6,
@@ -405,7 +405,7 @@ mod tests {
         encrypted: Vec<&'static str>,
     }
 
-    #[cfg_attr(rustfmt, rustfmt_skip)]
+    #[rustfmt::skip]
     fn tests() -> Vec<Test> {
         vec![
             Test {
