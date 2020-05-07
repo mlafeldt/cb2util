@@ -3,8 +3,6 @@
 use crate::is_beefcode;
 use crate::rc4::Rc4;
 
-use num_bigint::BigUint;
-
 use std::mem::size_of;
 use std::slice;
 
@@ -230,6 +228,8 @@ fn mul_inverse(word: u32) -> u32 {
 
 // RSA encryption/decryption
 fn rsa_crypt(addr: &mut u32, val: &mut u32, rsakey: u64, modulus: u64) {
+    use num_bigint::BigUint;
+
     let code = BigUint::from_slice(&[*val, *addr]);
     let m = BigUint::from(modulus);
 
