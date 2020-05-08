@@ -1,3 +1,4 @@
+// I don't like to reformat CB codes, seed tables, etc. for Clippy
 #![allow(clippy::unreadable_literal)]
 
 pub mod cb1;

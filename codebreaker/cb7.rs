@@ -55,21 +55,19 @@ impl Cb7 {
             }
 
             self.initialized = true;
-        } else {
-            if val != 0 {
-                for i in 0..4 {
-                    self.key[i] = u32::from(self.seeds[(i + 3) % 4][v[3]]) << 24
-                        | u32::from(self.seeds[(i + 2) % 4][v[2]]) << 16
-                        | u32::from(self.seeds[(i + 1) % 4][v[1]]) << 8
-                        | u32::from(self.seeds[i % 4][v[0]]);
-                }
-            } else {
-                self.seeds.copy_from_slice(&[[0; 256]; 5]);
-                self.key[0] = 0;
-                self.key[1] = 0;
-                self.key[2] = 0;
-                self.key[3] = 0;
+        } else if val != 0 {
+            for i in 0..4 {
+                self.key[i] = u32::from(self.seeds[(i + 3) % 4][v[3]]) << 24
+                    | u32::from(self.seeds[(i + 2) % 4][v[2]]) << 16
+                    | u32::from(self.seeds[(i + 1) % 4][v[1]]) << 8
+                    | u32::from(self.seeds[i % 4][v[0]]);
             }
+        } else {
+            self.seeds.copy_from_slice(&[[0; 256]; 5]);
+            self.key[0] = 0;
+            self.key[1] = 0;
+            self.key[2] = 0;
+            self.key[3] = 0;
         }
 
         // Use key to encrypt seeds with RC4
