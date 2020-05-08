@@ -5,5 +5,4 @@
 /cb2util
 /release/
 # Rust
-target
-codebreaker/Cargo.lock
+/target
