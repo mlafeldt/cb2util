@@ -22,7 +22,7 @@ impl Default for Cb7 {
 impl Cb7 {
     pub fn new() -> Cb7 {
         Cb7 {
-            seeds: [[0; 256]; 5],
+            seeds: ZERO_SEEDS,
             key: [0; 5],
             beefcodf: false,
             initialized: false,
@@ -51,7 +51,7 @@ impl Cb7 {
                         | u32::from(self.seeds[i % 4][v[0]]);
                 }
             } else {
-                self.seeds.copy_from_slice(&[[0; 256]; 5]);
+                self.seeds.copy_from_slice(&ZERO_SEEDS);
             }
 
             self.initialized = true;
@@ -63,7 +63,7 @@ impl Cb7 {
                     | u32::from(self.seeds[i % 4][v[0]]);
             }
         } else {
-            self.seeds.copy_from_slice(&[[0; 256]; 5]);
+            self.seeds.copy_from_slice(&ZERO_SEEDS);
             self.key[0] = 0;
             self.key[1] = 0;
             self.key[2] = 0;
@@ -255,6 +255,8 @@ unsafe fn slice_to_u8<T: Copy>(slice: &[T]) -> &[u8] {
     let len = size_of::<T>() * slice.len();
     slice::from_raw_parts(slice.as_ptr() as *const u8, len)
 }
+
+const ZERO_SEEDS: [[u8; 256]; 5] = [[0; 256]; 5];
 
 #[rustfmt::skip]
 const SEEDS: [[u8; 256]; 5] = [
