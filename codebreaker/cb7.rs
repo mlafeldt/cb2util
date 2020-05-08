@@ -12,9 +12,12 @@ pub struct Cb7 {
     initialized: bool,
 }
 
+// Use common CB V7 encryption (B4336FA9 4DFEFB79) of CMGSCCC.com
 impl Default for Cb7 {
     fn default() -> Self {
-        Self::new()
+        let mut cb7 = Self::new();
+        cb7.beefcode(BEEFCODE, 0);
+        cb7
     }
 }
 
@@ -86,10 +89,6 @@ impl Cb7 {
         //
         // Since we don't know "wwwwwwww wwwwwwww" yet, all we can do is set a flag.
         self.beefcodf = addr & 1 != 0;
-    }
-
-    pub fn beefcode_with_value(&mut self, val: u32) {
-        self.beefcode(0xbeefc0de, val)
     }
 
     // Encrypts a V7+ code.
@@ -194,7 +193,7 @@ impl Cb7 {
 
 #[inline(always)]
 pub fn is_beefcode(val: u32) -> bool {
-    val & 0xfffffffe == 0xbeefc0de
+    val & 0xfffffffe == BEEFCODE
 }
 
 // Multiplication, modulo (2^32)
@@ -264,6 +263,14 @@ unsafe fn slice_to_u32<T: Copy>(slice: &[T]) -> &[u32] {
     let len = size_of::<T>() * slice.len();
     slice::from_raw_parts(slice.as_ptr() as *const u32, len)
 }
+
+const BEEFCODE: u32 = 0xbeefc0de;
+
+const RC4_KEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
+
+const RSA_DEC_KEY: u64 = 11;
+const RSA_ENC_KEY: u64 = 2682110966135737091;
+const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
 
 const ZERO_SEEDS: [[u8; 256]; 5] = [[0; 256]; 5];
 
@@ -361,12 +368,6 @@ const SEEDS: [[u8; 256]; 5] = [
     ],
 ];
 
-const RC4_KEY: [u32; 5] = [0xd0dba9d7, 0x13a0a96c, 0x80410df0, 0x2ccdbe1f, 0xe570a86b];
-
-const RSA_DEC_KEY: u64 = 11;
-const RSA_ENC_KEY: u64 = 2682110966135737091;
-const RSA_MODULUS: u64 = 18446744073709551605; // 0xffffffff_fffffff5
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -445,8 +446,7 @@ mod tests {
     #[test]
     fn test_encrypt_code() {
         for t in tests().iter() {
-            let mut cb7 = Cb7::new();
-            cb7.beefcode_with_value(0);
+            let mut cb7 = Cb7::default();
             for (i, line) in t.decrypted.iter().enumerate() {
                 let code = parse_code(line);
                 let result = cb7.encrypt_code(code.0, code.1);
@@ -458,8 +458,7 @@ mod tests {
     #[test]
     fn test_decrypt_code() {
         for t in tests().iter() {
-            let mut cb7 = Cb7::new();
-            cb7.beefcode_with_value(0);
+            let mut cb7 = Cb7::default();
             for (i, line) in t.encrypted.iter().enumerate() {
                 let code = parse_code(line);
                 let result = cb7.decrypt_code(code.0, code.1);
