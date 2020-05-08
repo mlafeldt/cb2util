@@ -121,7 +121,7 @@ impl Cb7 {
         rsa_crypt(addr, val, RSA_ENC_KEY, RSA_MODULUS);
 
         // Step 4: Encryption loop of 64 cycles, using the generated seeds
-        let s = unsafe { slice::from_raw_parts(self.seeds.as_ptr() as *const u32, 5 * 64) };
+        let s = unsafe { slice_to_u32(&self.seeds) };
         for i in 0..64 {
             *addr = (addr.wrapping_add(s[2 * 64 + i]) ^ s[i]).wrapping_sub(*val ^ s[4 * 64 + i]);
             *val = (val.wrapping_sub(s[3 * 64 + i]) ^ s[64 + i]).wrapping_add(*addr ^ s[4 * 64 + i]);
@@ -153,7 +153,7 @@ impl Cb7 {
 
     pub fn decrypt_code_mut(&mut self, addr: &mut u32, val: &mut u32) {
         // Step 1: Decryption loop of 64 cycles, using the generated seeds
-        let s = unsafe { slice::from_raw_parts(self.seeds.as_ptr() as *const u32, 5 * 64) };
+        let s = unsafe { slice_to_u32(&self.seeds) };
         for i in (0..64).rev() {
             *val = (val.wrapping_sub(*addr ^ s[4 * 64 + i]) ^ s[64 + i]).wrapping_add(s[3 * 64 + i]);
             *addr = (addr.wrapping_add(*val ^ s[4 * 64 + i]) ^ s[i]).wrapping_sub(s[2 * 64 + i]);
@@ -254,6 +254,11 @@ unsafe fn slice_to_u8_mut<T: Copy>(slice: &mut [T]) -> &mut [u8] {
 unsafe fn slice_to_u8<T: Copy>(slice: &[T]) -> &[u8] {
     let len = size_of::<T>() * slice.len();
     slice::from_raw_parts(slice.as_ptr() as *const u8, len)
+}
+
+unsafe fn slice_to_u32<T: Copy>(slice: &[T]) -> &[u32] {
+    let len = size_of::<T>() * slice.len();
+    slice::from_raw_parts(slice.as_ptr() as *const u32, len)
 }
 
 const ZERO_SEEDS: [[u8; 256]; 5] = [[0; 256]; 5];
