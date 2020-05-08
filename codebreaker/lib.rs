@@ -19,6 +19,12 @@ pub struct Codebreaker {
     code_lines: usize,
 }
 
+impl Default for Codebreaker {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Codebreaker {
     pub fn new() -> Codebreaker {
         Codebreaker {

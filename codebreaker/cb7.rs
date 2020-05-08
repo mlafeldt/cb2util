@@ -13,6 +13,12 @@ pub struct Cb7 {
     initialized: bool,
 }
 
+impl Default for Cb7 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Cb7 {
     pub fn new() -> Cb7 {
         Cb7 {
