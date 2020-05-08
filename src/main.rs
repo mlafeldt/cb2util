@@ -22,8 +22,7 @@ fn main() {
         )
         .get_matches();
 
-    match m.subcommand() {
-        ("cheats", Some(m)) => cheats::run(m),
-        _ => (),
+    if let ("cheats", Some(m)) = m.subcommand() {
+        cheats::run(m)
     }
 }

@@ -42,7 +42,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
         let mut fix_beef = 0;
 
         if i > 0 {
-            println!("");
+            println!();
         }
 
         // Process game title
@@ -81,7 +81,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
                     beefcodf = false;
                     continue;
                 }
-                if fix_beef != 0 && (addr == 0x000ffffe || addr == 0x000fffff) {
+                if fix_beef != 0 && (addr == 0x000f_fffe || addr == 0x000f_ffff) {
                     fix_beef -= 1;
                     continue;
                 }
@@ -116,4 +116,4 @@ fn read16(b: &[u8]) -> u16 {
 }
 
 const CHEATS_HEADER_SIZE: usize = 8;
-const CHEATS_FILE_ID: &'static [u8; 4] = b"CFU\0";
+const CHEATS_FILE_ID: &[u8; 4] = b"CFU\0";
