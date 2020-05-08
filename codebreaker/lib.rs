@@ -35,16 +35,12 @@ impl Codebreaker {
         }
     }
 
-    // Resets the CB encryption.
-    pub fn reset(&mut self) {
-        *self = Codebreaker::new()
-    }
-
-    // Set common CB V7 encryption (B4336FA9 4DFEFB79) which is used by CMGSCCC.com
-    pub fn set_common_v7(&mut self) {
-        self.reset();
-        self.scheme = Scheme::V7;
-        self.cb7.beefcode_with_value(0);
+    pub fn new_v7() -> Codebreaker {
+        Codebreaker {
+            scheme: Scheme::V7,
+            cb7: Cb7::default(),
+            code_lines: 0,
+        }
     }
 
     // Used to encrypt a list of CB codes (V1 + V7)
