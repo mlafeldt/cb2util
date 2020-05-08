@@ -1,12 +1,7 @@
-#[macro_use]
-extern crate clap;
-extern crate codebreaker;
-extern crate flate2;
-
-use clap::{App, AppSettings, Arg, SubCommand};
-
 mod cli;
 use cli::cheats;
+
+use clap::{crate_version, App, AppSettings, Arg, SubCommand};
 
 fn main() {
     let m = App::new("cb2util")
