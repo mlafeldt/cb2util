@@ -5,7 +5,7 @@ use std::path::Path;
 use clap::ArgMatches;
 use flate2::read::ZlibDecoder;
 
-use codebreaker::Codebreaker;
+use codebreaker::{cb7, Codebreaker};
 
 pub fn run(m: &ArgMatches) {
     let path = Path::new(m.value_of("INPUT").unwrap());
@@ -85,7 +85,7 @@ fn extract_cheats(buf: &[u8], decrypt: bool) {
                     fix_beef -= 1;
                     continue;
                 }
-                if codebreaker::is_beefcode(addr) {
+                if cb7::is_beefcode(addr) {
                     beefcodf = addr & 1 != 0;
                     fix_beef = 2;
                     continue;

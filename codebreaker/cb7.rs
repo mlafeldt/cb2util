@@ -1,6 +1,5 @@
 // Encrypt and decrypt codes using CB v7 scheme
 
-use crate::is_beefcode;
 use crate::rc4::Rc4;
 
 use std::mem::size_of;
@@ -191,6 +190,11 @@ impl Cb7 {
             self.beefcode(*addr, *val);
         }
     }
+}
+
+#[inline(always)]
+pub fn is_beefcode(val: u32) -> bool {
+    val & 0xfffffffe == 0xbeefc0de
 }
 
 // Multiplication, modulo (2^32)

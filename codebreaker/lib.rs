@@ -5,7 +5,7 @@ pub mod cb1;
 pub mod cb7;
 mod rc4;
 
-use cb7::Cb7;
+use cb7::{is_beefcode, Cb7};
 
 #[derive(PartialEq)]
 enum Scheme {
@@ -140,11 +140,6 @@ impl Codebreaker {
             self.code_lines = 1;
         }
     }
-}
-
-#[inline(always)]
-pub fn is_beefcode(val: u32) -> bool {
-    val & 0xfffffffe == 0xbeefc0de
 }
 
 fn num_code_lines(addr: u32) -> usize {
