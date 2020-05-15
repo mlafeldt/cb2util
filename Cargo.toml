@@ -8,4 +8,4 @@ edition = "2018"
 [dependencies]
 clap = "2"
 flate2 = "0.2"
-codebreaker = { git = "https://github.com/mlafeldt/codebreaker" }
+codebreaker = { path = "../codebreaker-rs", version = "0.1" }

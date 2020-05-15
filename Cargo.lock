@@ -33,7 +33,7 @@ name = "cb2util"
 version = "0.1.0"
 dependencies = [
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "codebreaker 0.1.0 (git+https://github.com/mlafeldt/codebreaker)",
+ "codebreaker 0.1.4",
  "flate2 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -58,8 +58,7 @@ dependencies = [
 
 [[package]]
 name = "codebreaker"
-version = "0.1.0"
-source = "git+https://github.com/mlafeldt/codebreaker#090d6620f106adc4bb30e9fcfd1e7ece1babcdc8"
+version = "0.1.4"
 dependencies = [
  "num-bigint 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -171,7 +170,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 "checksum cc 1.0.52 (registry+https://github.com/rust-lang/crates.io-index)" = "c3d87b23d6a92cd03af510a5ade527033f6aa6fa92161e2d5863a907d4c5e31d"
 "checksum clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)" = "5067f5bb2d80ef5d68b4c87db81601f0b75bca627bc2ef76b141d7b846a3c6d9"
-"checksum codebreaker 0.1.0 (git+https://github.com/mlafeldt/codebreaker)" = "<none>"
 "checksum flate2 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)" = "e6234dd4468ae5d1e2dbb06fe2b058696fdc50a339c68a393aefbf00bc81e423"
 "checksum hermit-abi 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "61565ff7aaace3525556587bd2dc31d4a07071957be715e63ce7b1eccf51a8f4"
 "checksum libc 0.2.69 (registry+https://github.com/rust-lang/crates.io-index)" = "99e85c08494b21a9054e7fe1374a732aeadaff3980b6990b94bfd3a70f690005"
