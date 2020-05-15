@@ -1,9 +1,13 @@
 [package]
 name = "cb2util"
-version = "0.1.0"
+version = "0.0.1"
 description = "CodeBreaker PS2 File Utility"
 authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
+license = "MIT"
+repository = "https://github.com/mlafeldt/cb2util"
+documentation = "https://github.com/mlafeldt/cb2util"
 edition = "2018"
+include = ["src/**/*"]
 
 [dependencies]
 clap = "2"
