@@ -221,38 +221,22 @@ static int beefcodf;		// BEEFC0DF?
 static int code_lines;
 
 /*
- * Computes the multiplicative inverse of @word, modulo (2^32).
- * I think this is borrowed from IDEA. ;)
+ * Computes the multiplicative inverse of x modulo (2^32). x must be odd!
+ * The code is based on Newton's method as explained in this blog post:
+ * https://lemire.me/blog/2017/09/18/computing-the-inverse-of-odd-integers/
  */
-static uint32_t mul_inverse(uint32_t word)
+static uint32_t mod_inverse(uint32_t x)
 {
-	// Original MIPS R5900 coding converted to C
-	uint32_t a0, a1, a2, a3;
-	uint32_t v0, v1;
-	uint32_t t1;
+	uint32_t y = x;
 
-	if (word == 1) return 1;
+	// Call this recurrence formula 4 times for 32-bit values:
+	// f(y) = y * (2 - y * x) modulo 2^32
+	y *= 2 - y * x;
+	y *= 2 - y * x;
+	y *= 2 - y * x;
+	y *= 2 - y * x;
 
-	a2 = (0 - word) % word;
-	if (!a2) return 1;
-
-	t1 = 1;
-	a3 = word;
-	a0 = 0 - (0xFFFFFFFF / word);
-
-	do {
-		v0 = a3 / a2;
-		v1 = a3 % a2;
-		a1 = a2;
-		a3 = a1;
-		a1 = a0;
-		a2 = v1;
-		v0 = v0 * a1;
-		a0 = t1 - v0;
-		t1 = a1;
-	} while (a2);
-
-	return t1;
+	return y;
 }
 
 #ifdef CODE_ENCRYPTION
@@ -270,7 +254,7 @@ static uint32_t mul_encrypt(uint32_t a, uint32_t b)
  */
 static uint32_t mul_decrypt(uint32_t a, uint32_t b)
 {
-	return (a * mul_inverse(b | 1));
+	return (a * mod_inverse(b | 1));
 }
 
 /*
