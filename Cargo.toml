@@ -12,4 +12,4 @@ include = ["src/**/*"]
 [dependencies]
 clap = "2"
 flate2 = "0.2"
-codebreaker = { path = "../codebreaker-rs", version = "0.1" }
+codebreaker = { path = "../codebreaker-rs", version = "0.2" }
