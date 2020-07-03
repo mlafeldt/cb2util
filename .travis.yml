@@ -1,18 +1,20 @@
-language: c
+language: rust
 
 sudo: false
 
-compiler:
-  - gcc
-  - clang
-
-install: make CC=$CC install
+rust: stable
 
 env:
-  - TEST_OPTS=-v
-  - DEFAULT_TEST_TARGET=prove
+  - RUST_BACKTRACE=full
 
-script: make test
+before_script:
+  - rustup component add clippy
+
+script:
+  - cargo build
+  - cargo clippy -- -D warnings
+  - cargo test --verbose
+  - make -C test SHARNESS_BUILD_DIRECTORY="$PWD/target/debug" T="cheats-extract*" TEST_OPTS=-v
 
 branches:
   only:
