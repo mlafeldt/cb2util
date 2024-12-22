@@ -21,10 +21,7 @@ The features are:
 Installation
 ------------
 
-The easiest and fastest way to get cb2util is to download the pre-built binaries
-for Windows or Linux from the [Downloads] site.
-
-If you want to build cb2util from source, simply run:
+To build cb2util from source, simply run:
 
     $ git clone --recursive git://github.com/mlafeldt/cb2util.git
     $ cd cb2util/
@@ -263,7 +260,7 @@ Check RSA signature of pelican.bin:
 
 File extension: `*.cbs`
 
-Comming soon... ;)
+Coming soon... ;)
 
 
 Disclaimer
@@ -295,18 +292,9 @@ Special Thanks
 * Greets to all the people that contribute to our code hacking community!
 
 
-Contact
--------
-
-* Web: <http://mlafeldt.github.com/cb2util>
-* Mail: <mathias.lafeldt@gmail.com>
-* Twitter: [@mlafeldt](https://twitter.com/mlafeldt)
-
-
-[COPYING]: https://github.com/mlafeldt/cb2util/blob/master/test/COPYING
-[Downloads]: https://github.com/mlafeldt/cb2util/downloads
-[LICENSE]: https://github.com/mlafeldt/cb2util/blob/master/LICENSE
-[Sharness]: http://mlafeldt.github.com/sharness
+[COPYING]: test/COPYING
+[LICENSE]: LICENSE
+[Sharness]: https://github.com/felipec/sharness
 [libbig_int]: https://github.com/mlafeldt/libbig_int
-[libcheats]: http://mlafeldt.github.com/libcheats
+[libcheats]: https://github.com/mlafeldt/libcheats
 [zlib]: http://www.zlib.net
