@@ -1,6 +1,6 @@
 [submodule "libcheats"]
 	path = libcheats
-	url = git://github.com/mlafeldt/libcheats.git
+	url = https://github.com/mlafeldt/libcheats
 [submodule "libbig_int"]
 	path = libbig_int
-	url = git://github.com/mlafeldt/libbig_int.git
+	url = https://github.com/mlafeldt/libbig_int
