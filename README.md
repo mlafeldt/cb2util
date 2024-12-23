@@ -1,5 +1,4 @@
-cb2util - CodeBreaker PS2 File Utility
-======================================
+# cb2util - CodeBreaker PS2 File Utility
 
 cb2util was made to utilize different file formats of CodeBreaker PS2.
 
@@ -17,32 +16,24 @@ The features are:
 - convert PCB files into ELF files
 - check digital signature on code saves and PCB files
 
+## Installation
 
-Installation
-------------
+To build cb2util from source simply run:
 
-To build cb2util from source, simply run:
-
-    $ git clone --recursive git://github.com/mlafeldt/cb2util.git
+    $ git clone --recursive https://github.com/mlafeldt/cb2util
     $ cd cb2util/
     $ make
     $ make install
 
-CMake is supported too:
+Zig is also supported, which is particularly useful for cross-compiling:
 
-    $ mkdir build
-    $ cd build/
-    $ cmake ..
-    $ make
-    $ make install
+    $ make include/elf.h
+    $ zig build
+    $ zig build -Dtarget=aarch64-macos
+    $ zig build -Dtarget=x86_64-linux-gnu
+    $ zig build -Dtarget=x86_64-windows
 
-In case your system lacks `elf.h`, you can install it this way:
-
-    $ curl https://gist.githubusercontent.com/mlafeldt/3885346/raw/elf.h | tee /usr/local/include/elf.h
-
-
-Usage
------
+## Usage
 
 As cb2util is a command-line application, you have to pass arguments to it.
 
@@ -63,7 +54,6 @@ There's one command for each of the supported file formats, e.g. `cbc` for code
 saves. To learn how a command is supposed to work, run `cb2util help <command>`.
 
 Below are some notes and examples concerning the different file formats.
-
 
 ### Code saves (v7 and v8+/Day1)
 
@@ -131,7 +121,6 @@ Compile cheats in mygame.txt to code save for CB v7:
 
 Note that the format of the text file to be compiled is described below.
 
-
 ### "cheats" files
 
 The "cheats" file is CodeBreaker's internal code database. It is usually saved
@@ -180,7 +169,6 @@ You can use your own "cheats" file with CodeBreaker in just a few steps:
 3. use your favorite method to transfer the file to `mc0:/PCB/cheats`
 4. start CodeBreaker to see your cheats ready to be used
 
-
 #### Text file format
 
 To compile code saves and "cheats" files, cb2util uses [libcheats] for parsing
@@ -208,7 +196,6 @@ Example:
     902D51F8 0C0B95F6
     Invincible
     203C8728 00000001
-
 
 ### PCB files
 
@@ -255,42 +242,36 @@ Check RSA signature of pelican.bin:
 
     $ cb2util pcb --verify pelican.bin
 
-
 ### Game saves
 
 File extension: `*.cbs`
 
 Coming soon... ;)
 
-
-Disclaimer
-----------
+## Disclaimer
 
 THIS PROGRAM IS NOT LICENSED, ENDORSED, NOR SPONSORED BY SONY COMPUTER
 ENTERTAINMENT, INC. NOR PELICAN ACCESSORIES, INC.
 ALL TRADEMARKS ARE PROPERTY OF THEIR RESPECTIVE OWNERS.
 
-* cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
-* The code in `arcfour.c` is licensed under the terms of the FreeBSD license,
+- cb2util is licensed under the terms of the MIT License. See [LICENSE] file.
+- The code in `arcfour.c` is licensed under the terms of the FreeBSD license,
   which is believed to be compatible with the MIT license.
-* The SHA-1 implementation is placed in the public domain.
-* [libcheats] is licensed under the terms of the MIT License. See [LICENSE] file.
-* The license of [libbig_int] says that it can be redistributed/modified freely.
-* [zlib] has its own permissive free software license.
-* [Sharness] and all tests are licensed under the terms of the GNU General
+- The SHA-1 implementation is placed in the public domain.
+- [libcheats] is licensed under the terms of the MIT License. See [LICENSE] file.
+- The license of [libbig_int] says that it can be redistributed/modified freely.
+- [zlib] has its own permissive free software license.
+- [Sharness] and all tests are licensed under the terms of the GNU General
   Public License version 2 or higher. See file [COPYING] for full license text.
 
+## Special Thanks
 
-Special Thanks
---------------
-
-* Alexander Valyalkin for his great [libbig_int] library.
-* Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
-* Vector for making PS2 Save Builder and saving me some time.
-* Gtlcpimp who has awakened my interest in cb2util again and provided valuable
+- Alexander Valyalkin for his great [libbig_int] library.
+- Peter C. Gutmann and Paul Rubin for the fast implementation of SHA-1.
+- Vector for making PS2 Save Builder and saving me some time.
+- Gtlcpimp who has awakened my interest in cb2util again and provided valuable
   information on the "cheats" compression.
-* Greets to all the people that contribute to our code hacking community!
-
+- Greets to all the people that contribute to our code hacking community!
 
 [COPYING]: test/COPYING
 [LICENSE]: LICENSE
