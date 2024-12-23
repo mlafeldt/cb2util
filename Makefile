@@ -16,6 +16,7 @@ BIGINT = libbig_int
 LIBCHEATS = libcheats
 
 CC = gcc
+CURL = curl
 INSTALL = install
 RM = rm -f
 SHA1SUM = sha1sum
@@ -24,7 +25,7 @@ TAR = tar
 ZIP = zip
 
 CFLAGS = -Wall -Werror -O2
-CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include
+CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include -Iinclude
 CFLAGS += -DHAVE_STDINT_H
 LDFLAGS =
 LIBS =
@@ -118,13 +119,17 @@ $(PROG): $(OBJS)
 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
 	$(QUIET_STRIP)$(STRIP) $@
 
-cb2util.o: CB2UTIL-VERSION-FILE
+cb2util.o: CB2UTIL-VERSION-FILE include/elf.h
 cb2util.o: CFLAGS += -DCB2UTIL_VERSION='"$(CB2UTIL_VERSION)"'
+
+include/elf.h:
+	mkdir -p include
+	$(CURL) -fSs -o $@ https://gist.githubusercontent.com/mlafeldt/3885346/raw/elf.h
 
 clean:
 	$(RM) $(PROG) $(OBJS)
 	$(RM) CB2UTIL-VERSION-FILE
-	$(RM) -r release/
+	$(RM) -r release include
 	$(QUIET_SUBDIR0)test $(QUIET_SUBDIR1) clean
 
 test: all
