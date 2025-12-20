@@ -5,8 +5,8 @@ test_description="Test very basics"
 
 . ./sharness.sh
 
-"$SHARNESS_BUILD_DIRECTORY/cb2util" >/dev/null
-if [ $? != 1 ]; then
+"$SHARNESS_BUILD_DIRECTORY/cb2util" --version >/dev/null
+if [ $? != 0 ]; then
     echo >&2 'You do not seem to have built cb2util yet.'
     exit 1
 fi

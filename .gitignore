@@ -6,5 +6,5 @@
 /release/
 /include/elf.h
 .zig-cache
-zig-cache
 zig-out
+target

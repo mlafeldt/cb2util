@@ -1,0 +1,23 @@
+[package]
+name = "cb2util"
+version = "1.1.0"
+edition = "2021"
+authors = ["Mathias Lafeldt <mathias.lafeldt@gmail.com>"]
+description = "CodeBreaker PS2 File Utility"
+license = "MIT"
+repository = "https://github.com/mlafeldt/cb2util"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+codebreaker = "0.3"
+flate2 = "1"
+sha1 = "0.10"
+num-bigint = "0.4"
+
+[[bin]]
+name = "cb2util"
+path = "src/main.rs"
+
+[[test]]
+name = "integration"
+path = "test/integration.rs"
