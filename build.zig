@@ -21,11 +21,15 @@ pub fn build(b: *std.Build) void {
         break :v version;
     };
 
-    const libbig_int = b.addStaticLibrary(.{
+    const libbig_int = b.addLibrary(.{
+        .linkage = .static,
         .name = "big_int",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+            .sanitize_c = .off,
+        }),
     });
     libbig_int.addCSourceFiles(.{ .files = &.{
         "libbig_int/src/basic_funcs.c",
@@ -48,11 +52,15 @@ pub fn build(b: *std.Build) void {
     }, .flags = &cflags });
     libbig_int.addIncludePath(b.path("libbig_int/include"));
 
-    const libcheats = b.addStaticLibrary(.{
+    const libcheats = b.addLibrary(.{
+        .linkage = .static,
         .name = "cheats",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+            .sanitize_c = .off,
+        }),
     });
     libcheats.addCSourceFiles(.{ .files = &.{
         "libcheats/src/cheatlist.c",
@@ -64,11 +72,15 @@ pub fn build(b: *std.Build) void {
     libcheats.root_module.addCMacro("HAVE_STDINT_H", "1");
 
     const zlib = b.dependency("zlib", .{ .target = target, .optimize = optimize });
+    zlib.artifact("z").root_module.sanitize_c = .off;
 
     const exe = b.addExecutable(.{
         .name = "cb2util",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .sanitize_c = .off,
+        }),
     });
     exe.addCSourceFiles(.{ .files = &.{
         "arcfour.c",
@@ -91,7 +103,6 @@ pub fn build(b: *std.Build) void {
     exe.linkLibC();
     exe.root_module.addCMacro("CB2UTIL_VERSION", b.fmt("\"{s}\"", .{version}));
     exe.root_module.addCMacro("HAVE_STDINT_H", "1");
-    exe.root_module.sanitize_c = false;
 
     b.installArtifact(exe);
 
