@@ -24,7 +24,7 @@ STRIP = strip
 TAR = tar
 ZIP = zip
 
-CFLAGS = -Wall -Werror -O2
+CFLAGS = -Wall -Werror -Wno-date-time -O2
 CFLAGS += -I$(BIGINT)/include -I$(LIBCHEATS)/include -Iinclude
 CFLAGS += -DHAVE_STDINT_H
 LDFLAGS =
