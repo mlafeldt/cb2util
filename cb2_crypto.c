@@ -546,23 +546,19 @@ void cb_decrypt_code2(uint32_t *addr, uint32_t *val)
 {
 	if (enc_mode != ENC_MODE_V7) {
 		if (!code_lines) {
-			code_lines = num_code_lines(*addr);
 			if ((*addr >> 24) & 0x0E) {
 				if ((*addr & 0xFFFFFFFE) == 0xBEEFC0DE) {
 					/*
 					 * ignore raw beefcode
 					 */
-					code_lines--;
 					return;
-				} else {
-					enc_mode = ENC_MODE_V1;
-					code_lines--;
-					cb1_decrypt_code(addr, val);
 				}
+				enc_mode = ENC_MODE_V1;
+				cb1_decrypt_code(addr, val);
 			} else {
 				enc_mode = ENC_MODE_RAW;
-				code_lines--;
 			}
+			code_lines = num_code_lines(*addr) - 1;
 		} else {
 			code_lines--;
 			if (enc_mode == ENC_MODE_RAW)
